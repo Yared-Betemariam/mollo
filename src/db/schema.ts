@@ -1,3 +1,4 @@
+import { PageNode } from "@/modules/pages/editor";
 import { sql } from "drizzle-orm";
 import {
   index,
@@ -21,9 +22,10 @@ export const pages = pgTable(
     id: serial("id").primaryKey(),
     user_id: integer("user_id")
       .notNull()
+      .unique()
       .references(() => users.id),
-    username: varchar("username", { length: 255 }).notNull(),
-    definition: json("definition").notNull(),
+    username: varchar("username", { length: 255 }).unique().notNull(),
+    definition: json("definition").$type<{ nodes: PageNode[] }>().notNull(),
     base_template: varchar("base_template", { length: 255 }).notNull(),
     updated_at: timestamp("updated_at")
       .defaultNow()

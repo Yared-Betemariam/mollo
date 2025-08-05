@@ -12,3 +12,11 @@ export interface CleanSession {
   };
   expires: ISODateString;
 }
+
+export type Template = {
+  image_url: string;
+  base_template: string;
+  name: string;
+};
+
+export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;

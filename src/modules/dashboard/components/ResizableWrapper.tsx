@@ -1,7 +1,7 @@
 "use client";
 
 import { ScrollAreaWrapper } from "@/components/custom/scrollarea-wrapper";
-import { Icons } from "@/components/Icons";
+import SheetWrapper from "@/components/custom/sheet-wrapper";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,45 +10,87 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
-import AccountsButton from "@/modules/accounts/components/AccountsButton";
-import { useActiveAccount } from "@/modules/accounts/hooks";
-import Chat from "@/modules/ai/components/Chat";
 import UserButton from "@/modules/auth/components/UserButton";
-import { ChevronsRight, Plus, Wallet } from "lucide-react";
+import AddNode from "@/modules/pages/components/AddNode";
+import PagePreview from "@/modules/pages/components/PagePreview";
+import { usePage } from "@/modules/pages/hooks";
+import { trpc } from "@/trpc/client";
+import { Loader, Play } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
-import { usePages } from "../hooks";
+import React, { useState } from "react";
+import { toast } from "sonner";
 import HeaderWrapper from "./HeaderWrapper";
-
-const links = [
-  {
-    name: "Dashboard",
-    id: "dashboard",
-    path: "/",
-  },
-  {
-    name: "Trades",
-    id: "trades",
-    path: "/trades",
-  },
-  {
-    name: "Calendar",
-    id: "calendar",
-    path: "/calendar",
-  },
-];
 
 type Props = {
   children: React.ReactNode;
 };
 
 const ResizableWrapper = ({ children }: Props) => {
-  const pathname = usePathname();
-  const activeAccount = useActiveAccount();
-  const { activeTab, setActiveTab } = usePages();
+  const { nodes, addNode, page } = usePage();
   const isMobile = useIsMobile();
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  const { mutate, isPending } = trpc.pages.updateDefinition.useMutation({
+    onError: (er) => {
+      console.log(er);
+      toast.error("Error saving changes! Try again");
+    },
+    onSuccess: () => {
+      toast.success("Changes saved!");
+    },
+  });
+
+  const links = [
+    {
+      name: "Help",
+      href: "/help",
+    },
+    {
+      name: "Feedback",
+      href: "/feedback",
+    },
+  ];
+
+  const saveChanges = () => {
+    if (!page) {
+      toast.success("Page not found!");
+      return;
+    }
+    mutate({
+      id: Number(page.id),
+      nodes,
+    });
+  };
+
+  const SaveButton = (
+    <Button
+      disabled={isPending}
+      onClick={() => saveChanges()}
+      variant={"outline"}
+    >
+      {isPending && <Loader className="size-4 animate-spin" />} {"Save"}
+    </Button>
+  );
+
+  const previewCpt = (
+    <>
+      <HeaderWrapper className="justify-between">
+        <div className="flex gap-2 items-center text-zinc-900/50">
+          <Play className="size-5" />
+          <span>Preview</span>
+        </div>
+        {!isMobile && (
+          <div className="flex items-center gap-3">
+            {SaveButton}
+            <Button disabled>Publish</Button>
+          </div>
+        )}
+      </HeaderWrapper>
+      <ScrollAreaWrapper className="max-h-[calc(100vh-6rem)] rounded-lg  shadow-[0_-10px_50px_-12px] shadow-black/25 min-h-full max-w-3xl mx-auto">
+        <PagePreview nodes={nodes} />
+      </ScrollAreaWrapper>
+    </>
+  );
 
   return (
     <ResizablePanelGroup
@@ -56,97 +98,64 @@ const ResizableWrapper = ({ children }: Props) => {
       direction="horizontal"
       className="w-full flex-1"
     >
-      {activeTab.includes(0) &&
-        (!isMobile || (!activeTab.includes(1) && isMobile)) && (
-          <ResizablePanel minSize={50} defaultSize={65}>
-            <ScrollAreaWrapper className="max-h-screen">
-              <HeaderWrapper>
-                <Logo logo />
-                <span className="border-r h-full" />
-                <AccountsButton />
-                <span className="border-r h-full" />
-                <div className="flex flex-col -space-y-0.5">
-                  <span className="opacity-70 text-sm">Balance</span>
-                  <p className="text-xl tracking-tight flex items-center font-medium">
-                    <Wallet className="size-4.5 text-primary inline mr-1" /> $
-                    {activeAccount?.balance.toLocaleString() || 0}
-                  </p>
-                </div>
-                <div className="flex gap-4 ml-auto h-full items-center">
-                  {!activeTab.includes(1) && (
-                    <>
-                      <Button
-                        onClick={() => setActiveTab([0, 1])}
-                        className="rounded-full w-9 sm:w-auto drop-shadow-md drop-shadow-primary/50"
-                      >
-                        <Icons.metabi className="size-5" />
-                        <span className="z-10 hidden sm:flex">Ask Metabi</span>
-                      </Button>
-                      <span className="border-r h-full" />
-                      <UserButton />
-                    </>
-                  )}
-                </div>
-              </HeaderWrapper>
-              <div className="h-12 border-b w-full px-4 flex">
-                {links.map((item) => {
-                  const idMatch = pathname.match(/^\/dashboard\/(\d+)/);
-                  const id = idMatch ? idMatch[1] : null;
-
-                  const active =
-                    pathname ===
-                    `/dashboard/${id || 1}${item.path == "/" ? "" : item.path}`;
-
-                  return (
-                    <Link
-                      key={item.id}
-                      className={cn(
-                        "h-full flex transition-all duration-200 items-center border-b-2 px-4 text-zinc-600",
-                        active
-                          ? "text-primary font-medium border-b-primary"
-                          : "border-b-transparent"
-                      )}
-                      href={`/dashboard/${id || 1}${item.path}`}
-                    >
-                      {item.name}
-                    </Link>
-                  );
-                })}
-                <div className="flex items-center ml-auto">
-                  <Link
-                    className="w-fit"
-                    href={`/dashboard/${activeAccount?.id}/trades/create`}
-                  >
-                    <Button variant={"secondary"} size={"sm"}>
-                      <Plus /> Add Trade
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-              <main className="flex flex-col h-full">{children}</main>
-            </ScrollAreaWrapper>
-          </ResizablePanel>
-        )}
-      <ResizableHandle withHandle />
-
-      {activeTab.includes(1) && (
-        <ResizablePanel className="relative flex" minSize={20} defaultSize={35}>
-          <div className="flex flex-1 flex-col bg-radial from-white to-zinc-300">
-            <HeaderWrapper className="justify-between bg-white">
-              <Button
-                onClick={() => setActiveTab([0])}
-                variant={"outline"}
-                className="shadow-none border-dashed rounded-full bg-zinc-900/10"
-                size={"icon"}
-              >
-                <ChevronsRight className="size-6" />
-              </Button>
+      <ResizablePanel minSize={35} defaultSize={50}>
+        <ScrollAreaWrapper>
+          <HeaderWrapper>
+            <Logo logo />
+            <div className="flex gap-4 ml-auto h-full items-center">
+              {links.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  {item.name}
+                </Link>
+              ))}
               <UserButton />
-            </HeaderWrapper>
-            <Chat />
+            </div>
+          </HeaderWrapper>
+          <div className="h-14 items-center px-4 flex bg-zinc-100/75 justify-end gap-3">
+            {isMobile && (
+              <>
+                {SaveButton}
+                <span className="h-full border-r" />
+                <Button
+                  onClick={() => setPreviewOpen(true)}
+                  variant={"outline"}
+                >
+                  <Play /> Preview
+                </Button>
+              </>
+            )}
+            <AddNode
+              addNode={(node) => {
+                addNode(node);
+              }}
+            />
           </div>
-        </ResizablePanel>
-      )}
+          <main className="flex flex-col h-full">{children}</main>
+        </ScrollAreaWrapper>
+      </ResizablePanel>
+
+      {!isMobile ? (
+        <>
+          <ResizableHandle withHandle />
+
+          <ResizablePanel
+            className="relative flex flex-col justify-between bg-zinc-100"
+            minSize={35}
+            defaultSize={50}
+          >
+            {previewCpt}
+          </ResizablePanel>
+        </>
+      ) : null}
+
+      <SheetWrapper
+        title="Preview"
+        previewMode
+        open={previewOpen}
+        onOpen={(value) => setPreviewOpen(value)}
+      >
+        {previewCpt}
+      </SheetWrapper>
     </ResizablePanelGroup>
   );
 };

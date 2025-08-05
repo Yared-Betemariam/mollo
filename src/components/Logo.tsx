@@ -18,9 +18,9 @@ const Logo = ({ className, logo, size, light }: Props) => {
           alt="Metabook Logo"
           width={100}
           height={100}
-          className={cn("w-10 h-auto drop-shadow", {
-            "w-12": size === "lg",
-            "w-14": size === "xl",
+          className={cn("shrink-0 w-8 h-auto drop-shadow", {
+            "w-10": size === "lg",
+            "w-12": size === "xl",
           })}
         />
       ) : (
@@ -30,7 +30,7 @@ const Logo = ({ className, logo, size, light }: Props) => {
             alt="Metabook Logo"
             width={140}
             height={140}
-            className={cn("w-20 md:w-32", {
+            className={cn("shrink-0 w-20 md:w-32", {
               "md:w-36": size === "lg",
               "md:w-40": size === "xl",
             })}

@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDownIcon } from "lucide-react"
+import * as React from "react";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { ChevronDownIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Accordion({
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
-  return <AccordionPrimitive.Root data-slot="accordion" {...props} />
+  return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
 }
 
 function AccordionItem({
@@ -22,7 +22,7 @@ function AccordionItem({
       className={cn("border-b last:border-b-0", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AccordionTrigger({
@@ -44,7 +44,7 @@ function AccordionTrigger({
         <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
-  )
+  );
 }
 
 function AccordionContent({
@@ -60,7 +60,63 @@ function AccordionContent({
     >
       <div className={cn("pt-0 pb-4", className)}>{children}</div>
     </AccordionPrimitive.Content>
-  )
+  );
 }
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+interface AccordionContentProps {
+  isActive: boolean;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const AnimatedAccordionContent = ({
+  isActive,
+  children,
+  className,
+}: AccordionContentProps) => {
+  const contentRef = React.useRef<HTMLDivElement | null>(null);
+  const [height, setHeight] = React.useState<string>("0px");
+
+  React.useEffect(() => {
+    const contentEl = contentRef.current;
+    if (!contentEl) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (isActive) {
+        setHeight(`${contentEl.scrollHeight}px`);
+      }
+    });
+
+    resizeObserver.observe(contentEl);
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (contentRef.current) {
+      setHeight(isActive ? `${contentRef.current.scrollHeight}px` : "0px");
+    }
+  }, [isActive]);
+
+  return (
+    <div
+      ref={contentRef}
+      style={{ height }}
+      className={cn(
+        "overflow-hidden transition-[height] duration-300 ease-in-out",
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+  AnimatedAccordionContent,
+};

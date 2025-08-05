@@ -11,10 +11,12 @@ export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-export const Layout = ({ children }: LayoutProps) => {
+const Layout = async ({ children }: LayoutProps) => {
   return (
     <>
       <DashboardWrapper>{children}</DashboardWrapper>
+
+      {/* Util Compnents */}
       <Toaster />
       <Modals />
     </>

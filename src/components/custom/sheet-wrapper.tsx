@@ -16,6 +16,7 @@ interface SheetWrapperProps {
   title?: string;
   description?: string;
   children: React.ReactNode;
+  previewMode?: boolean;
 }
 
 const SheetWrapper: React.FC<SheetWrapperProps> = ({
@@ -25,19 +26,33 @@ const SheetWrapper: React.FC<SheetWrapperProps> = ({
   title,
   description,
   children,
+  previewMode,
 }) => {
   const isMobile = useIsMobile();
   return (
     <Sheet open={open} onOpenChange={onOpen}>
       <SheetContent
         side={isMobile ? "bottom" : side}
-        className={cn("space-y-0 gap-4", isMobile && "max-h-[90vh]")}
+        className={cn(
+          "space-y-0 gap-4",
+          isMobile && "max-h-[90vh]",
+          previewMode &&
+            "bg-zinc-100 srounded-t-lg min-h-[calc(100vh-6rem)] flex flex-col"
+        )}
       >
-        <SheetHeader className="border-b p-8">
+        <SheetHeader className={cn("border-b p-8", previewMode && "sr-only")}>
           <SheetTitle className="text-xl">{title}</SheetTitle>
           <SheetDescription>{description}</SheetDescription>
         </SheetHeader>
-        <div className="px-8 pb-10 md:pb-12 overflow-auto">{children}</div>
+        <div
+          className={cn(
+            previewMode
+              ? "flex flex-col justify-between h-full flex-1"
+              : "px-8 pb-10 md:pb-12 overflow-auto"
+          )}
+        >
+          {children}
+        </div>
       </SheetContent>
     </Sheet>
   );

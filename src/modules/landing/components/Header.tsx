@@ -6,6 +6,7 @@ import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import MenuSheet from "./MenuSheet";
 import { useUser } from "@/modules/auth/hooks";
+import { defaultLoginRedirect } from "@/routes";
 
 export const navLinks = [
   {
@@ -55,7 +56,7 @@ const Header = () => {
 
           {user && (
             <>
-              <Link href="/dashboard">
+              <Link href={defaultLoginRedirect}>
                 <Button variant={"outline"} size={"lg"} className="text-base!">
                   Dashboard
                 </Button>

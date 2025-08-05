@@ -1,11 +1,23 @@
-import z from "zod";
+import { z } from "zod";
 
-export const profileSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.email("Invalid email"),
+export const usernameSchema = z
+  .string()
+  .min(3, "Username must be at least 3 characters long")
+  .max(20, "Username must be less than 20 characters")
+  .regex(
+    /^[a-z0-9-]+$/,
+    "Username can only contain lowercase letters, numbers, and hyphens"
+  )
+  .refine((val) => !val.startsWith("-") && !val.endsWith("-"), {
+    message: "Username cannot start or end with a hyphen",
+  });
+
+export const onboardingSchema = z.object({
+  username: usernameSchema,
+  base_template: z.string().min(1, "Please select a template"),
 });
 
-export type ProfileFormValues = z.infer<typeof profileSchema>;
+export type OnboardingFormData = z.infer<typeof onboardingSchema>;
 
 // export const accountSchema = z.object({
 //   name: z.string().max(255).min(1, "Name is required"),

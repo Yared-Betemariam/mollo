@@ -1,7 +1,10 @@
 import { db } from "@/db";
 import { pages } from "@/db/schema";
+import { usernameSchema } from "@/schemas";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { eq } from "drizzle-orm";
+import z from "zod";
+import { PageNodeSchema } from "../editor";
 
 export const pageRouter = createTRPCRouter({
   // create: protectedProcedure.input(accountSchema).mutation(async (opts) => {
@@ -36,6 +39,43 @@ export const pageRouter = createTRPCRouter({
       data: user_page[0],
     };
   }),
+  updateDefinition: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        nodes: z.array(PageNodeSchema),
+      })
+    )
+    .mutation(async (opts) => {
+      await db
+        .update(pages)
+        .set({
+          definition: { nodes: opts.input.nodes },
+        })
+        .where(eq(pages.id, Number(opts.input.id)));
+
+      return {
+        success: true,
+        message: "Page successfully updated!",
+      };
+    }),
+  checkUsernameStatus: protectedProcedure
+    .input(
+      z.object({
+        username: usernameSchema,
+      })
+    )
+    .query(async (otps) => {
+      const isTaken = await db
+        .select({ exists: pages.id })
+        .from(pages)
+        .where(eq(pages.username, otps.input.username))
+        .limit(1);
+
+      return {
+        taken: isTaken.length > 0,
+      };
+    }),
   // delete: protectedProcedure
   //   .input(z.object({ id: z.number() }))
   //   .mutation(async (opts) => {
