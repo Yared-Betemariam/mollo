@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { Page, PageNode, UpdatableNode } from "../editor";
-import { getTemplate } from "../templates";
+import { Page, PageNode } from "../editor";
+import { UpdatableNode } from "../editor/class";
 
 interface NodesStoreType {
   nodes: PageNode[];
@@ -13,7 +13,7 @@ interface NodesStoreType {
 }
 
 export const useNodesStore = create<NodesStoreType>((set, get) => ({
-  nodes: getTemplate("sample"),
+  nodes: [],
   setNodes: (nodes) => set({ nodes }),
   editNode: (id, updates) => {
     set({ nodes: Page.editNode(get().nodes, id, updates) });

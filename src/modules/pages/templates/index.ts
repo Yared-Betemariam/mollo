@@ -1,19 +1,16 @@
+import { TemplateName } from "@/types";
 import { NodeType, PageNode } from "../editor";
 
-// Define allowed templates
-export type TemplateName = "editor" | "sample" | "video_editor";
-
-// Example preset node-sets for each template
 const templateStore: Record<TemplateName, PageNode[]> = {
   sample: [
     {
-      id: "kalsd",
+      id: "xxx1",
       type: NodeType.PageMetadata,
       title: "Yared's page",
       description: "Here is your metedatea",
     },
     {
-      id: "kalsd",
+      id: "xxx11",
       type: NodeType.SectionHeader,
       links: [
         {
@@ -23,7 +20,7 @@ const templateStore: Record<TemplateName, PageNode[]> = {
       ],
     },
     {
-      id: "1",
+      id: "111",
       type: NodeType.SectionHero,
       template: "light",
       title: "Sample Hero",
@@ -31,57 +28,18 @@ const templateStore: Record<TemplateName, PageNode[]> = {
       backgroundImageUrl: "/sample-bg.jpg",
     },
     {
-      id: "2",
+      id: "2222",
       type: NodeType.SectionFooter,
       template: "light",
       text: "© 2025 Sample Template",
     },
   ],
-  editor: [
+  empty: [
     {
-      id: "1",
-      type: NodeType.SectionHero,
-      template: "dark",
-      title: "Editor Hero",
-      description: "Build your portfolio here.",
-      backgroundImageUrl: "/editor-bg.jpg",
-    },
-    {
-      id: "2",
-      type: NodeType.SectionSkills,
-      template: "dark",
-      skills: [
-        { name: "Photoshop", proficiency: 90 },
-        { name: "Figma", proficiency: 80 },
-      ],
-    },
-    {
-      id: "3",
-      type: NodeType.SectionFooter,
-      template: "dark",
-      text: "© 2025 Editor Template",
-    },
-  ],
-  video_editor: [
-    {
-      id: "1",
-      type: NodeType.SectionHero,
-      template: "colorful",
-      title: "Video Editor Hero",
-      description: "Show off your reels.",
-      backgroundImageUrl: "/video-bg.jpg",
-    },
-    {
-      id: "2",
-      type: NodeType.SectionVideoGallery,
-      template: "colorful",
-      videos: ["/videos/vid1.mp4", "/videos/vid2.mp4"],
-    },
-    {
-      id: "3",
-      type: NodeType.SectionFooter,
-      template: "colorful",
-      text: "© 2025 Video Editor Template",
+      id: "xx21",
+      type: NodeType.PageMetadata,
+      title: "Empty Page",
+      description: "Empty mollo page",
     },
   ],
 };

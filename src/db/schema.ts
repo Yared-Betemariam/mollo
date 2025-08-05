@@ -1,6 +1,7 @@
 import { PageNode } from "@/modules/pages/editor";
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
   json,
@@ -27,12 +28,16 @@ export const pages = pgTable(
     username: varchar("username", { length: 255 }).unique().notNull(),
     definition: json("definition").$type<{ nodes: PageNode[] }>().notNull(),
     base_template: varchar("base_template", { length: 255 }).notNull(),
+
+    published: boolean("published").default(false).notNull(),
+    published_date: timestamp("published_date", { withTimezone: true }),
+
     updated_at: timestamp("updated_at")
       .defaultNow()
       .notNull()
       .$onUpdate(() => sql`now()`),
   },
-  (pages) => [index("pages_user_id_idx").on(pages.user_id)]
+  (pages) => [index("pages_username_idx").on(pages.username)]
 );
 
 export type User = typeof users.$inferSelect;

@@ -22,22 +22,12 @@ export const timeRangeOptions = [
 export const templates: Template[] = [
   {
     image_url: "/logo.png?height=200&width=200",
-    base_template: "minimal",
-    name: "Minimal",
+    base_template: "sample",
+    name: "Sample",
   },
   {
     image_url: "/logo.png?height=200&width=200",
-    base_template: "creative",
-    name: "Creative",
-  },
-  {
-    image_url: "/logo.png?height=200&width=200",
-    base_template: "business",
-    name: "Business",
-  },
-  {
-    image_url: "/logo.png?height=200&width=200",
-    base_template: "blog",
-    name: "Blog",
+    base_template: "empty",
+    name: "Empty",
   },
 ];

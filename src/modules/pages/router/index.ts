@@ -1,7 +1,11 @@
 import { db } from "@/db";
 import { pages } from "@/db/schema";
 import { usernameSchema } from "@/schemas";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  baseProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
 import { eq } from "drizzle-orm";
 import z from "zod";
 import { PageNodeSchema } from "../editor";
@@ -37,6 +41,26 @@ export const pageRouter = createTRPCRouter({
       success: true,
       message: "Page successfully fetched!",
       data: user_page[0],
+    };
+  }),
+  data: baseProcedure.input(z.string()).query(async (opts) => {
+    const page_datas = await db
+      .select({ definition: pages.definition })
+      .from(pages)
+      .where(eq(pages.username, opts.input));
+
+    if (page_datas.length < 1 || !page_datas[0]) {
+      return {
+        success: false,
+        message: "Page not found!",
+        data: null,
+      };
+    }
+
+    return {
+      success: true,
+      message: "Page successfully fetched!",
+      data: page_datas[0],
     };
   }),
   updateDefinition: protectedProcedure

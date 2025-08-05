@@ -152,7 +152,9 @@ export default function OnboardingCard() {
               type="submit"
               size="lg"
               className="w-full text-base h-12"
-              disabled={isPending}
+              disabled={
+                isPending || !usernameStatus || usernameStatus.taken === true
+              }
             >
               {isPending ? "Starting..." : "Start"}
             </Button>

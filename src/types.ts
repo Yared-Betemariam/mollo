@@ -15,8 +15,10 @@ export interface CleanSession {
 
 export type Template = {
   image_url: string;
-  base_template: string;
+  base_template: TemplateName;
   name: string;
 };
+
+export type TemplateName = "empty" | "sample";
 
 export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;
