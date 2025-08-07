@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NodeType } from "../../editor";
 import { usePage } from "../../hooks";
 import Node from "./Node";
@@ -9,8 +9,14 @@ const PropEditor = () => {
   const { nodes, editNode, deleteNode, moveNodeDown, moveNodeUp } = usePage();
   const [activeNode, setActiveNode] = useState<string>();
 
+  useEffect(() => {
+    if (nodes && nodes.length > 0 && !activeNode) {
+      setActiveNode(nodes[0].id);
+    }
+  }, [nodes]);
+
   return (
-    <div className="flex flex-col">
+    <div className="h-[calc(100vh-7.5rem)]">
       {nodes.map((node, i) => {
         return (
           <Node
@@ -21,9 +27,7 @@ const PropEditor = () => {
             toggleNode={() =>
               setActiveNode(activeNode == node.id ? undefined : node.id)
             }
-            isActive={
-              activeNode == node.id || node.type == NodeType.PageMetadata
-            }
+            isActive={activeNode == node.id}
             key={i}
             editNode={(updates) => {
               editNode<typeof node>(node.id, {

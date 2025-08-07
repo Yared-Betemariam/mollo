@@ -74,7 +74,9 @@ export const pageRouter = createTRPCRouter({
       await db
         .update(pages)
         .set({
-          definition: { nodes: opts.input.nodes },
+          definition: {
+            nodes: opts.input.nodes,
+          },
         })
         .where(eq(pages.id, Number(opts.input.id)));
 

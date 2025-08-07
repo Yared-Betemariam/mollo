@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { ConfirmationModal } from "./components/ConfirmationModal";
+import TestimonialsModal from "./components/TestimonialsModal";
+import SkillsModal from "./components/SkillsModal";
+import EducationModal from "./components/EducationModal";
 
 const Modals = () => {
   const [mounted, setMounted] = useState(false);
@@ -16,7 +19,11 @@ const Modals = () => {
 
   return (
     <>
+      {/* Edu, Skill, Proj, Vidgroup, ImgGroup */}
       <ConfirmationModal />
+      <EducationModal />
+      <TestimonialsModal />
+      <SkillsModal />
     </>
   );
 };

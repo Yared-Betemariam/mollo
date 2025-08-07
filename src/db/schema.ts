@@ -1,5 +1,4 @@
 import { PageNode } from "@/modules/pages/editor";
-import { sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -35,7 +34,7 @@ export const pages = pgTable(
     updated_at: timestamp("updated_at")
       .defaultNow()
       .notNull()
-      .$onUpdate(() => sql`now()`),
+      .$onUpdate(() => new Date()),
   },
   (pages) => [index("pages_username_idx").on(pages.username)]
 );

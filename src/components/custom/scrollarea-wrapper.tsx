@@ -22,13 +22,13 @@ export const ScrollAreaWrapper = ({
         {children}
       </Viewport>
       <Scrollbar
-        className="ScrollAreaScrollbar rounded-full w-[10px] bg-zinc-900/10 p-[1.5px] py-[2.5px] mr-[1px]"
+        className="ScrollAreaScrollbar rounded-full w-[10px] bg-zinc-900/10 p-[1.5px] py-[2.5px] mr-[1px] z-50"
         orientation="vertical"
       >
         <Thumb className="ScrollAreaThumb bg-zinc-900/25 rounded-full" />
       </Scrollbar>
       <Scrollbar
-        className="ScrollAreaScrollbar rounded-full h-[8px] bg-zinc-900/5 p-[1.5px] px-[2.5px]"
+        className="ScrollAreaScrollbar rounded-full h-[8px] bg-zinc-900/5 p-[1.5px] px-[2.5px] z-50"
         orientation="horizontal"
       >
         <Thumb className="ScrollAreaThumb bg-zinc-900 rounded-full" />

@@ -30,8 +30,86 @@ const AddNode = ({ addNode }: Props) => {
       title: "Hero Section",
       node: {
         type: NodeType.SectionHero,
-        title: "HI There",
-        description: "DESC",
+        title: "I'm John, Professional Web Developer.",
+        description:
+          "I develop professional webdeveloper. I make full landing pages, websites and web apps.",
+      },
+    },
+    {
+      type: NodeType.SectionAbout,
+      title: "About Section",
+      node: {
+        type: NodeType.SectionAbout,
+        description:
+          "I develop professional webdeveloper. I make full landing pages, websites and web apps. I develop professional webdeveloper. I make full landing pages, websites and web apps.",
+      },
+    },
+    {
+      type: NodeType.SectionSkills,
+      title: "Skills Section",
+      node: {
+        type: NodeType.SectionSkills,
+        skills: [
+          {
+            id: "21891",
+            name: "HTML/CSS/JS",
+            proficiency: "78",
+          },
+        ],
+      },
+    },
+    {
+      type: NodeType.SectionEducation,
+      title: "Education Section",
+      node: {
+        type: NodeType.SectionEducation,
+        timeline: [
+          {
+            id: "21891",
+            title: "Degree",
+            description: "My Bachelor degree",
+            startDate: new Date().toISOString(),
+            endDate: new Date().toISOString(),
+          },
+        ],
+      },
+    },
+    {
+      type: NodeType.SectionTestimonials,
+      title: "Testimonials Section",
+      node: {
+        type: NodeType.SectionTestimonials,
+        testimonials: [
+          {
+            id: "218s",
+            name: "John Doe",
+            feedback: "This is a sample testimony",
+            rating: "3",
+          },
+        ],
+      },
+    },
+    {
+      type: NodeType.SectionContact,
+      title: "Contact Section",
+      node: {
+        type: NodeType.SectionContact,
+        email: "yourname@email.com",
+        phoneNumber: "090909090909",
+        socialLinks: [
+          {
+            platform: "Facebook",
+            url: "https://facebook.com",
+          },
+          {
+            platform: "Telegram",
+            url: "https://tg.me",
+          },
+          {
+            platform: "Instagram",
+            url: "https://instagram.com",
+          },
+        ],
       },
     },
   ];
@@ -43,20 +121,21 @@ const AddNode = ({ addNode }: Props) => {
           <Plus />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[200px]">
-        <Command>
+      <DropdownMenuContent align="end" className="w-44 p-0">
+        <Command className="pb-2 pt-1">
           <CommandInput
             placeholder="Filter label..."
             autoFocus={true}
             className="h-9"
           />
-          <CommandList>
+          <CommandList className="p-0 pt-1">
             <CommandEmpty>No label found.</CommandEmpty>
-            <CommandGroup>
+            <CommandGroup className="p-0">
               {items.map((item) => (
                 <CommandItem
                   key={item.type}
                   value={item.title}
+                  className="h-9 rounded-none"
                   onSelect={() => {
                     setOpen(false);
 

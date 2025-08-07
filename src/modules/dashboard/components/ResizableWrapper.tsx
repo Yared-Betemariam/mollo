@@ -20,6 +20,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import HeaderWrapper from "./HeaderWrapper";
+import { cn } from "@/lib/utils";
 
 type Props = {
   children: React.ReactNode;
@@ -53,9 +54,10 @@ const ResizableWrapper = ({ children }: Props) => {
 
   const saveChanges = () => {
     if (!page) {
-      toast.success("Page not found!");
+      toast.error("Page not found!");
       return;
     }
+
     mutate({
       id: Number(page.id),
       nodes,
@@ -86,7 +88,12 @@ const ResizableWrapper = ({ children }: Props) => {
           </div>
         )}
       </HeaderWrapper>
-      <ScrollAreaWrapper className="max-h-[calc(100vh-6rem)] rounded-lg  shadow-[0_-10px_50px_-12px] shadow-black/25 min-h-full max-w-3xl mx-auto">
+      <ScrollAreaWrapper
+        className={cn(
+          "rounded-lg  shadow-[0_-10px_50px_-12px] shadow-black/25 min-h-full max-w-3xl mx-auto",
+          isMobile ? "max-h-[calc(80vh-3rem)]" : "max-h-[calc(100vh-6rem)]"
+        )}
+      >
         <PagePreview nodes={nodes} />
       </ScrollAreaWrapper>
     </>
@@ -111,11 +118,11 @@ const ResizableWrapper = ({ children }: Props) => {
               <UserButton />
             </div>
           </HeaderWrapper>
-          <div className="h-14 items-center px-4 flex bg-zinc-100/75 justify-end gap-3">
+          <div className="h-14 items-center px-4 flex  justify-start gap-3">
+            {SaveButton}
+            <span className="mr-auto" />
             {isMobile && (
               <>
-                {SaveButton}
-                <span className="h-full border-r" />
                 <Button
                   onClick={() => setPreviewOpen(true)}
                   variant={"outline"}

@@ -25,7 +25,6 @@ const templateStore: Record<TemplateName, PageNode[]> = {
       template: "light",
       title: "Sample Hero",
       description: "This is a sample.",
-      backgroundImageUrl: "/sample-bg.jpg",
     },
     {
       id: "2222",

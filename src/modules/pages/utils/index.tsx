@@ -1,6 +1,6 @@
 // src/PageRenderer.tsx
 import React from "react";
-import { PageNode, NodeType } from "../editor";
+import { PageNode, NodeType, LinkItem } from "../editor";
 import {
   HeroSection,
   AboutSection,
@@ -142,4 +142,46 @@ export function getNodeTypeInfo(type: NodeType): NodeTypeInfo {
           "No predefined description for this section. Please update.",
       };
   }
+}
+
+export function getHeaderlinks(nodes: PageNode[]): LinkItem[] {
+  return nodes
+    .filter(
+      (node) =>
+        ![
+          NodeType.SectionFooter,
+          NodeType.PageMetadata,
+          NodeType.SectionHeader,
+          NodeType.SectionImageGallery,
+          NodeType.SectionVideoGallery,
+          NodeType.SectionSkills,
+          NodeType.SectionHero,
+          NodeType.SectionCertificates,
+        ].includes(node.type)
+    )
+    .map((item) => {
+      let title: string;
+
+      switch (item.type) {
+        case NodeType.SectionAbout:
+          title = "About";
+          break;
+        case NodeType.SectionEducation:
+          title = "Education";
+          break;
+        case NodeType.SectionProjects:
+          title = "Projects";
+          break;
+        case NodeType.SectionTestimonials:
+          title = "Testimonials";
+          break;
+        case NodeType.SectionContact:
+          title = "Contact";
+          break;
+        default:
+          title = "Unknown";
+          break;
+      }
+      return { title: title, url: `#${item.type}` };
+    });
 }

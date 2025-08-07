@@ -28,6 +28,7 @@ type DropdownProps = {
   placeholder?: string;
   ghost?: boolean;
   className?: string;
+  label?: string;
   icon?: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
@@ -37,6 +38,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   options,
   value,
   ghost,
+  label,
   onChange,
   placeholder = "Select",
   className,
@@ -44,7 +46,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   ...props
 }) => {
   const [open, setOpen] = useState(false);
-  return (
+  const DropdownCpt = (
     <Popover modal open={open} onOpenChange={setOpen}>
       <PopoverTrigger disabled={props.disabled} asChild>
         <Button
@@ -53,7 +55,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           variant={"outline"}
           aria-expanded={props.open}
           className={cn(
-            "gap-0 items-center justify-start relative",
+            "gap-0 h-10 items-center font-normal justify-start relative",
             ghost &&
               "bg-transparent px-1.5! h-8 font-normal text-sm! shadow-none border-none rounded-none",
             className
@@ -99,6 +101,14 @@ const Dropdown: React.FC<DropdownProps> = ({
         </Command>
       </PopoverContent>
     </Popover>
+  );
+  return label ? (
+    <div className="flex flex-col gap-1 min-w-40">
+      <label className="opacity-70">{label}</label>
+      {DropdownCpt}
+    </div>
+  ) : (
+    DropdownCpt
   );
 };
 
