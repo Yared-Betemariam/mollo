@@ -1,3 +1,4 @@
+import { cn, fontGeist } from "@/lib/utils";
 import { TRPCProvider } from "@/trpc/client";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
@@ -28,7 +29,10 @@ export default function RootLayout({
       <TRPCProvider>
         <html lang="en">
           <body
-            className={`${""} antialiased flex flex-col min-h-screen relative`}
+            className={cn(
+              `antialiased flex flex-col min-h-screen relative`,
+              fontGeist.className
+            )}
           >
             {children}
           </body>

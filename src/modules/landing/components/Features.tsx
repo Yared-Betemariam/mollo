@@ -23,12 +23,12 @@ const Features = () => {
     <section id="features" className="wrapper flex flex-col gap-12 py-28 ">
       <div className="flex flex-col gap-4">
         <h2 className={"h2"}>
-          Metabook <span className="text-primary brightness-75">Features</span>
+          The Power of Mollo
         </h2>
-        <p className="body">
+        <p className="big-body">
           Explore the powerful features of Metabook that enhance your trading
           experience.
-        </p>
+        </p>  
       </div>
       <div className="grid grid-cols-1 w-full md:grid-cols-2 divide-x divide-y border shadow-lg">
         {miniCards.map((item, i) => (

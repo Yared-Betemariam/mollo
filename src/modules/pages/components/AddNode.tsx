@@ -45,6 +45,23 @@ const AddNode = ({ addNode }: Props) => {
       },
     },
     {
+      type: NodeType.SectionImageGallery,
+      title: "Image Gallery",
+      node: {
+        type: NodeType.SectionImageGallery,
+        images: [],
+        groups: [],
+      },
+    },
+    {
+      type: NodeType.SectionProjects,
+      title: "Projects Section",
+      node: {
+        type: NodeType.SectionProjects,
+        projects: [],
+      },
+    },
+    {
       type: NodeType.SectionSkills,
       title: "Skills Section",
       node: {
@@ -56,6 +73,14 @@ const AddNode = ({ addNode }: Props) => {
             proficiency: "78",
           },
         ],
+      },
+    },
+    {
+      type: NodeType.SectionCertificates,
+      title: "Certificates Section",
+      node: {
+        type: NodeType.SectionCertificates,
+        imageUrls: [],
       },
     },
     {
@@ -90,6 +115,15 @@ const AddNode = ({ addNode }: Props) => {
       },
     },
     {
+      type: NodeType.SectionVideoGallery,
+      title: "Video Gallery Section",
+      node: {
+        type: NodeType.SectionVideoGallery,
+        videos: [],
+        groups: [],
+      },
+    },
+    {
       type: NodeType.SectionContact,
       title: "Contact Section",
       node: {
@@ -121,7 +155,7 @@ const AddNode = ({ addNode }: Props) => {
           <Plus />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44 p-0">
+      <DropdownMenuContent align="end" className="w-56 p-0">
         <Command className="pb-2 pt-1">
           <CommandInput
             placeholder="Filter label..."
@@ -135,7 +169,7 @@ const AddNode = ({ addNode }: Props) => {
                 <CommandItem
                   key={item.type}
                   value={item.title}
-                  className="h-9 rounded-none"
+                  className="h-9 px-4 rounded-none"
                   onSelect={() => {
                     setOpen(false);
 

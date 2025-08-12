@@ -1,4 +1,5 @@
 import { NodeType } from "@/modules/pages/editor";
+import { toReact } from "@/modules/pages/utils";
 import { trpc } from "@/trpc/server";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -36,23 +37,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = pageMetaData.title || `${username}'s Portfolio`;
   const description =
     pageMetaData.description || `Welcome to ${username}'s portfolio`;
-  // const ogImage = pageMetaData.ogImage || pageMetaData.images?.[0] || undefined;
-  const ogImage = undefined;
 
   return {
-    title,
+    title: {
+      default: title,
+      template: title,
+    },
     description,
+    ...(pageMetaData.iconUrl
+      ? {
+          icons: [
+            {
+              rel: "icon",
+              url: pageMetaData.iconUrl,
+              href: pageMetaData.iconUrl,
+            },
+          ],
+        }
+      : {}),
     openGraph: {
       title,
       description,
-      images: ogImage ? [{ url: ogImage }] : [],
       url: `https://${username}.${process.env.NEXT_PUBLIC_BASE_DOMAIN}`,
-    },
-    twitter: {
-      card: ogImage ? "summary_large_image" : "summary",
-      title,
-      description,
-      images: ogImage ? [ogImage] : [],
     },
     alternates: {
       canonical: `https://${username}.${process.env.NEXT_PUBLIC_BASE_DOMAIN}`,
@@ -69,7 +75,7 @@ const Page = async ({ params }: Props) => {
 
   if (project.nodes.length <= 0) return notFound();
 
-  return <div>{JSON.stringify(project.nodes)}</div>;
+  return <>{toReact(project.nodes)}</>;
 };
 
 export default Page;

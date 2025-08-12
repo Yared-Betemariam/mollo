@@ -8,11 +8,11 @@ export enum NodeType {
   SectionHero = "section:hero", //
   SectionAbout = "section:about", //
   SectionEducation = "section:education", //
-  SectionCertificates = "section:certificates",
+  SectionCertificates = "section:certificates", //
   SectionSkills = "section:skills", //
-  SectionProjects = "section:projects",
+  SectionProjects = "section:projects", //
   SectionVideoGallery = "section:video-gallery",
-  SectionImageGallery = "section:image-gallery",
+  SectionImageGallery = "section:image-gallery", //
   SectionTestimonials = "section:testimonials", //
   SectionContact = "section:contact", //
   SectionFooter = "section:footer", //
@@ -40,9 +40,9 @@ export type PageMetadataNode = z.infer<typeof PageMetadataNodeSchema>;
 
 export const HeaderNodeSchema = BaseNodeSchema.extend({
   type: z.literal(NodeType.SectionHeader),
-  links: z.array(LinkItemSchema),
   iconText: z.string().optional(),
   showIcon: z.boolean().optional(),
+  showLinks: z.boolean().optional(),
 });
 export type HeaderNode = z.infer<typeof HeaderNodeSchema>;
 
@@ -80,7 +80,6 @@ export type EducationNode = z.infer<typeof EducationNodeSchema>;
 export const CertificatesNodeSchema = BaseNodeSchema.extend({
   type: z.literal(NodeType.SectionCertificates),
   imageUrls: z.array(z.string()),
-  description: z.string().optional(),
 });
 export type CertificatesNode = z.infer<typeof CertificatesNodeSchema>;
 
@@ -99,6 +98,7 @@ export const SkillsNodeSchema = BaseNodeSchema.extend({
 export type SkillsNode = z.infer<typeof SkillsNodeSchema>;
 
 export const ProjectItemSchema = z.object({
+  id: z.string(),
   name: z.string(),
   description: z.string(),
   imageUrls: z.array(z.string()),
@@ -108,13 +108,12 @@ export type ProjectItem = z.infer<typeof ProjectItemSchema>;
 export const ProjectsNodeSchema = BaseNodeSchema.extend({
   type: z.literal(NodeType.SectionProjects),
   projects: z.array(ProjectItemSchema),
-  layout: z.enum(["horizontal", "vertical", "auto"]).optional(),
 });
 export type ProjectsNode = z.infer<typeof ProjectsNodeSchema>;
 
 export const VideoGroupSchema = z.object({
+  id: z.string(),
   title: z.string(),
-  description: z.string().optional(),
   videoUrls: z.array(z.string()),
 });
 export type VideoGroup = z.infer<typeof VideoGroupSchema>;
@@ -127,8 +126,8 @@ export const VideoGalleryNodeSchema = BaseNodeSchema.extend({
 export type VideoGalleryNode = z.infer<typeof VideoGalleryNodeSchema>;
 
 export const ImageGroupSchema = z.object({
+  id: z.string(),
   title: z.string(),
-  description: z.string().optional(),
   imageUrls: z.array(z.string()),
 });
 export type ImageGroup = z.infer<typeof ImageGroupSchema>;

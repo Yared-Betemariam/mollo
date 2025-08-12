@@ -5,6 +5,9 @@ import { ConfirmationModal } from "./components/ConfirmationModal";
 import TestimonialsModal from "./components/TestimonialsModal";
 import SkillsModal from "./components/SkillsModal";
 import EducationModal from "./components/EducationModal";
+import ProjectModal from "./components/ProjectModal";
+import ImageGalleryGroupModal from "./components/ImageGalleyGroupModal";
+import VideoGalleryGroupModal from "./components/VideoGalleyGroupModal";
 
 const Modals = () => {
   const [mounted, setMounted] = useState(false);
@@ -21,6 +24,9 @@ const Modals = () => {
     <>
       {/* Edu, Skill, Proj, Vidgroup, ImgGroup */}
       <ConfirmationModal />
+      <ProjectModal />
+      <ImageGalleryGroupModal />
+      <VideoGalleryGroupModal />
       <EducationModal />
       <TestimonialsModal />
       <SkillsModal />

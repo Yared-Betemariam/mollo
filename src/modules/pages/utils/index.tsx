@@ -1,28 +1,43 @@
 // src/PageRenderer.tsx
+import { cn, fontInter } from "@/lib/utils";
 import React from "react";
-import { PageNode, NodeType, LinkItem } from "../editor";
 import {
-  HeroSection,
   AboutSection,
-  EducationSection,
   CertificatesSection,
-  SkillsSection,
-  ProjectsSection,
-  VideoGallerySection,
-  ImageGallerySection,
-  TestimonialsSection,
   ContactSection,
+  EducationSection,
   FooterSection,
   HeaderSection,
+  HeroSection,
+  ImageGallerySection,
+  ProjectsSection,
+  SkillsSection,
+  TestimonialsSection,
+  VideoGallerySection,
 } from "../components/PageComponents";
+import { LinkItem, NodeType, PageMetadataNode, PageNode } from "../editor";
+import {} from "./";
 
 export function toReact(nodes: PageNode[]): React.ReactNode {
+  const metadataNode = nodes[0] as PageMetadataNode;
+
   return (
-    <>
+    <div
+      style={
+        {
+          // "--primary": metadataNode.themeColor,
+        }
+      }
+      className={cn(
+        "flex flex-col text-xl"
+        // fontInter.className
+        // metadataNode.themeFont == "inter" && fontInter.className
+      )}
+    >
       {nodes.map((node) => {
         switch (node.type) {
           case NodeType.SectionHeader:
-            return <HeaderSection key={node.id} node={node} />;
+            return <HeaderSection nodes={nodes} key={node.id} node={node} />;
           case NodeType.SectionHero:
             return <HeroSection key={node.id} node={node} />;
           case NodeType.SectionAbout:
@@ -49,7 +64,7 @@ export function toReact(nodes: PageNode[]): React.ReactNode {
             return null;
         }
       })}
-    </>
+    </div>
   );
 }
 
