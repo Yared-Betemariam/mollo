@@ -1,5 +1,6 @@
 "use client";
 
+import { PagePreviewer } from "@/components/custom/page-previewer";
 import { ScrollAreaWrapper } from "@/components/custom/scrollarea-wrapper";
 import SheetWrapper from "@/components/custom/sheet-wrapper";
 import Logo from "@/components/Logo";
@@ -10,9 +11,9 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 import UserButton from "@/modules/auth/components/UserButton";
 import AddNode from "@/modules/pages/components/AddNode";
-import PagePreview from "@/modules/pages/components/PagePreview";
 import { usePage } from "@/modules/pages/hooks";
 import { trpc } from "@/trpc/client";
 import { Loader, Play } from "lucide-react";
@@ -20,8 +21,6 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import HeaderWrapper from "./HeaderWrapper";
-import { cn } from "@/lib/utils";
-
 type Props = {
   children: React.ReactNode;
 };
@@ -94,7 +93,7 @@ const ResizableWrapper = ({ children }: Props) => {
           isMobile ? "max-h-[calc(80vh-3rem)]" : "max-h-[calc(100vh-6rem)]"
         )}
       >
-        <PagePreview nodes={nodes} />
+        {page && <PagePreviewer url={`/${page.username}`} />}
       </ScrollAreaWrapper>
     </>
   );

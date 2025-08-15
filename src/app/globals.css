@@ -134,31 +134,47 @@
   }
 
   .h2 {
-    @apply text-3xl md:text-4xl tracking-[-0.075em] leading-tight font-extrabold;
+    @apply text-4xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
   }
 
   .h3 {
-    @apply text-2xl md:text-3xl tracking-[-0.075em] leading-tight font-extrabold;
+    @apply text-3xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
   }
 
   .big-body {
-    @apply text-lg font-medium opacity-60;
+    @apply text-xl font-medium opacity-60;
+  }
+
+  .big-text {
+    @apply text-3xl sm:text-[2rem] leading-[1.3] font-medium tracking-tight opacity-90;
   }
 
   .page-h1 {
-    @apply text-[4.75rem] leading-[1] font-medium;
+    @apply text-5xl leading-[1] font-bold tracking-[-0.0625em] bg-clip-text text-transparent from-zinc-950 to-gray-500 bg-gradient-to-b;
   }
 
   .page-h2 {
-    @apply text-4xl font-medium;
+    @apply text-4xl sm:text-[2.5rem] font-bold tracking-[-0.0625em] bg-clip-text text-transparent from-zinc-950 to-gray-500 bg-gradient-to-b;
   }
 
   .page-h3 {
-    @apply text-3xl font-medium;
+    @apply text-3xl font-bold tracking-[-0.0625em] bg-clip-text text-transparent from-zinc-950 to-gray-500 bg-gradient-to-b;
+  }
+
+  .page-h4 {
+    @apply text-2xl font-bold tracking-[-0.0625em] bg-clip-text text-transparent from-zinc-950 to-gray-500 bg-gradient-to-b;
   }
 
   button {
     @apply active:scale-105;
+  }
+
+  .text {
+    @apply text-xl text-zinc-700 leading-[1.6]!;
+  }
+
+  .text-light {
+    @apply text-xl text-zinc-400/70 leading-[1.6]!;
   }
 
   .radial-mask {
@@ -175,6 +191,25 @@
       circle,
       rgba(0, 0, 0, 1) 0%,
       rgba(0, 0, 0, 0) 100%
+    );
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: cover;
+  }
+
+  .outbound-radiant-mask {
+    mask-image: radial-gradient(
+      circle,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 100%
+    );
+    mask-repeat: no-repeat;
+    mask-size: cover;
+
+    /* For WebKit browsers (Safari, Chrome) */
+    -webkit-mask-image: radial-gradient(
+      circle,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 100%
     );
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-size: cover;

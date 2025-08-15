@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { unknown } from "zod";
+import "react-photo-album/masonry.css";
 
 type Props = {
   params: Promise<{

@@ -1,56 +1,39 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 const Features = () => {
   const miniCards = [
     {
-      id: 1,
-      image: "/feature-1.png",
-      title: "Managing Trades",
-      desc: "Manage your trades with ease and efficiency. Track orders, monitor performance, and optimize your trading strategies.",
+      title: "For everyone",
+      desc: "Mollo is for Graphics editors, Video editors",
     },
     {
-      id: 2,
-      image: "/feature-2.png",
-      title: "AI Assistance with MetabookAI",
-      desc: "Leverage the power of AI to enhance your trading decisions. Get insights, predictions, and recommendations tailored to your trading style.",
+      title: "Build in minutes",
+      desc: "You will build your portfolio websites in minutes.",
+    },
+    {
+      title: "1 Click publish",
+      desc: "Publish you updates within a click of a button.",
+    },
+    {
+      title: "Update anytime",
+      desc: "Publish you updates within a click of a button.",
     },
   ];
 
   return (
     <section id="features" className="wrapper flex flex-col gap-12 py-28 ">
-      <div className="flex flex-col gap-4">
-        <h2 className={"h2"}>
-          The Power of Mollo
-        </h2>
-        <p className="big-body">
-          Explore the powerful features of Metabook that enhance your trading
-          experience.
-        </p>  
-      </div>
-      <div className="grid grid-cols-1 w-full md:grid-cols-2 divide-x divide-y border shadow-lg">
-        {miniCards.map((item, i) => (
+      <div className="grid grid-cols-1 w-full md:grid-cols-2 divide-x divide-y border">
+        {miniCards.map((item) => (
           <div
             key={item.title}
             className={cn(
-              "p-8 px-10 overflow-hidden flex flex-col gap-4 flex-1 justify-center relative",
-              i % 2 == 0 ? "pt-[19rem]" : "pb-[19rem]"
+              "p-8 px-10 overflow-hidden flex flex-col gap-1 flex-1 justify-center relative"
             )}
           >
-            <Image
-              src={item.image}
-              alt={item.title}
-              width={400}
-              height={400}
-              className={cn(
-                "w-[21rem] absolute left-1/2 bg-red-800 border -translate-x-1/2",
-                i % 2 == 0 ? "-top-[0rem]" : "-bottom-[0rem]"
-              )}
-            />
-            <p className={"h3"}>{item.title}</p>
-            <p className="body">{item.desc}</p>
+            <p className="h3 mr-2">{item.title}</p>
+            <p className="big-body">{item.desc}</p>
           </div>
         ))}
       </div>

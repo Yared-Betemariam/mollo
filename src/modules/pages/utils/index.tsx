@@ -1,6 +1,6 @@
 // src/PageRenderer.tsx
-import { cn, fontInter } from "@/lib/utils";
-import React from "react";
+import { cn } from "@/lib/utils";
+import React, { CSSProperties } from "react";
 import {
   AboutSection,
   CertificatesSection,
@@ -16,7 +16,76 @@ import {
   VideoGallerySection,
 } from "../components/PageComponents";
 import { LinkItem, NodeType, PageMetadataNode, PageNode } from "../editor";
-import {} from "./";
+type TransformOptions = {
+  darken?: number; // 0 to 1
+  brighten?: number; // 0 to 1
+  opacity?: number; // 0 to 1
+};
+
+export function hexTransfigure(hex: string, options: TransformOptions): string {
+  const { darken = 0, brighten = 0, opacity } = options;
+
+  // Ensure hex starts without #
+  hex = hex.replace(/^#/, "");
+
+  // Handle shorthand #FFF → #FFFFFF
+  if (hex.length === 3) {
+    hex = hex
+      .split("")
+      .map((char) => char + char)
+      .join("");
+  }
+
+  if (hex.length !== 6) {
+    throw new Error("Invalid hex color format");
+  }
+
+  // Convert to RGB
+  let r = parseInt(hex.substring(0, 2), 16);
+  let g = parseInt(hex.substring(2, 4), 16);
+  let b = parseInt(hex.substring(4, 6), 16);
+
+  // Apply darkening
+  if (darken > 0) {
+    r = Math.max(0, Math.min(255, Math.floor(r * (1 - darken))));
+    g = Math.max(0, Math.min(255, Math.floor(g * (1 - darken))));
+    b = Math.max(0, Math.min(255, Math.floor(b * (1 - darken))));
+  }
+
+  // Apply brightening
+  if (brighten > 0) {
+    r = Math.max(0, Math.min(255, Math.floor(r + (255 - r) * brighten)));
+    g = Math.max(0, Math.min(255, Math.floor(g + (255 - g) * brighten)));
+    b = Math.max(0, Math.min(255, Math.floor(b + (255 - b) * brighten)));
+  }
+
+  // Return rgba if opacity is specified
+  if (typeof opacity === "number") {
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  // Return hex otherwise
+  return (
+    "#" +
+    [r, g, b]
+      .map((val) => val.toString(16).padStart(2, "0"))
+      .join("")
+      .toUpperCase()
+  );
+}
+
+export async function getImageDimensions(
+  url: string
+): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = url;
+    img.onload = () => {
+      resolve({ width: img.naturalWidth / 2, height: img.naturalHeight / 2 });
+    };
+    img.onerror = reject;
+  });
+}
 
 export function toReact(nodes: PageNode[]): React.ReactNode {
   const metadataNode = nodes[0] as PageMetadataNode;
@@ -25,14 +94,32 @@ export function toReact(nodes: PageNode[]): React.ReactNode {
     <div
       style={
         {
-          // "--primary": metadataNode.themeColor,
-        }
+          "--primary": metadataNode?.themeColor || "#020202",
+          "--primary-dark": hexTransfigure(metadataNode?.themeColor || "#FFF", {
+            darken: 0.9,
+          }),
+          "--primary-darker": hexTransfigure(
+            metadataNode?.themeColor || "#FFF",
+            {
+              darken: 0.2,
+            }
+          ),
+          "--primary-light": hexTransfigure(
+            metadataNode?.themeColor || "#FFF",
+            {
+              brighten: 0.6,
+            }
+          ),
+          "--primary-dark-bg": hexTransfigure(
+            metadataNode?.themeColor || "#FFF",
+            {
+              darken: 0.625,
+              opacity: 0.1,
+            }
+          ),
+        } as CSSProperties
       }
-      className={cn(
-        "flex flex-col text-xl"
-        // fontInter.className
-        // metadataNode.themeFont == "inter" && fontInter.className
-      )}
+      className={cn("flex flex-col scroll-m-20")}
     >
       {nodes.map((node) => {
         switch (node.type) {
