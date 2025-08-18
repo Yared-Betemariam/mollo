@@ -1,4 +1,5 @@
 import { PageNode } from "@/modules/pages/editor";
+import { plansList, statusList } from "@/types";
 import {
   boolean,
   index,
@@ -6,6 +7,7 @@ import {
   json,
   pgTable,
   serial,
+  text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -13,6 +15,17 @@ import {
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
+  status: text("status", {
+    enum: statusList,
+  })
+    .default("active")
+    .notNull(),
+  plan: varchar("plan", {
+    enum: plansList,
+  })
+    .default("free")
+    .notNull(),
+  subscription_end_date: timestamp("subscription_end_date"),
   created_at: timestamp("created_at").defaultNow().notNull(),
 });
 

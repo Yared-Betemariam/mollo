@@ -25,7 +25,7 @@ const PropEditor = () => {
             moveNodeDown={() => moveNodeDown(node.id)}
             moveNodeUp={() => moveNodeUp(node.id)}
             toggleNode={() =>
-              setActiveNode(activeNode == node.id ? undefined : node.id)
+              setActiveNode(activeNode == node.id ? "none" : node.id)
             }
             isActive={activeNode == node.id}
             key={i}

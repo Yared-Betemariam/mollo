@@ -22,7 +22,7 @@ import {
 } from "../../pages/editor";
 import { useNodesStore } from "../../pages/store";
 import ValueChanger from "../../pages/components/PropEditor/ValueChanger";
-import ImageUploadComponent from "@/modules/uploads/components/ImageUpload";
+import ImagesUploadComponent from "@/modules/uploads/components/ImagesUpload";
 
 const ProjectModal = () => {
   const { open, closeModal, data } = useModalStore();
@@ -124,7 +124,7 @@ const ProjectModal = () => {
               control={form.control}
               name="imageUrls"
               render={({ field }) => (
-                <ImageUploadComponent
+                <ImagesUploadComponent
                   imageUrls={field.value}
                   onChange={(newImgUrls) => field.onChange(newImgUrls)}
                 />

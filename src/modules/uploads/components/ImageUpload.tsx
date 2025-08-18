@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
-import { Upload, X, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import axios from "axios";
+import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import axios from "axios";
+import { Upload, X } from "lucide-react";
+import React, { useCallback, useRef, useState } from "react";
 
 interface ImageUploadComponentProps {
-  imageUrls: string[];
-  onChange: (newImageUrls: string[]) => void;
+  imageUrl: string | null;
+  onChange: (newImageUrl: string | null) => void;
 }
 
 interface UploadingFile {
@@ -21,11 +22,13 @@ interface UploadingFile {
 }
 
 function ImageUploadComponent({
-  imageUrls,
+  imageUrl,
   onChange,
 }: ImageUploadComponentProps) {
   const [isDragOver, setIsDragOver] = useState(false);
-  const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
+  const [uploadingFile, setUploadingFile] = useState<UploadingFile | null>(
+    null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadMutation = trpc.uploads.image.useMutation();
@@ -34,7 +37,6 @@ function ImageUploadComponent({
   const uploadFile = useCallback(
     async (file: File): Promise<string> => {
       try {
-        // Step 1: Get upload URL from your mutation
         const response = await uploadMutation.mutateAsync({
           filename: file.name,
         });
@@ -45,7 +47,6 @@ function ImageUploadComponent({
 
         const { uploadUrl, imageUrl } = response.data;
 
-        // Step 2: Upload file to Cloudflare R2 using the upload URL
         await axios.put(uploadUrl, file, {
           headers: {
             "Content-Type": file.type,
@@ -55,14 +56,11 @@ function ImageUploadComponent({
               const progress = Math.round(
                 (progressEvent.loaded * 100) / progressEvent.total
               );
-              setUploadingFiles((prev) =>
-                prev.map((f) => (f.file === file ? { ...f, progress } : f))
-              );
+              setUploadingFile((prev) => (prev ? { ...prev, progress } : prev));
             }
           },
         });
 
-        // Return the final image URL
         return imageUrl;
       } catch (error) {
         console.error("Upload error:", error);
@@ -72,92 +70,38 @@ function ImageUploadComponent({
     [uploadMutation]
   );
 
-  // Handle duplicate file names
-  const getUniqueFileName = useCallback(
-    (fileName: string, existingFiles: File[]): string => {
-      const existingNames = existingFiles.map((f) => f.name);
-      let uniqueName = fileName;
-      let counter = 1;
-
-      const nameWithoutExt = fileName.replace(/\.[^/.]+$/, "");
-      const extension = fileName.match(/\.[^/.]+$/)?.[0] || "";
-
-      while (existingNames.includes(uniqueName)) {
-        uniqueName = `${nameWithoutExt} (${counter})${extension}`;
-        counter++;
-      }
-
-      return uniqueName;
-    },
-    []
-  );
-
-  // Process and upload files
+  // Process and upload a single file
   const handleFiles = useCallback(
     async (files: FileList) => {
-      const validFiles = Array.from(files).filter((file) =>
-        file.type.startsWith("image/")
-      );
+      const file = Array.from(files).find((f) => f.type.startsWith("image/"));
+      if (!file) return;
 
-      if (validFiles.length === 0) return;
-
-      // Handle duplicate names
-      const processedFiles = validFiles.map((file) => {
-        const uniqueName = getUniqueFileName(file.name, validFiles);
-        if (uniqueName !== file.name) {
-          // Create a new file with the unique name
-          return new File([file], uniqueName, { type: file.type });
-        }
-        return file;
-      });
-
-      // Initialize uploading state
-      const newUploadingFiles: UploadingFile[] = processedFiles.map((file) => ({
+      const newUploadingFile: UploadingFile = {
         id: Math.random().toString(36).substr(2, 9),
         file,
         progress: 0,
-      }));
+      };
 
-      setUploadingFiles((prev) => [...prev, ...newUploadingFiles]);
+      setUploadingFile(newUploadingFile);
 
-      // Upload files
-      const uploadPromises = processedFiles.map(async (file) => {
-        try {
-          const imageUrl = await uploadFile(file);
-          setUploadingFiles((prev) =>
-            prev.map((f) =>
-              f.file === file ? { ...f, url: imageUrl, progress: 100 } : f
-            )
-          );
-          return imageUrl;
-        } catch (error) {
-          console.log(error);
-          setUploadingFiles((prev) =>
-            prev.map((f) =>
-              f.file === file
-                ? { ...f, error: "Upload failed", progress: 0 }
-                : f
-            )
-          );
-          return null;
-        }
-      });
-
-      const results = await Promise.all(uploadPromises);
-      const successfulUploads = results.filter(Boolean) as string[];
-
-      if (successfulUploads.length > 0) {
-        onChange([...imageUrls, ...successfulUploads]);
+      try {
+        const uploadedUrl = await uploadFile(file);
+        setUploadingFile((prev) =>
+          prev ? { ...prev, url: uploadedUrl, progress: 100 } : prev
+        );
+        onChange(uploadedUrl);
+      } catch (error) {
+        console.log(error);
+        setUploadingFile((prev) =>
+          prev ? { ...prev, error: "Upload failed", progress: 0 } : prev
+        );
       }
 
-      // Clean up uploading state after a delay
       setTimeout(() => {
-        setUploadingFiles((prev) =>
-          prev.filter((f) => !processedFiles.includes(f.file))
-        );
+        setUploadingFile(null);
       }, 1000);
     },
-    [imageUrls, onChange, uploadFile, getUniqueFileName]
+    [uploadFile, onChange]
   );
 
   // Drag and drop handlers
@@ -195,147 +139,123 @@ function ImageUploadComponent({
       if (files) {
         handleFiles(files);
       }
-      // Reset input value to allow selecting the same file again
       e.target.value = "";
     },
     [handleFiles]
   );
 
   // Remove image
-  const handleRemoveImage = useCallback(
-    (urlToRemove: string) => {
-      const newUrls = imageUrls.filter((url) => url !== urlToRemove);
-      onChange(newUrls);
-      // Clean up blob URL if it was created locally
-      if (urlToRemove.startsWith("blob:")) {
-        URL.revokeObjectURL(urlToRemove);
-      }
-    },
-    [imageUrls, onChange]
-  );
+  const handleRemoveImage = useCallback(() => {
+    if (imageUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(imageUrl);
+    }
+    onChange(null);
+  }, [imageUrl, onChange]);
 
   return (
-    <div className="w-full space-y-4">
-      {/* Drop Zone */}
-      <div
-        className={`
-          relative border-2 border-dashed rounded-lg p-4 text-center transition-colors
-          ${
-            isDragOver
-              ? "border-primary bg-primary/5"
-              : "border-muted-foreground/25 hover:border-muted-foreground/50"
-          }
-        `}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileInputChange}
-          className="hidden"
-        />
+    <div className={cn("space-y-4", !imageUrl && "w-full")}>
+      {!imageUrl && !uploadingFile && (
+        <div
+          className={`
+            relative h-28 border-2 border-dashed rounded-lg text-center transition-colors
+            ${
+              isDragOver
+                ? "border-primary bg-primary/5"
+                : "border-muted-foreground/25 hover:border-muted-foreground/50"
+            }
+          `}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileInputChange}
+            className="hidden"
+          />
 
-        <div className="flex flex-col items-center">
-          <Upload className="size-6 text-primary/25 brightness-75" />
+          <div className="flex flex-col h-full justify-center gap-1 items-center">
+            <Upload className="size-6 text-primary/25 brightness-75" />
 
-          <div className="flex flex-col mt-2 gap-1 mb-3">
-            <h3 className="text-base font-medium">Drop images here</h3>
-            <p className="text-sm text-muted-foreground">
-              or click the button below to select files
-            </p>
+            <p className="text-sm text-muted-foreground">Drop an image here</p>
+
+            <Button
+              size={"xs"}
+              type="button"
+              onClick={handleFileSelect}
+              variant="outline"
+            >
+              <Upload className="h-4 w-4 mr-1" />
+              Choose File
+            </Button>
           </div>
-
-          <Button type="button" onClick={handleFileSelect} variant="outline">
-            <Upload className="h-4 w-4 mr-1" />
-            Choose Files
-          </Button>
         </div>
-      </div>
+      )}
 
-      {/* Uploading Files Progress */}
-      {uploadingFiles.length > 0 && (
+      {/* Uploading File Progress */}
+      {uploadingFile && (
         <div className="space-y-3">
-          <h4 className="text-sm font-medium">Uploading files...</h4>
-          {uploadingFiles.map((uploadingFile) => (
-            <div key={uploadingFile.id} className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="truncate flex-1 mr-2">
-                  {uploadingFile.file.name}
-                </span>
-                <span className="text-muted-foreground">
-                  {uploadingFile.error
-                    ? "Failed"
-                    : `${Math.round(uploadingFile.progress)}%`}
-                </span>
-              </div>
-              <Progress
-                value={uploadingFile.progress}
-                className={`h-2 ${
-                  uploadingFile.error ? "bg-destructive/20" : ""
-                }`}
-              />
-              {uploadingFile.error && (
-                <p className="text-xs text-destructive">
-                  {uploadingFile.error}
-                </p>
-              )}
+          <h4 className="text-sm font-medium">Uploading file...</h4>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="truncate flex-1 mr-2">
+                {uploadingFile.file.name}
+              </span>
+              <span className="text-muted-foreground">
+                {uploadingFile.error
+                  ? "Failed"
+                  : `${Math.round(uploadingFile.progress)}%`}
+              </span>
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* Uploaded Images Grid */}
-      {imageUrls.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-sm">Uploaded Images ({imageUrls.length})</h4>
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
-            {imageUrls.map((url, index) => (
-              <div key={`${url}-${index}`} className="relative group">
-                <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-                  <img
-                    src={url || "/placeholder.svg"}
-                    alt={`Uploaded image ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      // Fallback for broken images
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = "none";
-                      const parent = target.parentElement;
-                      if (parent) {
-                        const fallback = document.createElement("div");
-                        fallback.className =
-                          "w-full h-full flex items-center justify-center bg-muted";
-                        fallback.innerHTML =
-                          '<svg class="h-8 w-8 text-muted-foreground"><use href="#image-icon"></use></svg>';
-                        parent.appendChild(fallback);
-                      }
-                    }}
-                  />
-                </div>
-
-                {/* Remove button */}
-                <button
-                  onClick={() => handleRemoveImage(url)}
-                  className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-destructive/90"
-                  aria-label="Remove image"
-                >
-                  <X className="size-4" />
-                </button>
-              </div>
-            ))}
+            <Progress
+              value={uploadingFile.progress}
+              className={`h-2 ${
+                uploadingFile.error ? "bg-destructive/20" : ""
+              }`}
+            />
+            {uploadingFile.error && (
+              <p className="text-xs text-destructive">{uploadingFile.error}</p>
+            )}
           </div>
         </div>
       )}
 
-      {/* Empty state */}
-      {imageUrls.length === 0 && uploadingFiles.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground">
-          <ImageIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>No images uploaded yet</p>
+      {/* Uploaded Image */}
+      {imageUrl && !uploadingFile && (
+        <div className="max-h-28 space-y-2">
+          <p>Uploaded Image</p>
+          <div className="relative group size-24">
+            <div className="aspect-square bg-muted rounded-lg overflow-hidden w-full h-full border">
+              <img
+                src={imageUrl || "/placeholder.svg"}
+                alt="Uploaded"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                  const parent = target.parentElement;
+                  if (parent) {
+                    const fallback = document.createElement("div");
+                    fallback.className =
+                      "w-full h-full flex items-center justify-center bg-muted";
+                    fallback.innerHTML =
+                      '<svg class="h-8 w-8 text-muted-foreground"><use href="#image-icon"></use></svg>';
+                    parent.appendChild(fallback);
+                  }
+                }}
+              />
+            </div>
+            {/* Remove button */}
+            <button
+              onClick={handleRemoveImage}
+              className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-destructive/90"
+              aria-label="Remove image"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
         </div>
       )}
 

@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { cn, getDateStringByIso } from "@/lib/utils";
 import IconUploadDialog from "@/modules/modals/components/IconUpload";
 import { useModalStore } from "@/modules/modals/store";
-import ImageUploadComponent from "@/modules/uploads/components/ImageUpload";
+import ImagesUploadComponent from "@/modules/uploads/components/ImagesUpload";
 import {
   ArrowDown,
   ArrowUp,
@@ -40,6 +40,8 @@ import {
 import { getNodeTypeInfo } from "../../utils";
 import ColorPicker from "./ColorPicker";
 import ValueChanger from "./ValueChanger";
+import ImageUploadComponent from "@/modules/uploads/components/ImageUpload";
+import NodeItems from "./NodeItems";
 
 interface Props {
   node: PageNode;
@@ -171,17 +173,6 @@ const Node = ({
               }}
               value={node.title}
             />
-            <ValueChanger
-              label="Page Description"
-              type="textarea"
-              onChange={(value) => {
-                editNode<PageMetadataNode>({
-                  ...node,
-                  description: value,
-                });
-              }}
-              value={node.description}
-            />
           </>
         );
       case NodeType.SectionHeader:
@@ -253,19 +244,30 @@ const Node = ({
               }}
               value={node.description}
             />
-            <div className="flex gap-5">
-              <div className="flex gap-2 items-center">
-                <Checkbox
-                  id="isImageBackgroud"
-                  checked={node.isImageBackgroud || false}
-                  onCheckedChange={() => {
-                    editNode<HeroNode>({
-                      ...node,
-                      isImageBackgroud: !node.isImageBackgroud,
-                    });
-                  }}
-                />
-                <label htmlFor="isImageBackgroud">Is Backgroud Image</label>
+            <div className="flex gap-8">
+              <ImageUploadComponent
+                imageUrl={node.imageUrl || null}
+                onChange={(imageUrl) => {
+                  editNode<HeroNode>({
+                    ...node,
+                    ...(imageUrl ? { imageUrl } : { imageUrl: undefined }),
+                  });
+                }}
+              />
+              <div className="flex flex-col">
+                <div className="flex items-center min-w-[30%] gap-2">
+                  <Checkbox
+                    id="isImageBackgroud"
+                    checked={node.isImageBackgroud || false}
+                    onCheckedChange={() => {
+                      editNode<HeroNode>({
+                        ...node,
+                        isImageBackgroud: !node.isImageBackgroud,
+                      });
+                    }}
+                  />
+                  <label htmlFor="isImageBackgroud">Is Backgroud Image</label>
+                </div>
               </div>
             </div>
           </>
@@ -301,70 +303,32 @@ const Node = ({
               }}
               value={node.description || ""}
             />
-            <div className="flex flex-col-reverse w-full gap-0.5">
-              <ScrollAreaWrapper className="flex-1 grid grid-cols-1 max-h-36 w-full">
-                {node.timeline.map((item, i) => (
-                  <div
-                    key={i}
-                    className="border items-center flex py-2 rounded-md px-3 mb-2"
-                  >
-                    <div className="flex flex-1 flex-col gap-1">
-                      <p className="font-medium">{item.title}</p>
-                      <span className="text-xs opacity-50">
-                        {getDateStringByIso(item.startDate)}{" "}
-                        {item.endDate
-                          ? `- ${getDateStringByIso(item.endDate)}`
-                          : "- Present"}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <Button
-                        variant={"ghost"}
-                        size={"sm"}
-                        onClick={() =>
-                          useModalStore.getState().openModal({
-                            open: "education",
-                            data: { node: node, education: item },
-                          })
-                        }
-                        className="gap-2 size-7"
-                      >
-                        <Pencil />
-                      </Button>
-                      <Button
-                        size={"sm"}
-                        variant={"ghost"}
-                        onClick={() =>
-                          editNode<EducationNode>({
-                            ...node,
-                            timeline: node.timeline.filter(
-                              (edu) => edu.id !== item.id
-                            ),
-                          })
-                        }
-                        className="gap-2 size-7"
-                      >
-                        <Trash className="text-destructive!" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                {node.timeline.length <= 0 && (
-                  <span>No education items here</span>
-                )}
-              </ScrollAreaWrapper>
-              <Button
-                size={"sm"}
-                onClick={() =>
-                  useModalStore
-                    .getState()
-                    .openModal({ open: "education", data: { node: node } })
-                }
-                className="size-8 ml-auto rounded-md"
-              >
-                <Plus className="size-4" />
-              </Button>
-            </div>
+            <NodeItems
+              onDelete={(id) => {
+                editNode<EducationNode>({
+                  ...node,
+                  timeline: node.timeline?.filter((test) => test.id !== id),
+                });
+              }}
+              node={node}
+              name="Timeline"
+              item_id="education"
+              items={
+                node.timeline?.map((item) => ({
+                  id: item.id,
+                  name: item.title,
+                  item,
+                  cpt: (
+                    <p className="node-desc">
+                      {getDateStringByIso(item.startDate)}{" "}
+                      {item.endDate
+                        ? `- ${getDateStringByIso(item.endDate)}`
+                        : "- Present"}
+                    </p>
+                  ),
+                })) || []
+              }
+            />
           </>
         );
       case NodeType.SectionSkills:
@@ -381,142 +345,60 @@ const Node = ({
               }}
               value={node.description || ""}
             />
-            <div className="flex flex-col-reverse w-full gap-0.5">
-              <ScrollAreaWrapper className="flex-1 grid grid-cols-2 sm:grid-cols-3 max-h-36 w-full">
-                {node.skills.map((item, i) => (
-                  <div
-                    key={i}
-                    className="border items-center flex py-2 rounded-md px-3 mb-2"
-                  >
-                    <div className="flex flex-1 flex-col gap-2">
-                      <p className="font-medium">{item.name}</p>
-                      <Progress
-                        className="max-w-32"
-                        value={Number(item.proficiency)}
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <Button
-                        variant={"ghost"}
-                        size={"sm"}
-                        onClick={() =>
-                          useModalStore.getState().openModal({
-                            open: "skill",
-                            data: { node: node, skill: item },
-                          })
-                        }
-                        className="gap-2 size-7"
-                      >
-                        <Pencil />
-                      </Button>
-                      <Button
-                        size={"sm"}
-                        variant={"ghost"}
-                        onClick={() =>
-                          editNode<SkillsNode>({
-                            ...node,
-                            skills: node.skills.filter(
-                              (test) => test.id !== item.id
-                            ),
-                          })
-                        }
-                        className="gap-2 size-7"
-                      >
-                        <Trash className="text-destructive!" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                {node.skills.length <= 0 && <span>No skills here</span>}
-              </ScrollAreaWrapper>
-              <Button
-                size={"sm"}
-                onClick={() =>
-                  useModalStore
-                    .getState()
-                    .openModal({ open: "skill", data: { node: node } })
-                }
-                className="size-8 ml-auto rounded-md"
-              >
-                <Plus className="size-4" />
-              </Button>
-            </div>
+            <NodeItems
+              onDelete={(id) => {
+                editNode<SkillsNode>({
+                  ...node,
+                  skills: node.skills.filter((test) => test.id !== id),
+                });
+              }}
+              node={node}
+              name="Skills"
+              item_id="skill"
+              items={
+                node.skills.map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  item,
+                  cpt: (
+                    <Progress
+                      className="max-w-32 mt-1"
+                      value={Number(item.proficiency)}
+                    />
+                  ),
+                })) || []
+              }
+            />
           </>
         );
       case NodeType.SectionProjects:
         return (
           <>
-            <div className="flex flex-col w-full gap-0.5">
-              <ScrollAreaWrapper className="flex flex-1 flex-col max-h-36 w-full p-0.5">
-                {node.projects && node.projects.length > 0 ? (
-                  node.projects.map((project, i) => (
-                    <div
-                      key={project.id || i}
-                      className="border flex py-1.5 rounded-md px-2 mb-2"
-                    >
-                      <div className="flex flex-1 flex-col">
-                        <span className="text-sm opacity-50">
-                          Project #{i + 1}
-                        </span>
-                        <p className="font-medium">{project.name}</p>
-                        <span className="text-xs opacity-70">
-                          {project.description}
-                        </span>
-                      </div>
-                      <div className="flex h-full items-start">
-                        <Button
-                          variant={"ghost"}
-                          size={"sm"}
-                          onClick={() =>
-                            useModalStore.getState().openModal({
-                              open: "project",
-                              data: { node, project },
-                            })
-                          }
-                          className="gap-2 size-7"
-                        >
-                          <Pencil />
-                        </Button>
-                        <Button
-                          size={"sm"}
-                          variant={"ghost"}
-                          onClick={() =>
-                            editNode<ProjectsNode>({
-                              ...node,
-                              projects: (node.projects || []).filter(
-                                (p) => p.id !== project.id
-                              ),
-                            })
-                          }
-                          className="gap-2 size-7"
-                        >
-                          <Trash className="text-destructive!" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <span>No projects here</span>
-                )}
-              </ScrollAreaWrapper>
-              <Button
-                size={"sm"}
-                onClick={() =>
-                  useModalStore
-                    .getState()
-                    .openModal({ open: "project", data: { node } })
-                }
-                className="size-8 ml-auto rounded-md"
-              >
-                <Plus className="size-4" />
-              </Button>
-            </div>
+            <NodeItems
+              onDelete={(id) => {
+                editNode<ProjectsNode>({
+                  ...node,
+                  projects: node.projects.filter((test) => test.id !== id),
+                });
+              }}
+              node={node}
+              name="Projects"
+              item_id="project"
+              items={
+                node.projects.map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  item,
+                  cpt: <p className="node-desc">{item.description}</p>,
+                })) || []
+              }
+            />
           </>
         );
       case NodeType.SectionCertificates:
         return (
           <>
-            <ImageUploadComponent
+            <ImagesUploadComponent
               imageUrls={node.imageUrls}
               onChange={(imageUrls) =>
                 editNode<CertificatesNode>({ ...node, imageUrls })
@@ -527,10 +409,28 @@ const Node = ({
       case NodeType.SectionVideoGallery:
         return (
           <>
-            <ImageUploadComponent
+            <ImagesUploadComponent
               imageUrls={node.videos || []}
               onChange={(videos) =>
                 editNode<VideoGalleryNode>({ ...node, videos })
+              }
+            />
+            <NodeItems
+              onDelete={(id) => {
+                editNode<VideoGalleryNode>({
+                  ...node,
+                  groups: node.groups?.filter((test) => test.id !== id),
+                });
+              }}
+              node={node}
+              name="Video Groups"
+              item_id="videoGalleryGroup"
+              items={
+                node.groups?.map((item) => ({
+                  id: item.id,
+                  name: item.title,
+                  item,
+                })) || []
               }
             />
             <div className="flex flex-col w-full gap-0.5">
@@ -600,139 +500,55 @@ const Node = ({
       case NodeType.SectionImageGallery:
         return (
           <>
-            <ImageUploadComponent
+            <ImagesUploadComponent
               imageUrls={node.images || []}
               onChange={(images) =>
                 editNode<ImageGalleryNode>({ ...node, images })
               }
             />
-            <div className="flex flex-col w-full gap-0.5">
-              <ScrollAreaWrapper className="flex flex-1 flex-col max-h-36 w-full p-0.5">
-                {node.groups && node.groups.length > 0 ? (
-                  node.groups.map((group, i) => (
-                    <div
-                      key={group.id || i}
-                      className="border flex py-1.5 rounded-md px-2 mb-2"
-                    >
-                      <div className="flex flex-1 flex-col">
-                        <span className="text-sm opacity-50">
-                          Group #{i + 1}
-                        </span>
-                        <p className="font-medium">{group.title}</p>
-                      </div>
-                      <div className="flex h-full items-start">
-                        <Button
-                          variant={"ghost"}
-                          size={"sm"}
-                          onClick={() =>
-                            useModalStore.getState().openModal({
-                              open: "imageGalleryGroup",
-                              data: { node, group },
-                            })
-                          }
-                          className="gap-2 size-7"
-                        >
-                          <Pencil />
-                        </Button>
-                        <Button
-                          size={"sm"}
-                          variant={"ghost"}
-                          onClick={() =>
-                            editNode<ImageGalleryNode>({
-                              ...node,
-                              groups: (node.groups || []).filter(
-                                (g) => g.id !== group.id
-                              ),
-                            })
-                          }
-                          className="gap-2 size-7"
-                        >
-                          <Trash className="text-destructive!" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <span>No image groups here</span>
-                )}
-              </ScrollAreaWrapper>
-              <Button
-                size={"sm"}
-                onClick={() =>
-                  useModalStore
-                    .getState()
-                    .openModal({ open: "imageGalleryGroup", data: { node } })
-                }
-                className="size-8 ml-auto rounded-md"
-              >
-                <Plus className="size-4" />
-              </Button>
-            </div>
+            <NodeItems
+              onDelete={(id) => {
+                editNode<ImageGalleryNode>({
+                  ...node,
+                  groups: node.groups?.filter((test) => test.id !== id),
+                });
+              }}
+              node={node}
+              name="Image Groups"
+              item_id="imageGalleryGroup"
+              items={
+                node.groups?.map((item) => ({
+                  id: item.id,
+                  name: item.title,
+                  item,
+                })) || []
+              }
+            />
           </>
         );
       case NodeType.SectionTestimonials:
         return (
-          <div className="flex flex-col w-full gap-0.5">
-            <ScrollAreaWrapper className="flex flex-1 flex-col max-h-36 w-full p-0.5">
-              {node.testimonials.map((item, i) => (
-                <div
-                  key={i}
-                  className="border flex py-1.5 rounded-md px-2 mb-2"
-                >
-                  <div className="flex flex-1 flex-col">
-                    <span className="text-sm opacity-50">
-                      Testimonial #{i + 1}
-                    </span>
-                    <p>{item.feedback}</p>
-                  </div>
-                  <div className="flex h-full items-start">
-                    <Button
-                      variant={"ghost"}
-                      size={"sm"}
-                      onClick={() =>
-                        useModalStore.getState().openModal({
-                          open: "testimonial",
-                          data: { node: node, testimonial: item },
-                        })
-                      }
-                      className="gap-2 size-7"
-                    >
-                      <Pencil />
-                    </Button>
-                    <Button
-                      size={"sm"}
-                      variant={"ghost"}
-                      onClick={() =>
-                        editNode<TestimonialsNode>({
-                          ...node,
-                          testimonials: node.testimonials.filter(
-                            (test) => test.id !== item.id
-                          ),
-                        })
-                      }
-                      className="gap-2 size-7"
-                    >
-                      <Trash className="text-destructive!" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              {node.testimonials.length <= 0 && (
-                <span>No testimonails here</span>
-              )}
-            </ScrollAreaWrapper>
-            <Button
-              size={"sm"}
-              onClick={() =>
-                useModalStore
-                  .getState()
-                  .openModal({ open: "testimonial", data: { node: node } })
-              }
-              className="size-8 ml-auto rounded-md"
-            >
-              <Plus className="size-4" />
-            </Button>
-          </div>
+          <NodeItems
+            onDelete={(id) => {
+              editNode<TestimonialsNode>({
+                ...node,
+                testimonials: node.testimonials?.filter(
+                  (test) => test.id !== id
+                ),
+              });
+            }}
+            node={node}
+            name="Testimonials"
+            item_id="testimonial"
+            items={
+              node.testimonials?.map((item) => ({
+                id: item.id,
+                name: item.name,
+                item,
+                cpt: <p className="node-desc">{item.jobDescription}</p>,
+              })) || []
+            }
+          />
         );
       case NodeType.SectionContact:
         return (
@@ -859,7 +675,7 @@ const Node = ({
                 key={action.desc}
                 onClick={action.onClick}
                 className={cn(
-                  "p-1 aspect-square rounded-md hover:bg-zinc-900/15 hover:cursor-pointer",
+                  "p-1 aspect-square rounded-md hover:bg-zinc-900/[0.075] hover:cursor-pointer",
                   action.title == "Delete" && "text-destructive"
                 )}
               >

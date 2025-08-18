@@ -36,15 +36,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!pageMetaData) return {};
 
   const title = pageMetaData.title || `${username}'s Portfolio`;
-  const description =
-    pageMetaData.description || `Welcome to ${username}'s portfolio`;
 
   return {
     title: {
       default: title,
       template: title,
     },
-    description,
     ...(pageMetaData.iconUrl
       ? {
           icons: [
@@ -58,7 +55,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : {}),
     openGraph: {
       title,
-      description,
       url: `https://${username}.${process.env.NEXT_PUBLIC_BASE_DOMAIN}`,
     },
     alternates: {

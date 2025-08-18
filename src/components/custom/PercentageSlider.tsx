@@ -36,10 +36,6 @@ export function PercentageSlider({
             background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`,
           }}
         />
-        <div
-          className="absolute top-1/2 transform -translate-y-1/2 w-5 h-5 bg-blue-500 border-2 border-white rounded-full shadow-lg pointer-events-none"
-          style={{ left: `calc(${percentage}% - 10px)` }}
-        />
       </div>
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-500">{min}%</span>

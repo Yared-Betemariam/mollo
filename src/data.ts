@@ -32,13 +32,19 @@ export const templates: Template[] = [
   },
 ];
 
-export const pricing_cards = [
+export const pricing_plans = [
   {
     id: "pro",
     title: "Pro",
     price: {
       year: 299,
       onetime: 699,
+    },
+    limits: {
+      maxImages: 25,
+      maxVideos: 10,
+      maxImageSize: 10, // mb
+      maxVideoSize: 100, // mb
     },
   },
   {
@@ -47,6 +53,12 @@ export const pricing_cards = [
     price: {
       year: 499,
       onetime: 999,
+    },
+    limits: {
+      maxImages: 49,
+      maxVideos: 19,
+      maxImageSize: 25, // mb
+      maxVideoSize: 300, // mb
     },
   },
 ];

@@ -1,7 +1,10 @@
 type ISODateString = string;
 
-export const timeRangeList = ["today", "week", "month", "all"];
-export type TimeRange = "today" | "week" | "month" | "all";
+export const statusList = ["active", "disabled"] as const;
+export type Status = (typeof statusList)[number];
+
+export const plansList = ["pro", "premium", "free"] as const;
+export type Plan = (typeof plansList)[number];
 
 export interface CleanSession {
   user: {

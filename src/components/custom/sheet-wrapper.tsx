@@ -35,9 +35,8 @@ const SheetWrapper: React.FC<SheetWrapperProps> = ({
         side={isMobile ? "bottom" : side}
         className={cn(
           "space-y-0 gap-4",
-          isMobile && "max-h-[90vh]",
-          previewMode &&
-            "bg-zinc-100 srounded-t-lg min-h-[calc(100vh-6rem)] flex flex-col"
+          isMobile && "max-h-[calc(100vh-2rem)]",
+          previewMode && "bg-zinc-100 srounded-t-lg h-full flex flex-col"
         )}
       >
         <SheetHeader className={cn("border-b p-8", previewMode && "sr-only")}>

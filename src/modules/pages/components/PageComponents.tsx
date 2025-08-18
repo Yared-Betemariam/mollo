@@ -26,29 +26,27 @@ import {
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { cn, getDateStringByIso } from "@/lib/utils";
 import { getDate } from "date-fns";
 import { Expand, Phone, Star } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { FaFacebook, FaInstagram, FaTelegram } from "react-icons/fa";
+import { FiMenu } from "react-icons/fi";
 import { GoMail } from "react-icons/go";
-import ReactMarkdown from "react-markdown";
 import PhotoAlbum, {
   Photo,
   RenderImageContext,
   RenderImageProps,
 } from "react-photo-album";
 import { getHeaderlinks, getImageDimensions } from "../utils";
-import {
-  SheetClose,
-  SheetContent,
-  Sheet,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { FiMenu } from "react-icons/fi";
 
 // utils components
 function FullscreenMedia({ src, isVideo }: { src: string; isVideo?: boolean }) {
@@ -186,8 +184,8 @@ export function HeaderSection({
         <header
           id={node.type}
           className={cn(
-            `fixed z-50 w-full h-20 top-0 inset-x-0 bg-white ${node.template}`,
-            isScrolled && "border-b"
+            `fixed z-50 w-full h-20 top-0 inset-x-0 ${node.template}`,
+            isScrolled && "border-b bg-white"
           )}
         >
           <section className="wrapper h-full  flex items-center">
@@ -299,22 +297,34 @@ export function HeroSection({ node }: { node: HeroNode }) {
     default:
       return (
         <section id={node.type} className={`hero flex ${node.template}`}>
-          {node.imageUrl && node.isImageBackgroud ? (
-            <div className="wrapper flex gap-6 pb-24 pt-44">
-              <div className="flex flex-col gap-6">
+          {node.imageUrl && !node.isImageBackgroud ? (
+            <div className="wrapper flex items-center gap-6 pb-24 pt-44">
+              <div className="flex max-w-[60%] flex-col gap-6">
                 <h1 className="page-h1">{node.title}</h1>
                 <p className="max-w-[56ch]">{node.description}</p>
               </div>
-              <Image
+              <img
                 width={400}
                 height={400}
                 alt="hero-img"
-                src={"/logo.png"}
-                className=""
+                src={node.imageUrl}
+                className="max-h-64 object-cover"
               />
             </div>
           ) : (
-            <div className="wrapper flex flex-col items-center justify-center gap-6 pb-24 pt-44">
+            <div
+              style={{
+                ...(node.imageUrl && node.isImageBackgroud
+                  ? {
+                      backgroundImage: `url(${node.imageUrl})`,
+                      backgroundOrigin: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }
+                  : {}),
+              }}
+              className="wrapper flex flex-col items-center justify-center gap-6 pb-32 pt-56"
+            >
               <div className="flex flex-col items-center justify-center max-w-xl gap-8 text-center">
                 <h1 className="page-h1">{node.title}</h1>
                 <p className="text">{node.description}</p>
@@ -339,9 +349,7 @@ export function AboutSection({ node }: { node: AboutNode }) {
         >
           <div className="wrapper flex flex-col gap-6">
             <h2 className="h3">About me</h2>
-            <div className="big-text">
-              <ReactMarkdown>{node.description}</ReactMarkdown>
-            </div>
+            <p className="big-text">{node.description}</p>
           </div>
         </section>
       );

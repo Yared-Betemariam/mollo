@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { IconUrls, pricing_cards } from "@/data";
+import { IconUrls, pricing_plans } from "@/data";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
@@ -18,7 +18,7 @@ const Pricing = () => {
       </div>
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 w-full md:grid-cols-2 divide-x divide-y border max-w-[24rem] md:max-w-[32rem]">
-          {pricing_cards.map((item, i) => (
+          {pricing_plans.map((item, i) => (
             <div
               key={item.title}
               className={cn(
@@ -26,8 +26,8 @@ const Pricing = () => {
                 item.id == "premium"
                   ? "border-2 border-inset border-zinc-900"
                   : "",
-                pricing_cards.length > i + 1 &&
-                  pricing_cards[i + 1].id == "premium" &&
+                pricing_plans.length > i + 1 &&
+                  pricing_plans[i + 1].id == "premium" &&
                   "pb-20 md:pb-10"
               )}
             >
@@ -69,15 +69,15 @@ const Pricing = () => {
                     ? [
                         "Upto 50 images",
                         "Upto 20 videos",
-                        "Max 5mb image size",
-                        "Max 50mb video size",
+                        "Max 10mb image size",
+                        "Max 100mb video size",
                       ]
                     : item.id == "premium"
                     ? [
                         "Unlimited images",
                         "Unlimited videos",
                         "Max 25mb image size",
-                        "Max 200mb video size",
+                        "Max 300mb video size",
                       ]
                     : []
                   ).map((value) => (

@@ -46,6 +46,7 @@ const SkillsModal = () => {
     } else {
       form.reset({
         id: generateId(true),
+        proficiency: "0",
       });
     }
   }, [nodeInfo]);

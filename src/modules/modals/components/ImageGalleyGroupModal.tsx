@@ -17,7 +17,7 @@ import {
   ImageGroup,
   ImageGroupSchema,
 } from "@/modules/pages/editor";
-import ImageUploadComponent from "@/modules/uploads/components/ImageUpload";
+import ImagesUploadComponent from "@/modules/uploads/components/ImagesUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -102,7 +102,7 @@ const ImageGalleryGroupModal = () => {
               control={form.control}
               name="imageUrls"
               render={({ field }) => (
-                <ImageUploadComponent
+                <ImagesUploadComponent
                   imageUrls={field.value || []}
                   onChange={(newImgUrls) => field.onChange(newImgUrls)}
                 />

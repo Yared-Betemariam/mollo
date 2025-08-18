@@ -133,12 +133,20 @@
     @apply px-4 sm:px-6;
   }
 
+  .node-desc {
+    @apply truncate w-[10ch] text-sm opacity-80;
+  }
+
   .h2 {
     @apply text-4xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
   }
 
   .h3 {
     @apply text-3xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
+  }
+
+  .h4 {
+    @apply text-2xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
   }
 
   .big-body {

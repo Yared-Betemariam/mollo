@@ -31,3 +31,5 @@ export const useNodesStore = create<NodesStoreType>((set, get) => ({
     set({ nodes: Page.addNode(get().nodes, node) });
   },
 }));
+
+export const channel = new BroadcastChannel("zustand-sync");

@@ -15,14 +15,13 @@ const Hero = () => {
           alt="pattern"
           className="mx-auto -z-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-[110vw] opacity-25 h-auto brightness-200 outbound-radiant-mask"
         />
-        <div className="size-24 -z-10 blur-xl rounded-full bg-gradient-to-b from-red-800 to-blue-800 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-
+        <div className="size-96 -z-10 blur-2xl rounded-full bg-gradient-to-b from-red-800 to-blue-800 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-15" />
         <Image
           src="/cube-pattern.png"
           width={1100}
           height={400}
           alt="pattern"
-          className="size-14"
+          className="size-56 opacity-[7%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         />
         <section className="wrapper relative flex pt-28 flex-col gap-12">
           <div className="flex text-center items-center flex-col gap-8 w-full">

@@ -49,8 +49,6 @@ interface ConfirmationModalStore {
   open: boolean;
   variant?: "default" | "destructive";
 
-  isLoading: boolean;
-
   title: string | null;
   description: string | null;
 
@@ -60,8 +58,7 @@ interface ConfirmationModalStore {
 }
 
 export const useConfirmationModalStore = create<ConfirmationModalStore>(
-  (set) => ({
-    isLoading: false,
+  (set, get) => ({
     open: false,
     title: null,
     description: null,
@@ -69,9 +66,9 @@ export const useConfirmationModalStore = create<ConfirmationModalStore>(
 
     openModal: ({ title, description, onClick, variant }) => {
       const handleClick = () => {
-        set({ isLoading: true });
-
         onClick();
+
+        get().closeModal();
       };
 
       set({
@@ -87,7 +84,6 @@ export const useConfirmationModalStore = create<ConfirmationModalStore>(
       set({
         open: false,
         title: null,
-        isLoading: false,
         description: null,
         handleClick: null,
       }),
