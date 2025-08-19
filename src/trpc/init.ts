@@ -31,7 +31,26 @@ const isAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
+const isAdmin = t.middleware(({ ctx, next }) => {
+  if (
+    !ctx.session?.user?.email ||
+    ctx.session.user.email.toString() !== process.env.ADMIN_EMAIL?.toString()
+  ) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Not authenticated",
+    });
+  }
+
+  return next({
+    ctx: {
+      session: ctx.session as CleanSession,
+    },
+  });
+});
+
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(isAuthed);
+export const adminProcedure = t.procedure.use(isAuthed).use(isAdmin);

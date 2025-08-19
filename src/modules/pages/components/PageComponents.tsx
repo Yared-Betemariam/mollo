@@ -656,7 +656,7 @@ export function ContactSection({ node }: { node: ContactNode }) {
                 className="flex flex-col md:flex-row items-center gap-6"
               >
                 {node.phoneNumber && (
-                  <div className="border border-border/25 gap-3 rounded-full px-4 pr-5 py-1 bg-primary/5 brightness-50 flex items-center">
+                  <div className="border border-border/25 gap-3 rounded-full px-4 pr-5 py-1 bg-primary/5 flex items-center">
                     <Phone className="fill-current size-6" />
                     <div className="flex flex-col -space-y-1">
                       <span className="text-base opacity-60">tel +251</span>
@@ -665,7 +665,7 @@ export function ContactSection({ node }: { node: ContactNode }) {
                   </div>
                 )}
                 {node.email && (
-                  <div className="border border-border/25 gap-3 rounded-full px-4 pr-5 py-1 bg-primary/5 brightness-50 flex items-center">
+                  <div className="border border-border/25 gap-3 rounded-full px-4 pr-5 py-1 bg-primary/5 flex items-center">
                     <GoMail className="fill-current size-7" />
                     <div className="flex flex-col -space-y-1">
                       <span className="text-base opacity-60">Email</span>

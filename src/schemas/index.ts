@@ -1,3 +1,4 @@
+import { plansList, statusList } from "@/types";
 import { z } from "zod";
 
 export const usernameSchema = z
@@ -17,4 +18,12 @@ export const onboardingSchema = z.object({
   base_template: z.string().min(1, "Please select a template"),
 });
 
+export const updateUserSchema = z.object({
+  id: z.number(),
+  status: z.enum(statusList),
+  plan: z.enum(plansList),
+  subscription_end_date: z.date().nullable(),
+});
+
 export type OnboardingFormData = z.infer<typeof onboardingSchema>;
+export type UpdateUserSchema = z.infer<typeof updateUserSchema>;

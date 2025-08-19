@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
-import { authRoutes, defaultLoginRedirect, publicRoutes } from "./routes";
+import {
+  authRoutes,
+  defaultLoginRedirect,
+  publicRoutes,
+  redirects,
+} from "./routes";
 
 function rewriteSubdomain(request: NextRequest): NextResponse | void {
   const host = request.headers.get("host") || "";
@@ -28,12 +33,16 @@ function rewriteSubdomain(request: NextRequest): NextResponse | void {
 }
 
 export default auth((req) => {
-  // First, handle subdomain rewrites
   const rewritten = rewriteSubdomain(req);
   if (rewritten) return rewritten;
 
-  // Then your existing auth logic
   const { nextUrl } = req;
+
+  const matchedRedirect = redirects.find((r) => nextUrl.pathname === r.from);
+  if (matchedRedirect) {
+    return NextResponse.redirect(new URL(matchedRedirect.to, nextUrl));
+  }
+
   const isLoggedIn = !!req.auth;
   const isApiRoute = nextUrl.pathname.startsWith("/api");
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
@@ -46,9 +55,11 @@ export default auth((req) => {
     }
     return;
   }
+
   if (!isLoggedIn && !isPublic) {
     return NextResponse.redirect(new URL(authRoutes[0], nextUrl));
   }
+
   return;
 });
 

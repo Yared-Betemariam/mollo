@@ -149,12 +149,24 @@
     @apply text-2xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
   }
 
+  .h5 {
+    @apply text-xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
+  }
+
   .big-body {
     @apply text-xl font-medium opacity-60;
   }
 
   .big-text {
     @apply text-3xl sm:text-[2rem] leading-[1.3] font-medium tracking-tight opacity-90;
+  }
+
+  .text {
+    @apply text-xl text-zinc-700 leading-[1.6]!;
+  }
+
+  .text-light {
+    @apply text-xl text-zinc-400/70 leading-[1.6]!;
   }
 
   .page-h1 {
@@ -175,14 +187,6 @@
 
   button {
     @apply active:scale-105;
-  }
-
-  .text {
-    @apply text-xl text-zinc-700 leading-[1.6]!;
-  }
-
-  .text-light {
-    @apply text-xl text-zinc-400/70 leading-[1.6]!;
   }
 
   .radial-mask {
