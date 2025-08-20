@@ -2,31 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { getInfoSummary, isUploadValid } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import { Info, UploadingFile } from "@/types";
 import axios from "axios";
 import { Film, Upload, X } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 
-interface VideoUploadComponentProps {
+interface VideosUploadComponentProps {
   videoUrls: string[];
   onChange: (newVideoUrls: string[]) => void;
   maxFileSizeMB?: number;
+  info: Info | null;
 }
 
-interface UploadingFile {
-  id: string;
-  file: File;
-  progress: number;
-  url?: string; // final public URL
-  error?: string;
-  previewUrl?: string; // object URL for local preview
-}
-
-function VideoUploadComponent({
+function VideosUploadComponent({
   videoUrls,
   onChange,
-  maxFileSizeMB = 500, // default 500MB
-}: VideoUploadComponentProps) {
+  info,
+  maxFileSizeMB = 500,
+}: VideosUploadComponentProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -52,21 +47,24 @@ function VideoUploadComponent({
 
   const handleFiles = useCallback(
     async (filesList: FileList) => {
-      const incoming = Array.from(filesList).filter((f) =>
+      const filtered = Array.from(filesList).filter((f) =>
         f.type.startsWith("video/")
       );
-      if (incoming.length === 0) return;
+      if (filtered.length === 0) return;
+
+      const isValid = isUploadValid(info, filtered, "image");
+      if (!isValid) return;
 
       // Basic size validation (optional)
-      const maxBytes = maxFileSizeMB * 1024 * 1024;
-      const filtered = incoming.filter((f) => {
-        if (f.size > maxBytes) {
-          console.warn(`Skipping ${f.name}: exceeds ${maxFileSizeMB}MB`);
-          return false;
-        }
-        return true;
-      });
-      if (filtered.length === 0) return;
+      // const maxBytes = maxFileSizeMB * 1024 * 1024;
+      // const filtered = incoming.filter((f) => {
+      //   if (f.size > maxBytes) {
+      //     console.warn(`Skipping ${f.name}: exceeds ${maxFileSizeMB}MB`);
+      //     return false;
+      //   }
+      //   return true;
+      // });
+      // if (filtered.length === 0) return;
 
       // Build taken names from currently uploading to avoid duplicates across the same session
       const taken = new Set<string>([
@@ -224,7 +222,7 @@ function VideoUploadComponent({
     <div className="w-full space-y-4">
       {/* Drop zone */}
       <div
-        className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors
+        className={`relative bg-zinc-50 border-2 border-dashed rounded-lg p-8 text-center transition-colors
         ${
           isDragOver
             ? "border-primary bg-primary/5"
@@ -242,23 +240,27 @@ function VideoUploadComponent({
           className="hidden"
           onChange={handleInputChange}
         />
-        <div className="flex flex-col items-center space-y-4">
-          <div className="p-4 bg-muted rounded-full">
-            <Film className="h-8 w-8 text-muted-foreground" />
+        <div className="flex flex-col h-full justify-center gap-3 items-center">
+          <Film className="size-6 text-primary opacity-75" />
+
+          <div>
+            <p className="opacity-75 text-base">Drag & Drop an video here</p>
+            {info && (
+              <p className="text-muted-foreground text-sm">
+                {getInfoSummary(info, "video")}
+              </p>
+            )}
           </div>
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium">Drop videos here</h3>
-            <p className="text-sm text-muted-foreground">
-              or click the button to select files
-            </p>
-          </div>
-          <Button variant="outline" onClick={handleChooseClick}>
-            <Upload className="h-4 w-4 mr-2" />
-            Choose Files
+
+          <Button
+            size={"xs"}
+            type="button"
+            onClick={handleChooseClick}
+            variant="outline"
+          >
+            <Upload className="h-4 w-4 mr-1" />
+            Choose File
           </Button>
-          <p className="text-xs text-muted-foreground">
-            Max file size {maxFileSizeMB}MB per file
-          </p>
         </div>
       </div>
 
@@ -337,4 +339,4 @@ function VideoUploadComponent({
   );
 }
 
-export default VideoUploadComponent;
+export default VideosUploadComponent;

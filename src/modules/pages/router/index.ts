@@ -1,12 +1,12 @@
 import { db } from "@/db";
 import { pages } from "@/db/schema";
-import { usernameSchema } from "@/schemas";
+import { updatePageSchema, usernameSchema } from "@/schemas";
 import {
   baseProcedure,
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import z from "zod";
 import { PageNodeSchema } from "../editor";
 
@@ -47,7 +47,7 @@ export const pageRouter = createTRPCRouter({
     const page_datas = await db
       .select({ definition: pages.definition })
       .from(pages)
-      .where(eq(pages.username, opts.input));
+      .where(and(eq(pages.username, opts.input), eq(pages.published, true)));
 
     if (page_datas.length < 1 || !page_datas[0]) {
       return {
@@ -79,6 +79,31 @@ export const pageRouter = createTRPCRouter({
           },
         })
         .where(eq(pages.id, Number(opts.input.id)));
+
+      return {
+        success: true,
+        message: "Page successfully updated!",
+      };
+    }),
+  update: protectedProcedure
+    .input(
+      updatePageSchema.extend({
+        id: z.number(),
+      })
+    )
+    .mutation(async (opts) => {
+      const { username, published, base_template } = opts.input;
+
+      await db
+        .update(pages)
+        .set({
+          username,
+          published,
+          base_template,
+          published_date: published ? new Date() : null,
+        })
+        .where(eq(pages.id, Number(opts.input.id)))
+        .returning();
 
       return {
         success: true,

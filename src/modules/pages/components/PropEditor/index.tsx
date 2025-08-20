@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { NodeType } from "../../editor";
 import { usePage } from "../../hooks";
 import Node from "./Node";
+import { usePageInfoStore } from "../../store";
 
 const PropEditor = () => {
   const { nodes, editNode, deleteNode, moveNodeDown, moveNodeUp } = usePage();
   const [activeNode, setActiveNode] = useState<string>();
+  const { info } = usePageInfoStore();
 
   useEffect(() => {
     if (nodes && nodes.length > 0 && !activeNode) {
@@ -36,6 +38,7 @@ const PropEditor = () => {
               });
             }}
             node={node}
+            info={info}
           />
         );
       })}

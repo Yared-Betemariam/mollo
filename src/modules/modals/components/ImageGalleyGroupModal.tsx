@@ -21,11 +21,12 @@ import ImagesUploadComponent from "@/modules/uploads/components/ImagesUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNodesStore } from "../../pages/store";
+import { useNodesStore, usePageInfoStore } from "../../pages/store";
 
 const ImageGalleryGroupModal = () => {
   const { open, closeModal, data } = useModalStore();
   const { editNode } = useNodesStore();
+  const { info } = usePageInfoStore();
   const nodeInfo = data as {
     node: ImageGalleryNode; // Replace with your actual node type if needed
     group: ImageGroup | undefined;
@@ -103,6 +104,7 @@ const ImageGalleryGroupModal = () => {
               name="imageUrls"
               render={({ field }) => (
                 <ImagesUploadComponent
+                  info={info}
                   imageUrls={field.value || []}
                   onChange={(newImgUrls) => field.onChange(newImgUrls)}
                 />

@@ -23,7 +23,7 @@ export const useUserData = () => {
 
 export const useBilling = () => {
   const { user, isLoading } = useUserData();
-  const isUserActive = (user?.status || "disabled") === "active";
+  const isUserActive = (user?.status || "active") === "active";
   const isSubscriptionExpired = user?.subscription_end_date
     ? isPast(new Date(user?.subscription_end_date))
     : false;

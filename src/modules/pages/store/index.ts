@@ -1,3 +1,4 @@
+import { Info } from "@/types";
 import { create } from "zustand";
 import { Page, PageNode } from "../editor";
 import { UpdatableNode } from "../editor/class";
@@ -30,6 +31,16 @@ export const useNodesStore = create<NodesStoreType>((set, get) => ({
   addNode: (node) => {
     set({ nodes: Page.addNode(get().nodes, node) });
   },
+}));
+
+interface PageInfoStoreType {
+  info: Info | null;
+  setInfo: (info: Info) => void;
+}
+
+export const usePageInfoStore = create<PageInfoStoreType>((set) => ({
+  info: null,
+  setInfo: (info) => set({ info }),
 }));
 
 export const channel = new BroadcastChannel("zustand-sync");

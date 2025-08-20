@@ -1,9 +1,9 @@
 import DialogWrapper from "@/components/custom/dialog-wrapper";
 import Dropdown from "@/components/custom/dropdown";
+import { Calendar28 } from "@/components/custom/input-calendar";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import FormButton, {
-  DatePicker,
   Form,
   FormControl,
   FormField,
@@ -91,6 +91,10 @@ const UserModal = () => {
                             value: "free",
                           },
                           {
+                            label: "Starter",
+                            value: "starter",
+                          },
+                          {
                             label: "Pro",
                             value: "pro",
                           },
@@ -142,10 +146,13 @@ const UserModal = () => {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <DatePicker
-                        className="w-full"
-                        value={field.value?.toISOString()}
-                        onChange={(e) => field.onChange(new Date(e as Date))}
+                      <Calendar28
+                        date={field.value}
+                        setDate={(e) => {
+                          if (e) {
+                            field.onChange(e);
+                          }
+                        }}
                       />
                     </FormControl>
                   </FormItem>

@@ -25,5 +25,10 @@ export const updateUserSchema = z.object({
   subscription_end_date: z.date().nullable(),
 });
 
+export const updatePageSchema = z.object({
+  username: usernameSchema,
+  published: z.boolean(),
+  base_template: z.string(),
+});
+
 export type OnboardingFormData = z.infer<typeof onboardingSchema>;
-export type UpdateUserSchema = z.infer<typeof updateUserSchema>;

@@ -1,8 +1,10 @@
 import { NodeType, PageNode } from "@/modules/pages/editor";
+import { Info } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import crypto from "crypto";
 import { format, parseISO } from "date-fns";
 import { Geist, Inter } from "next/font/google";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -142,4 +144,87 @@ export function countMediaUrls(
   }
 
   return count;
+}
+
+export function getInfoSummary(
+  info: Info,
+  fileType: "image" | "video"
+): string {
+  const { limits } = info;
+  return `Maximum ${fileType} upload size is ${
+    fileType === "image" ? limits.maxImageSize : limits.maxVideoSize
+  } MB.`;
+}
+
+export function isUploadValid(
+  info: Info | null,
+  files: File[],
+  fileType: "image" | "video"
+): boolean {
+  if (!info) {
+    toast.error("No info is provided for upload validation.");
+    return false;
+  }
+
+  if (info.status == "disabled") {
+    toast.error(
+      "Uploads are disabled for this account. Contact support for more information."
+    );
+    return false;
+  }
+
+  if (info.isExpired) {
+    toast.error(
+      "Your subscription has expired. Please renew to continue uploading."
+    );
+    return false;
+  }
+
+  const fileCount = files.length;
+  if (fileCount === 0) {
+    toast.error("No files selected for upload.");
+    return false;
+  }
+
+  if (
+    fileType === "image" &&
+    info.imageCount + fileCount > info.limits.maxImages
+  ) {
+    toast.error(
+      `You have reached the maximum image limit of ${info.limits.maxImages}.`
+    );
+    return false;
+  }
+
+  if (
+    fileType === "image" &&
+    files.some((file) => file.size > info.limits.maxImageSize * 1024 * 1024)
+  ) {
+    toast.error(
+      `One or more images exceed the maximum size of ${info.limits.maxImageSize} MB.`
+    );
+    return false;
+  }
+
+  if (
+    fileType === "video" &&
+    info.videoCount + fileCount > info.limits.maxVideos
+  ) {
+    toast.error(
+      `You have reached the maximum video limit of ${info.limits.maxVideos}.`
+    );
+    return false;
+  }
+
+  if (
+    fileType === "video" &&
+    files.some((file) => file.size > info.limits.maxVideoSize * 1024 * 1024)
+  ) {
+    toast.error(
+      `One or more videos exceed the maximum size of ${info.limits.maxVideoSize} MB.`
+    );
+    return false;
+  }
+
+  return true;
 }

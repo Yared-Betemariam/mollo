@@ -11,7 +11,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
+import { getInfoSummary, isUploadValid } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import { Info } from "@/types";
 import { Check, ImageIcon, Move, RotateCcw, Upload } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 
@@ -19,6 +21,7 @@ interface IconUploadDialogProps {
   currentIconUrl?: string;
   onIconChange: (iconUrl: string) => void;
   trigger?: React.ReactNode;
+  info: Info | null;
 }
 
 interface CropArea {
@@ -37,6 +40,7 @@ function IconUploadDialog({
   currentIconUrl,
   onIconChange,
   trigger,
+  info,
 }: IconUploadDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -84,6 +88,9 @@ function IconUploadDialog({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file && file.type.startsWith("image/")) {
+        const isValid = isUploadValid(info, [file], "image");
+        if (!isValid) return;
+
         setSelectedFile(file);
         const url = URL.createObjectURL(file);
         setPreviewUrl(url);
@@ -439,7 +446,7 @@ function IconUploadDialog({
               <>
                 {/* File Selection */}
                 <div
-                  className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-muted-foreground/50 transition-colors"
+                  className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors bg-zinc-50"
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                 >
@@ -451,25 +458,23 @@ function IconUploadDialog({
                     className="hidden"
                   />
 
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="p-4 bg-muted rounded-full">
-                      <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                    </div>
+                  <div className="flex flex-col items-center space-y-3">
+                    <ImageIcon className="size-6 opacity-75 text-muted-foreground" />
 
-                    <div className="space-y-2">
-                      <h3 className="font-medium">Drop icon here</h3>
-                      <p className="text-sm text-muted-foreground">
-                        or click to select a file
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Will be automatically optimized to 100×100px
-                      </p>
+                    <div>
+                      <h3 className="text-lg font-medium">Drop icon here</h3>
+                      {info && (
+                        <p className="opacity-75 text-sm">
+                          {getInfoSummary(info, "image")}
+                        </p>
+                      )}
                     </div>
 
                     <Button
+                      disabled={!info}
                       onClick={handleFileSelect}
                       variant="outline"
-                      size="sm"
+                      size="xs"
                     >
                       <Upload className="h-4 w-4 mr-2" />
                       Choose File

@@ -11,12 +11,12 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
+import { cn, countMediaUrls } from "@/lib/utils";
 import UserButton from "@/modules/auth/components/UserButton";
 import { useModalStore } from "@/modules/modals/store";
 import AddNode from "@/modules/pages/components/AddNode";
 import { usePage } from "@/modules/pages/hooks";
-import { channel } from "@/modules/pages/store";
+import { channel, usePageInfoStore } from "@/modules/pages/store";
 import { trpc } from "@/trpc/client";
 import {
   Loader,
@@ -28,9 +28,15 @@ import {
   ZoomOut,
 } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import HeaderWrapper from "./HeaderWrapper";
+import { useBilling } from "@/modules/auth/hooks";
+import { Badge } from "@/components/ui/badge";
+import { FaExclamationTriangle } from "react-icons/fa";
+import Hint from "@/components/custom/hint";
+import { pricing_plans } from "@/data";
+import { Limits } from "@/types";
 
 type Props = {
   children: React.ReactNode;
@@ -38,10 +44,21 @@ type Props = {
 
 const ResizableWrapper = ({ children }: Props) => {
   const { nodes, addNode, page } = usePage();
+  const {
+    isUserActive,
+    isSubscriptionExpired,
+    plan,
+    isLoading: isBillingLoading,
+  } = useBilling();
   const isMobile = useIsMobile();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [zoom, setZoom] = useState(100);
   const [deviceView, setDeviceView] = useState<"desktop" | "mobile">("desktop");
+  const utils = trpc.useUtils();
+
+  const noChanges = useMemo(() => {
+    return JSON.stringify(page?.definition.nodes) == JSON.stringify(nodes);
+  }, [nodes, page]);
 
   const { mutate, isPending } = trpc.pages.updateDefinition.useMutation({
     onError: (er) => {
@@ -50,6 +67,19 @@ const ResizableWrapper = ({ children }: Props) => {
     },
     onSuccess: () => {
       toast.success("Changes saved!");
+
+      utils.pages.user.invalidate();
+    },
+  });
+
+  const updatePage = trpc.pages.update.useMutation({
+    onError: (er) => {
+      console.log(er);
+      toast.error("Error updating page! Try again");
+    },
+    onSuccess: () => {
+      toast.success(`Page ${!page?.published ? "published" : "unpublished"}!`);
+      utils.pages.user.invalidate();
     },
   });
 
@@ -57,12 +87,43 @@ const ResizableWrapper = ({ children }: Props) => {
     channel.postMessage({ nodes });
   }, [nodes]);
 
+  useEffect(() => {
+    const planLimits: Limits = pricing_plans.find((p) => p.id === plan)
+      ?.limits || {
+      maxImages: 3,
+      maxVideos: 0,
+      maxImageSize: 1,
+      maxVideoSize: 10,
+    };
+
+    usePageInfoStore.getState().setInfo({
+      status: isUserActive ? "active" : "disabled",
+      isExpired: isSubscriptionExpired,
+      imageCount: countMediaUrls(nodes, "image"),
+      videoCount: countMediaUrls(nodes, "video"),
+      limits: planLimits,
+    });
+  }, [nodes, isBillingLoading]);
+
   const links = [
     {
       name: "Help",
       href: "/help",
     },
   ];
+
+  const handlePublish = () => {
+    if (page) {
+      updatePage.mutate({
+        id: page.id,
+        username: page.username,
+        published: !page.published,
+        base_template: page.base_template,
+      });
+    } else {
+      toast.error("Page not found!");
+    }
+  };
 
   const saveChanges = () => {
     if (!page) {
@@ -86,10 +147,8 @@ const ResizableWrapper = ({ children }: Props) => {
 
   const SaveButton = (
     <Button
-      disabled={
-        isPending ||
-        JSON.stringify(page?.definition.nodes) == JSON.stringify(nodes)
-      }
+      size={"sm"}
+      disabled={isPending || noChanges}
       onClick={() => saveChanges()}
       variant={"outline"}
     >
@@ -165,6 +224,20 @@ const ResizableWrapper = ({ children }: Props) => {
     </>
   );
 
+  const PublishButton = (
+    <Button
+      variant={!page?.published ? "default" : "outline"}
+      disabled={
+        !isUserActive || !noChanges || isPending || updatePage.isPending
+      }
+      onClick={() => {
+        handlePublish();
+      }}
+    >
+      {page?.published ? "Unpublish" : "Publish"}
+    </Button>
+  );
+
   return (
     <ResizablePanelGroup
       id="wrapper"
@@ -175,13 +248,48 @@ const ResizableWrapper = ({ children }: Props) => {
         <ScrollAreaWrapper>
           <HeaderWrapper>
             <Logo logo />
-            <div className="flex gap-4 mr-auto h-full items-center">
+            <div className="flex gap-4 h-full items-center">
               {links.map((item) => (
                 <Link key={item.href} href={item.href}>
                   {item.name}
                 </Link>
               ))}
             </div>
+            {!isBillingLoading && plan && (
+              <Hint desc="Your current plan">
+                <Badge
+                  className={cn("text-sm capitalize", {
+                    "bg-yellow-800/10 text-sm text-yellow-900": plan == "free",
+                    "bg-emerald-800/10 text-sm text-emerald-900":
+                      plan == "starter",
+                    "bg-blue-800/10 text-sm text-blue-900": plan == "pro",
+                    "bg-amber-800/10 text-sm text-amber-900": plan == "premium",
+                  })}
+                >
+                  {plan}
+                </Badge>
+              </Hint>
+            )}
+            {!isBillingLoading && !isUserActive && (
+              <Hint desc="Your account is not active. Please contact support to activate your account.">
+                <Badge className="bg-red-800/10 text-sm text-red-900">
+                  <FaExclamationTriangle /> Disabled
+                </Badge>
+              </Hint>
+            )}
+            {!isBillingLoading && isSubscriptionExpired && (
+              <Hint desc="Your subscription has expired. Please renew your subscription to continue using the service.">
+                <Badge className="bg-yellow-800/10 text-sm text-yellow-900">
+                  <FaExclamationTriangle /> Expired
+                </Badge>
+              </Hint>
+            )}
+            <div className="mr-auto" />
+            {PublishButton}
+
+            <UserButton />
+          </HeaderWrapper>
+          <div className="h-14 items-center px-4 flex  justify-start gap-3">
             <Button
               size={"sm"}
               onClick={() =>
@@ -192,16 +300,12 @@ const ResizableWrapper = ({ children }: Props) => {
             >
               <Share /> Share
             </Button>
-
-            <UserButton />
-          </HeaderWrapper>
-          <div className="h-14 items-center px-4 flex  justify-start gap-3">
-            <Button>Publish</Button>
             {SaveButton}
             <span className="mr-auto" />
             {isMobile && (
               <>
                 <Button
+                  size={"sm"}
                   onClick={() => {
                     setPreviewOpen(true);
                   }}
@@ -213,6 +317,10 @@ const ResizableWrapper = ({ children }: Props) => {
             )}
             <AddNode
               addNode={(node) => {
+                if (nodes.length >= 20) {
+                  toast.error("You can only have 20 nodes on a page.");
+                  return;
+                }
                 addNode(node);
               }}
             />

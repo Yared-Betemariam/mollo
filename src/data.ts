@@ -34,17 +34,31 @@ export const templates: Template[] = [
 
 export const pricing_plans = [
   {
-    id: "pro",
-    title: "Pro",
+    id: "starter",
+    title: "Starter",
     price: {
       year: 299,
       onetime: 699,
     },
     limits: {
+      maxImages: 10,
+      maxVideos: 5,
+      maxImageSize: 5,
+      maxVideoSize: 50,
+    },
+  },
+  {
+    id: "pro",
+    title: "Pro",
+    price: {
+      year: 399,
+      onetime: 799,
+    },
+    limits: {
       maxImages: 25,
       maxVideos: 10,
-      maxImageSize: 10, // mb
-      maxVideoSize: 100, // mb
+      maxImageSize: 10,
+      maxVideoSize: 100,
     },
   },
   {
@@ -52,13 +66,13 @@ export const pricing_plans = [
     title: "Premium",
     price: {
       year: 499,
-      onetime: 999,
+      onetime: 899,
     },
     limits: {
       maxImages: 49,
       maxVideos: 19,
-      maxImageSize: 25, // mb
-      maxVideoSize: 300, // mb
+      maxImageSize: 25,
+      maxVideoSize: 300,
     },
   },
 ];

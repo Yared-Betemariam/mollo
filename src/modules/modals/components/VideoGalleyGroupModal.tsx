@@ -17,15 +17,16 @@ import {
   VideoGroup,
   VideoGroupSchema,
 } from "@/modules/pages/editor";
-import VideoUploadComponent from "@/modules/uploads/components/VideoUpload";
+import VideosUploadComponent from "@/modules/uploads/components/VideosUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNodesStore } from "../../pages/store";
+import { useNodesStore, usePageInfoStore } from "../../pages/store";
 
 const VideoGalleryGroupModal = () => {
   const { open, closeModal, data } = useModalStore();
   const { editNode } = useNodesStore();
+  const { info } = usePageInfoStore();
   const nodeInfo = data as {
     node: VideoGalleryNode;
     group: VideoGroup | undefined;
@@ -102,7 +103,8 @@ const VideoGalleryGroupModal = () => {
               control={form.control}
               name="videoUrls"
               render={({ field }) => (
-                <VideoUploadComponent
+                <VideosUploadComponent
+                  info={info}
                   videoUrls={field.value || []}
                   onChange={(newVidUrls) => field.onChange(newVidUrls)}
                 />

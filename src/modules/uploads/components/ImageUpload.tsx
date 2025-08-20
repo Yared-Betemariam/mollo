@@ -2,28 +2,23 @@
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { cn, getInfoSummary, isUploadValid } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import { Info, UploadingFile } from "@/types";
 import axios from "axios";
-import { Upload, X } from "lucide-react";
+import { ImageIcon, Upload, X } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 
 interface ImageUploadComponentProps {
   imageUrl: string | null;
   onChange: (newImageUrl: string | null) => void;
-}
-
-interface UploadingFile {
-  id: string;
-  file: File;
-  progress: number;
-  url?: string;
-  error?: string;
+  info: Info | null;
 }
 
 function ImageUploadComponent({
   imageUrl,
   onChange,
+  info,
 }: ImageUploadComponentProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadingFile, setUploadingFile] = useState<UploadingFile | null>(
@@ -75,6 +70,9 @@ function ImageUploadComponent({
     async (files: FileList) => {
       const file = Array.from(files).find((f) => f.type.startsWith("image/"));
       if (!file) return;
+
+      const isValid = isUploadValid(info, [file], "image");
+      if (!isValid) return;
 
       const newUploadingFile: UploadingFile = {
         id: Math.random().toString(36).substr(2, 9),
@@ -157,7 +155,7 @@ function ImageUploadComponent({
       {!imageUrl && !uploadingFile && (
         <div
           className={`
-            relative h-28 border-2 border-dashed rounded-lg text-center transition-colors
+            relative h-36  bg-zinc-50 border-2 border-dashed rounded-lg text-center transition-colors
             ${
               isDragOver
                 ? "border-primary bg-primary/5"
@@ -176,16 +174,24 @@ function ImageUploadComponent({
             className="hidden"
           />
 
-          <div className="flex flex-col h-full justify-center gap-1 items-center">
-            <Upload className="size-6 text-primary/25 brightness-75" />
+          <div className="flex flex-col h-full justify-center gap-3 items-center">
+            <ImageIcon className="size-6 text-primary opacity-75" />
 
-            <p className="text-sm text-muted-foreground">Drop an image here</p>
+            <div>
+              <p className="opacity-75 text-base">Drag & Drop an image here</p>
+              {info && (
+                <p className="text-muted-foreground text-sm">
+                  {getInfoSummary(info, "image")}
+                </p>
+              )}{" "}
+            </div>
 
             <Button
               size={"xs"}
               type="button"
               onClick={handleFileSelect}
               variant="outline"
+              disabled={!info}
             >
               <Upload className="h-4 w-4 mr-1" />
               Choose File
@@ -224,9 +230,9 @@ function ImageUploadComponent({
 
       {/* Uploaded Image */}
       {imageUrl && !uploadingFile && (
-        <div className="max-h-28 space-y-2">
+        <div className="max-h-36 space-y-2">
           <p>Uploaded Image</p>
-          <div className="relative group size-24">
+          <div className="relative group size-32">
             <div className="aspect-square bg-muted rounded-lg overflow-hidden w-full h-full border">
               <img
                 src={imageUrl || "/placeholder.svg"}

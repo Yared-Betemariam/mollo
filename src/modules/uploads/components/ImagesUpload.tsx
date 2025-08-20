@@ -1,28 +1,24 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
-import { Upload, X, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import axios from "axios";
+import { getInfoSummary, isUploadValid } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import { Info, UploadingFile } from "@/types";
+import axios from "axios";
+import { ImageIcon, Upload, X } from "lucide-react";
+import React, { useCallback, useRef, useState } from "react";
 
 interface ImagesUploadComponentProps {
   imageUrls: string[];
   onChange: (newImageUrls: string[]) => void;
-}
-
-interface UploadingFile {
-  id: string;
-  file: File;
-  progress: number;
-  url?: string;
-  error?: string;
+  info: Info | null;
 }
 
 function ImagesUploadComponent({
   imageUrls,
   onChange,
+  info,
 }: ImagesUploadComponentProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
@@ -95,11 +91,16 @@ function ImagesUploadComponent({
   // Process and upload files
   const handleFiles = useCallback(
     async (files: FileList) => {
+      // check number of images status.
+      // check file size.
       const validFiles = Array.from(files).filter((file) =>
         file.type.startsWith("image/")
       );
 
       if (validFiles.length === 0) return;
+
+      const isValid = isUploadValid(info, validFiles, "image");
+      if (!isValid) return;
 
       // Handle duplicate names
       const processedFiles = validFiles.map((file) => {
@@ -219,7 +220,7 @@ function ImagesUploadComponent({
       {/* Drop Zone */}
       <div
         className={`
-          relative border-2 border-dashed rounded-lg p-4 text-center transition-colors
+          relative border-2 bg-zinc-50 border-dashed rounded-lg p-4 text-center transition-colors
           ${
             isDragOver
               ? "border-primary bg-primary/5"
@@ -239,19 +240,27 @@ function ImagesUploadComponent({
           className="hidden"
         />
 
-        <div className="flex flex-col items-center gap-1">
-          <Upload className="size-6 text-primary opacity-50" />
+        <div className="flex flex-col h-full justify-center gap-3 items-center">
+          <ImageIcon className="size-6 text-primary opacity-75" />
 
-          <h3 className="text-sm opacity-60 mb-1">Drag & Drop images here</h3>
+          <div>
+            <p className="opacity-75 text-base">Drag & Drop an image here</p>
+            {info && (
+              <p className="text-muted-foreground text-sm">
+                {getInfoSummary(info, "image")}
+              </p>
+            )}
+          </div>
 
           <Button
             size={"xs"}
             type="button"
             onClick={handleFileSelect}
             variant="outline"
+            disabled={!info}
           >
             <Upload className="h-4 w-4 mr-1" />
-            Choose Files
+            Choose File
           </Button>
         </div>
       </div>

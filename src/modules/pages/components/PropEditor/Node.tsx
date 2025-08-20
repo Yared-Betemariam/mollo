@@ -42,6 +42,8 @@ import ColorPicker from "./ColorPicker";
 import ValueChanger from "./ValueChanger";
 import ImageUploadComponent from "@/modules/uploads/components/ImageUpload";
 import NodeItems from "./NodeItems";
+import { Info } from "@/types";
+import VideosUploadComponent from "@/modules/uploads/components/VideosUpload";
 
 interface Props {
   node: PageNode;
@@ -52,6 +54,7 @@ interface Props {
   deleteNode: () => void;
   isMain?: boolean;
   editNode: <T extends PageNode>(updates: Partial<T>) => void;
+  info: Info | null;
 }
 
 const Node = ({
@@ -63,6 +66,7 @@ const Node = ({
   moveNodeUp,
   deleteNode,
   isMain,
+  info,
 }: Props) => {
   const nodeInfo = useMemo(() => getNodeTypeInfo(node.type), [node]);
 
@@ -94,6 +98,7 @@ const Node = ({
                   )}
 
                   <IconUploadDialog
+                    info={info}
                     currentIconUrl={node.iconUrl}
                     onIconChange={(value) => {
                       editNode<PageMetadataNode>({
@@ -102,7 +107,7 @@ const Node = ({
                       });
                     }}
                     trigger={
-                      <Button variant={"outline"} size={"sm"}>
+                      <Button variant={"outline"} size={"xs"}>
                         <Upload className="h-4 w-4 mr-1" />
                         {node.iconUrl ? "Change Icon" : "Upload Icon"}
                       </Button>
@@ -246,6 +251,7 @@ const Node = ({
             />
             <div className="flex gap-8">
               <ImageUploadComponent
+                info={info}
                 imageUrl={node.imageUrl || null}
                 onChange={(imageUrl) => {
                   editNode<HeroNode>({
@@ -254,8 +260,8 @@ const Node = ({
                   });
                 }}
               />
-              <div className="flex flex-col">
-                <div className="flex items-center min-w-[30%] gap-2">
+              <div className="flex min-w-[30%] flex-col">
+                <div className="flex items-center  gap-2">
                   <Checkbox
                     id="isImageBackgroud"
                     checked={node.isImageBackgroud || false}
@@ -399,6 +405,7 @@ const Node = ({
         return (
           <>
             <ImagesUploadComponent
+              info={info}
               imageUrls={node.imageUrls}
               onChange={(imageUrls) =>
                 editNode<CertificatesNode>({ ...node, imageUrls })
@@ -409,8 +416,9 @@ const Node = ({
       case NodeType.SectionVideoGallery:
         return (
           <>
-            <ImagesUploadComponent
-              imageUrls={node.videos || []}
+            <VideosUploadComponent
+              info={info}
+              videoUrls={node.videos || []}
               onChange={(videos) =>
                 editNode<VideoGalleryNode>({ ...node, videos })
               }
@@ -501,6 +509,7 @@ const Node = ({
         return (
           <>
             <ImagesUploadComponent
+              info={info}
               imageUrls={node.images || []}
               onChange={(images) =>
                 editNode<ImageGalleryNode>({ ...node, images })
@@ -657,7 +666,7 @@ const Node = ({
           onClick={() => toggleNode()}
           className={cn(
             "hover:text-primary h-full text-[17px] cursor-pointer transition-all duration-200",
-            isActive && "text-primary font-semibold"
+            isActive && "text-sky-800 font-semibold"
           )}
         >
           {nodeInfo.title}
