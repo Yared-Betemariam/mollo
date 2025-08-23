@@ -1,20 +1,15 @@
 "use client";
 
+import DialogWrapper from "@/components/custom/dialog-wrapper";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { getInfoSummary, isUploadValid } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { Info } from "@/types";
-import { Check, ImageIcon, Move, RotateCcw, Upload } from "lucide-react";
+import { Check, ImageIcon, RotateCcw, Upload } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 
 interface IconUploadDialogProps {
@@ -98,7 +93,7 @@ function IconUploadDialog({
       }
       e.target.value = "";
     },
-    []
+    [info]
   );
 
   // Handle image load to set initial crop area
@@ -301,8 +296,8 @@ function IconUploadDialog({
         const scaleY = imageSize.height / (imageRef.current?.offsetHeight || 1);
 
         const newPanOffset = {
-          x: panOffset.x - deltaX * scaleX,
-          y: panOffset.y - deltaY * scaleY,
+          x: panOffset.x + deltaX * scaleX,
+          y: panOffset.y + deltaY * scaleY,
         };
 
         // Constrain pan offset to keep crop area within image bounds
@@ -420,252 +415,213 @@ function IconUploadDialog({
 
   return (
     <>
-      <Dialog
+      {trigger || (
+        <Button variant="outline" size="sm">
+          <Upload className="h-4 w-4 mr-2" />
+          Upload Icon
+        </Button>
+      )}
+
+      <DialogWrapper
         open={isOpen}
-        onOpenChange={(open) => {
+        onOpen={(open) => {
           setIsOpen(open);
           if (!open) resetDialog();
         }}
+        title="Upload Icon"
       >
-        <DialogTrigger asChild>
-          {trigger || (
-            <Button variant="outline" size="sm">
-              <Upload className="h-4 w-4 mr-2" />
-              Upload Icon
-            </Button>
-          )}
-        </DialogTrigger>
+        <div className="space-y-4">
+          {step === "select" && (
+            <div className="space-y-4 px-6 pb-6">
+              {/* File Selection */}
+              <div
+                className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors bg-zinc-50"
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
 
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Upload Icon</DialogTitle>
-          </DialogHeader>
+                <div className="flex flex-col items-center space-y-3">
+                  <ImageIcon className="size-6 opacity-75 text-muted-foreground" />
 
-          <div className="space-y-4">
-            {step === "select" && (
-              <>
-                {/* File Selection */}
-                <div
-                  className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors bg-zinc-50"
-                  onDragOver={handleDragOver}
-                  onDrop={handleDrop}
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-
-                  <div className="flex flex-col items-center space-y-3">
-                    <ImageIcon className="size-6 opacity-75 text-muted-foreground" />
-
-                    <div>
-                      <h3 className="text-lg font-medium">Drop icon here</h3>
-                      {info && (
-                        <p className="opacity-75 text-sm">
-                          {getInfoSummary(info, "image")}
-                        </p>
-                      )}
-                    </div>
-
-                    <Button
-                      disabled={!info}
-                      onClick={handleFileSelect}
-                      variant="outline"
-                      size="xs"
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Choose File
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Current Icon Preview */}
-                {currentIconUrl && (
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Current icon:
-                    </p>
-                    <div className="inline-block p-2 border rounded-lg">
-                      <img
-                        src={currentIconUrl || "/placeholder.svg"}
-                        alt="Current icon"
-                        className="w-16 h-16 object-cover rounded"
-                      />
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            {step === "crop" && previewUrl && (
-              <>
-                {/* Image Cropper and Positioner */}
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <h3 className="font-medium mb-2">
-                      Crop and position your icon
+                  <div>
+                    <h3 className="text-lg font-medium">
+                      Drag & Drop your icon here
                     </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Adjust the crop size, then drag to position the focus area
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Original image with crop overlay */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">
-                        Adjust crop and position
-                      </Label>
-                      <div className="relative inline-block w-full">
-                        <img
-                          ref={imageRef}
-                          src={previewUrl || "/placeholder.svg"}
-                          alt="Original"
-                          className="w-full max-h-40 object-contain cursor-move select-none"
-                          onLoad={handleImageLoad}
-                          onMouseDown={handleMouseDown}
-                          onMouseMove={handleMouseMove}
-                          onMouseUp={handleMouseUp}
-                          onMouseLeave={handleMouseUp}
-                          style={{
-                            display: imageSize.width > 0 ? "block" : "none",
-                          }}
-                          draggable={false}
-                        />
-
-                        {/* Crop overlay with pan offset */}
-                        {imageSize.width > 0 && imageRef.current && (
-                          <div
-                            className="absolute border-2 border-primary bg-primary/20 pointer-events-none"
-                            style={{
-                              left: `${
-                                ((cropArea.x + panOffset.x) / imageSize.width) *
-                                imageRef.current.offsetWidth
-                              }px`,
-                              top: `${
-                                ((cropArea.y + panOffset.y) /
-                                  imageSize.height) *
-                                imageRef.current.offsetHeight
-                              }px`,
-                              width: `${
-                                (cropArea.width / imageSize.width) *
-                                imageRef.current.offsetWidth
-                              }px`,
-                              height: `${
-                                (cropArea.height / imageSize.height) *
-                                imageRef.current.offsetHeight
-                              }px`,
-                            }}
-                          />
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        <Move className="h-3 w-3 inline mr-1" />
-                        Drag to reposition
+                    {info && (
+                      <p className="opacity-75 text-sm">
+                        {getInfoSummary(info, "image")}
                       </p>
-                    </div>
-
-                    {/* Preview */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">
-                        Icon preview
-                      </Label>
-                      <div className="border rounded-lg p-4 bg-muted/50 flex items-center justify-center">
-                        <canvas
-                          ref={previewCanvasRef}
-                          className="w-20 h-20 border rounded"
-                          style={{ imageRendering: "auto" }}
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground text-center">
-                        Final 100×100px result
-                      </p>
-                    </div>
+                    )}
                   </div>
 
-                  {/* Crop Size Control */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Crop size</Label>
-                    <Slider
-                      value={[cropArea.width]}
-                      onValueChange={([width]) => {
-                        const maxSize = Math.min(
-                          imageSize.width,
-                          imageSize.height
-                        );
-                        const newWidth = Math.min(width, maxSize);
-                        const newHeight = newWidth; // Keep square
-                        setCropArea((prev) => ({
-                          ...prev,
-                          width: newWidth,
-                          height: newHeight,
-                          x: Math.min(prev.x, imageSize.width - newWidth),
-                          y: Math.min(prev.y, imageSize.height - newHeight),
-                        }));
-                        // Reset pan when crop size changes
-                        setPanOffset({ x: 0, y: 0 });
-                      }}
-                      max={Math.min(imageSize.width, imageSize.height)}
-                      min={Math.min(
-                        50,
-                        Math.min(imageSize.width, imageSize.height)
-                      )}
-                      step={1}
-                      className="w-full"
-                    />
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex justify-between">
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setStep("select")}
-                      >
-                        Back
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={resetPosition}
-                      >
-                        <RotateCcw className="h-4 w-4 mr-1" />
-                        Reset
-                      </Button>
-                    </div>
-                    <Button onClick={handleUpload}>
-                      <Check className="h-4 w-4 mr-2" />
-                      Upload Icon
-                    </Button>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {step === "uploading" && (
-              <div className="text-center space-y-4">
-                <div className="p-4 bg-muted rounded-full w-fit mx-auto">
-                  <Upload className="h-8 w-8 text-muted-foreground animate-pulse" />
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="font-medium">Optimizing and uploading...</h3>
-                  <Progress value={uploadProgress} className="w-full" />
-                  <p className="text-sm text-muted-foreground">
-                    {uploadProgress}% complete
-                  </p>
+                  <Button
+                    disabled={!info}
+                    onClick={handleFileSelect}
+                    variant="outline"
+                    size="xs"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Choose File
+                  </Button>
                 </div>
               </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Hidden canvas for image processing */}
+              {/* Current Icon Preview */}
+              {currentIconUrl && (
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Current icon:
+                  </p>
+                  <div className="inline-block p-2 border rounded-lg">
+                    <img
+                      src={currentIconUrl || "/placeholder.svg"}
+                      alt="Current icon"
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === "crop" && previewUrl && (
+            <>
+              {/* Image Cropper and Positioner */}
+              <div className="space-y-4 px-6">
+                <div className="flex flex-col relative gap-4">
+                  {/* Original image with crop overlay */}
+                  <div className="space-y-2 mx-auto">
+                    <div className="relative w-fit inline-block">
+                      <img
+                        ref={imageRef}
+                        src={previewUrl || "/placeholder.svg"}
+                        alt="Original"
+                        className="w-full max-h-40 object-contain cursor-move select-none"
+                        onLoad={handleImageLoad}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                        style={{
+                          display: imageSize.width > 0 ? "block" : "none",
+                        }}
+                        draggable={false}
+                      />
+
+                      {/* Crop overlay with pan offset */}
+                      {imageSize.width > 0 && imageRef.current && (
+                        <div
+                          className="absolute border-2 border-primary bg-primary/20 aspect-square pointer-events-none"
+                          style={{
+                            left: `${
+                              ((cropArea.x + panOffset.x) / imageSize.width) *
+                              imageRef.current.offsetWidth
+                            }px`,
+                            top: `${
+                              ((cropArea.y + panOffset.y) / imageSize.height) *
+                              imageRef.current.offsetHeight
+                            }px`,
+                            width: `${
+                              (cropArea.width / imageSize.width) *
+                              imageRef.current.offsetWidth
+                            }px`,
+                            height: `${
+                              (cropArea.height / imageSize.height) *
+                              imageRef.current.offsetHeight
+                            }px`,
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Preview */}
+
+                  <canvas
+                    ref={previewCanvasRef}
+                    className="size-14 border rounded absolute bottom-0"
+                    style={{ imageRendering: "auto" }}
+                  />
+                </div>
+
+                {/* Crop Size Control */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Crop size</Label>
+                  <Slider
+                    value={[cropArea.width]}
+                    onValueChange={([width]) => {
+                      const maxSize = Math.min(
+                        imageSize.width,
+                        imageSize.height
+                      );
+                      const newWidth = Math.min(width, maxSize);
+                      const newHeight = newWidth; // Keep square
+                      setCropArea((prev) => ({
+                        ...prev,
+                        width: newWidth,
+                        height: newHeight,
+                        x: Math.min(prev.x, imageSize.width - newWidth),
+                        y: Math.min(prev.y, imageSize.height - newHeight),
+                      }));
+                      // Reset pan when crop size changes
+                      setPanOffset({ x: 0, y: 0 });
+                    }}
+                    max={Math.min(imageSize.width, imageSize.height)}
+                    min={Math.min(
+                      50,
+                      Math.min(imageSize.width, imageSize.height)
+                    )}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+
+              <DialogFooter>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setStep("select")}
+                  >
+                    Back
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={resetPosition}>
+                    <RotateCcw className="h-4 w-4 mr-1" />
+                  </Button>
+                </div>
+                <Button onClick={handleUpload}>
+                  <Check className="h-4 w-4 mr-2" />
+                  Upload Icon
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+
+          {step === "uploading" && (
+            <div className="text-center space-y-4 px-6 pb-6">
+              <div className="p-4 bg-muted rounded-full w-fit mx-auto">
+                <Upload className="h-8 w-8 opacity-60 animate-pulse" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="font-medium">Optimizing and uploading...</h3>
+                <Progress value={uploadProgress} className="w-full" />
+                <p className="text-sm text-muted-foreground">
+                  {uploadProgress}% complete
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </DialogWrapper>
       <canvas ref={canvasRef} className="hidden" />
     </>
   );

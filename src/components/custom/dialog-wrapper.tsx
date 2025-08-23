@@ -15,6 +15,7 @@ interface DialogWrapperProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
+  containerClassName?: string;
 }
 
 const DialogWrapper: React.FC<DialogWrapperProps> = ({
@@ -24,6 +25,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
   description,
   className,
   children,
+  containerClassName,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpen}>
@@ -35,7 +37,11 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         {children && (
-          <div className="overflow-auto w-full flex-1">{children}</div>
+          <div
+            className={cn("overflow-auto w-full flex-1", containerClassName)}
+          >
+            {children}
+          </div>
         )}
       </DialogContent>
     </Dialog>

@@ -30,7 +30,8 @@ const AddNode = ({ addNode }: Props) => {
       title: "Hero Section",
       node: {
         type: NodeType.SectionHero,
-        title: "I'm John, Professional Web Developer.",
+        subtitle: "I'm John",
+        title: "Professional Web Developer",
         description:
           "I develop professional webdeveloper. I make full landing pages, websites and web apps.",
       },

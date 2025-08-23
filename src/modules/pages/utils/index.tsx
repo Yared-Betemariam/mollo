@@ -119,7 +119,7 @@ export function toReact(nodes: PageNode[]): React.ReactNode {
           ),
         } as CSSProperties
       }
-      className={cn("flex flex-col scroll-m-20")}
+      className={cn("flex flex-col")}
     >
       {nodes.map((node) => {
         switch (node.type) {

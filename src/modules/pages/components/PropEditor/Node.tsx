@@ -229,6 +229,16 @@ const Node = ({
         return (
           <>
             <ValueChanger
+              label="Subtitle"
+              onChange={(value) => {
+                editNode<HeroNode>({
+                  ...node,
+                  subtitle: value,
+                });
+              }}
+              value={node.subtitle}
+            />
+            <ValueChanger
               label="Title"
               onChange={(value) => {
                 editNode<HeroNode>({

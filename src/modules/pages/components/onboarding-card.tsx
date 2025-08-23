@@ -39,6 +39,7 @@ export default function OnboardingCard() {
       base_template: "",
     },
   });
+
   const watchedUsername = form.watch("username");
   const [debouncedUsername] = useDebounce(watchedUsername, 2000);
 
@@ -51,6 +52,16 @@ export default function OnboardingCard() {
     );
 
   const handleSubmit = (data: OnboardingFormData) => {
+    if (isCheckingUsername) {
+      toast.error("Please wait while we check the username availability.");
+      return;
+    }
+
+    if (usernameStatus?.taken) {
+      toast.error("This username is already taken. Please choose another.");
+      return;
+    }
+
     mutate(data);
   };
 

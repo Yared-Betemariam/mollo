@@ -115,7 +115,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 scroll-smooth;
+    @apply border-border outline-ring/50 scroll-smooth scroll-m-20;
   }
 
   body {
@@ -129,6 +129,10 @@
     @apply max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8;
   }
 
+  .page-wrapper {
+    @apply max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
   .px {
     @apply px-4 sm:px-6;
   }
@@ -138,15 +142,18 @@
   }
 
   .h2 {
-    @apply text-4xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
+    @apply text-6xl tracking-[-0.075em] leading-tight font-medium text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
+  }
+  .about {
+    @apply text-5xl tracking-[-0.075em] leading-tight font-medium text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
   }
 
   .h3 {
-    @apply text-3xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
+    @apply text-4xl tracking-[-0.075em] leading-tight font-medium text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
   }
 
   .h4 {
-    @apply text-2xl tracking-[-0.075em] leading-tight font-bold text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
+    @apply text-3xl tracking-[-0.075em] leading-tight font-medium text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-gray-500;
   }
 
   .h5 {
@@ -154,7 +161,7 @@
   }
 
   .big-body {
-    @apply text-xl font-medium opacity-60;
+    @apply text-2xl tracking-tight opacity-60;
   }
 
   .big-text {
@@ -169,8 +176,12 @@
     @apply text-xl text-zinc-400/70 leading-[1.6]!;
   }
 
+  .page-subtitle {
+    @apply uppercase opacity-80 text-xl tracking-widest;
+  }
+
   .page-h1 {
-    @apply text-5xl leading-[1] font-bold tracking-[-0.0625em] bg-clip-text text-transparent from-zinc-950 to-gray-500 bg-gradient-to-b;
+    @apply text-5xl leading-[1] font-bold tracking-[-0.0625em] bg-clip-text text-transparent  bg-gradient-to-b;
   }
 
   .page-h2 {
@@ -189,6 +200,18 @@
     @apply active:scale-105;
   }
 
+  .mask-scroller {
+    mask-image: linear-gradient(
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
   .radial-mask {
     mask-image: radial-gradient(
       circle,
@@ -211,7 +234,7 @@
   .outbound-radiant-mask {
     mask-image: radial-gradient(
       circle,
-      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 10%,
       rgba(0, 0, 0, 1) 100%
     );
     mask-repeat: no-repeat;
@@ -220,7 +243,7 @@
     /* For WebKit browsers (Safari, Chrome) */
     -webkit-mask-image: radial-gradient(
       circle,
-      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 10%,
       rgba(0, 0, 0, 1) 100%
     );
     -webkit-mask-repeat: no-repeat;
@@ -292,5 +315,32 @@
   h5,
   h6 {
     font-size: 1rem;
+  }
+}
+
+@layer utilities {
+  @keyframes scroll-up {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  .animate-scroll-slow {
+    animation: scroll-up 20s linear infinite;
+  }
+
+  .animate-scroll-normal {
+    animation: scroll-up 15s linear infinite;
+  }
+
+  .animate-scroll-fast {
+    animation: scroll-up 10s linear infinite;
+  }
+
+  .animate-reverse {
+    animation-direction: reverse;
   }
 }

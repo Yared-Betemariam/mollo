@@ -5,10 +5,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CreditCard, LogOut, User } from "lucide-react";
+import { CreditCard, LogOut, Settings } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -53,20 +52,24 @@ const UserButton = () => {
         align="start"
         className="min-w-[14rem] mx-2 px-0 flex flex-col"
       >
-        <div className="px-3 tracking-tight flex flex-col mt-1 mb-2">
-          <div className="flex items-center text-sm opacity-60 -mb-0.5">
-            <User className="size-4 mr-1 inline" /> <span>Email</span>
-          </div>
-          <p className="font-medium">{user.email}</p>
+        <div className="px-3 border-b tracking-tight flex flex-col mb-1 py-2">
+          <span className="text-sm opacity-60 -mb-0.5">Email</span>
+          <p className="text-base tracking-tight">{user.email}</p>
         </div>
+        <Link href={"/settings"}>
+          <DropdownMenuItem className="h-8 rounded-none px-4">
+            <Settings className="mr-1 size-3.5" />
+            <span>Settings</span>
+          </DropdownMenuItem>
+        </Link>
         <Link href={"/billing"}>
           <DropdownMenuItem className="h-8 rounded-none px-4">
             <CreditCard className="mr-1 size-3.5" />
             <span>Billing</span>
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuSeparator className="opacity-50" />
 
+        <span className="border-b my-1" />
         <DropdownMenuItem
           disabled={signingOut}
           onClick={() => handleLogout()}

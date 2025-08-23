@@ -188,7 +188,7 @@ export function HeaderSection({
             isScrolled && "border-b bg-white"
           )}
         >
-          <section className="wrapper h-full  flex items-center">
+          <section className="page-wrapper h-full  flex items-center">
             {node.showIcon && (
               <img
                 width={80}
@@ -298,9 +298,12 @@ export function HeroSection({ node }: { node: HeroNode }) {
       return (
         <section id={node.type} className={`hero flex ${node.template}`}>
           {node.imageUrl && !node.isImageBackgroud ? (
-            <div className="wrapper flex items-center gap-6 pb-24 pt-44">
-              <div className="flex max-w-[60%] flex-col gap-6">
-                <h1 className="page-h1">{node.title}</h1>
+            <div className="page-wrapper flex items-center gap-6 pb-24 pt-44">
+              <div className="flex max-w-[55%] flex-col gap-6">
+                <p className="page-subtitle">{node.subtitle}</p>
+                <h1 className="page-h1 from-zinc-950 to-[var(--primary-darker)]">
+                  {node.title}
+                </h1>
                 <p className="max-w-[56ch]">{node.description}</p>
               </div>
               <img
@@ -308,7 +311,7 @@ export function HeroSection({ node }: { node: HeroNode }) {
                 height={400}
                 alt="hero-img"
                 src={node.imageUrl}
-                className="max-h-64 object-cover"
+                className="max-h-64 mx-auto w-auto object-cover"
               />
             </div>
           ) : (
@@ -323,10 +326,13 @@ export function HeroSection({ node }: { node: HeroNode }) {
                     }
                   : {}),
               }}
-              className="wrapper flex flex-col items-center justify-center gap-6 pb-32 pt-56"
+              className="page-wrapper flex flex-col items-center justify-center gap-6 pb-32 pt-56"
             >
               <div className="flex flex-col items-center justify-center max-w-xl gap-8 text-center">
-                <h1 className="page-h1">{node.title}</h1>
+                <p className="page-subtitle">{node.subtitle}</p>
+                <h1 className="page-h1 from-zinc-950 to-[var(--primary-darker)]">
+                  {node.title}
+                </h1>
                 <p className="text">{node.description}</p>
               </div>
             </div>
@@ -347,7 +353,7 @@ export function AboutSection({ node }: { node: AboutNode }) {
           }}
           className={`about ${node.template} py-16  border-y`}
         >
-          <div className="wrapper flex flex-col gap-6">
+          <div className="page-wrapper flex flex-col gap-6">
             <h2 className="h3">About me</h2>
             <p className="big-text">{node.description}</p>
           </div>
@@ -361,7 +367,7 @@ export function EducationSection({ node }: { node: EducationNode }) {
     default:
       return (
         <section id={node.type} className={`education ${node.template} py-16`}>
-          <div className="wrapper flex flex-col gap-4">
+          <div className="page-wrapper flex flex-col gap-4">
             <h2 className="page-h2">Education</h2>
             {node.description && <p className="text">{node.description}</p>}
             <ul className="timeline px-4 mt-10">
@@ -400,7 +406,7 @@ export function CertificatesSection({ node }: { node: CertificatesNode }) {
       return (
         <section
           id={node.type}
-          className={`wrapper certificates ${node.template} py-16`}
+          className={`page-wrapper certificates ${node.template} py-16`}
         >
           <h2 className="page-h2">Certificates</h2>
           <div className="mx-auto">
@@ -449,7 +455,7 @@ export function SkillsSection({ node }: { node: SkillsNode }) {
     default:
       return (
         <section id={node.type} className={`skills ${node.template} py-24`}>
-          <div className="wrapper flex flex-col gap-6">
+          <div className="page-wrapper flex flex-col gap-6">
             <h2 className="page-h2">Skills</h2>
             {node.description && <p className="text">{node.description}</p>}
             <div className="grid grid-cols-1 sm:gird-cols-2 md:grid-cols-4 gap-8 mt-6">
@@ -479,7 +485,7 @@ export function ProjectsSection({ node }: { node: ProjectsNode }) {
             {node.projects.map((proj, i: number) => (
               <div
                 key={i}
-                className="space-y-4 wrapper py-20 flex flex-col gap-4"
+                className="space-y-4 page-wrapper py-20 flex flex-col gap-4"
               >
                 <h4 className="page-h2">{proj.name}</h4>
                 <p className="text">{proj.description}</p>
@@ -529,7 +535,7 @@ export function ImageGallerySection({ node }: { node: ImageGalleryNode }) {
           id={node.type}
           className={`image-gallery flex flex-col ${node.template}`}
         >
-          <div className="wrapper py-16 flex flex-col">
+          <div className="page-wrapper py-16 flex flex-col">
             <MasonryGallery urls={node.images || []} />
           </div>
 
@@ -538,7 +544,7 @@ export function ImageGallerySection({ node }: { node: ImageGalleryNode }) {
               node.groups.map((group) => (
                 <div
                   key={group.id}
-                  className="flex wrapper py-14 flex-col gap-8"
+                  className="flex page-wrapper py-14 flex-col gap-8"
                 >
                   <h3 className="page-h3">{group.title}</h3>
                   <MasonryGallery urls={group.imageUrls || []} />
@@ -558,7 +564,7 @@ export function TestimonialsSection({ node }: { node: TestimonialsNode }) {
           id={node.type}
           className={`testimonials ${node.template} py-16`}
         >
-          <div className="wrapper flex flex-col gap-6">
+          <div className="page-wrapper flex flex-col gap-6">
             <h2 className="page-h2">Testimonials</h2>
             <div className="flex flex-wrap gap-12">
               {node.testimonials.map((t, i: number) => {
@@ -642,7 +648,7 @@ export function ContactSection({ node }: { node: ContactNode }) {
           }}
           className={`${node.template} border-t-2 py-24 text-white`}
         >
-          <div className="wrapper items-center justify-center flex flex-col gap-6">
+          <div className="page-wrapper items-center justify-center flex flex-col gap-6">
             <h2 className="page-h2 from-white to-gray-500">Contacts </h2>
             <p className="text-light">
               Let&apos;s know if you have any questions

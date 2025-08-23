@@ -47,7 +47,7 @@ const Header = () => {
           </div>
 
           <Link href="/signin">
-            <Button size={"lg"} className="text-base!">
+            <Button size={"lg"} className="rounded-full">
               Signin
             </Button>
           </Link>

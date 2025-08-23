@@ -37,6 +37,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import Hint from "@/components/custom/hint";
 import { pricing_plans } from "@/data";
 import { Limits } from "@/types";
+import FormWarning from "@/components/custom/FormWarning";
 
 type Props = {
   children: React.ReactNode;
@@ -163,7 +164,7 @@ const ResizableWrapper = ({ children }: Props) => {
           <Play className="size-5" />
           <span>Preview</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex opacity-0 group-hover/pcp:opacity-100 duration-200 transition-all items-center gap-1">
           <Button
             variant="ghost"
             size="sm"
@@ -186,7 +187,12 @@ const ResizableWrapper = ({ children }: Props) => {
             <ZoomIn className="h-3.5 w-3.5" />
           </Button>
         </div>
-        <div className={cn("flex items-center gap-1", isMobile && "pr-9")}>
+        <div
+          className={cn(
+            "flex opacity-0 group-hover/pcp:opacity-100 duration-200 transition-all items-center gap-1",
+            isMobile && "pr-9"
+          )}
+        >
           <Button
             variant={deviceView === "mobile" ? "default" : "ghost"}
             size="sm"
@@ -285,6 +291,7 @@ const ResizableWrapper = ({ children }: Props) => {
               </Hint>
             )}
             <div className="mr-auto" />
+
             {PublishButton}
 
             <UserButton />
@@ -301,6 +308,11 @@ const ResizableWrapper = ({ children }: Props) => {
               <Share /> Share
             </Button>
             {SaveButton}
+            {!noChanges && (
+              <Hint desc="Save before you do anything!">
+                <FormWarning message="Unsaved changes" />
+              </Hint>
+            )}
             <span className="mr-auto" />
             {isMobile && (
               <>
@@ -334,7 +346,7 @@ const ResizableWrapper = ({ children }: Props) => {
           <ResizableHandle withHandle />
 
           <ResizablePanel
-            className="relative flex flex-col justify-between bg-zinc-100"
+            className="relative group/pcp flex flex-col justify-between bg-zinc-100"
             minSize={35}
             defaultSize={50}
           >

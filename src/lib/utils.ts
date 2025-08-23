@@ -3,7 +3,7 @@ import { Info } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import crypto from "crypto";
 import { format, parseISO } from "date-fns";
-import { Geist, Inter } from "next/font/google";
+import { Geist, Hanken_Grotesk, Schibsted_Grotesk } from "next/font/google";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
@@ -24,9 +24,9 @@ export function getDateStringByIso(iso: string) {
   return format(date, "MMM yyyy");
 }
 
-export const fontInter = Inter({
+export const fontTheme = Hanken_Grotesk({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-theme",
 });
 
 export const fontGeist = Geist({
@@ -201,7 +201,9 @@ export function isUploadValid(
     files.some((file) => file.size > info.limits.maxImageSize * 1024 * 1024)
   ) {
     toast.error(
-      `One or more images exceed the maximum size of ${info.limits.maxImageSize} MB.`
+      `Image${fileCount > 1 ? "s" : ""} exceed the maximum size of ${
+        info.limits.maxImageSize
+      } MB.`
     );
     return false;
   }
@@ -221,7 +223,9 @@ export function isUploadValid(
     files.some((file) => file.size > info.limits.maxVideoSize * 1024 * 1024)
   ) {
     toast.error(
-      `One or more videos exceed the maximum size of ${info.limits.maxVideoSize} MB.`
+      `Video${fileCount > 1 ? "s" : ""} exceed the maximum size of ${
+        info.limits.maxVideoSize
+      } MB.`
     );
     return false;
   }

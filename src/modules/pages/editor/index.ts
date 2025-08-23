@@ -48,6 +48,7 @@ export type HeaderNode = z.infer<typeof HeaderNodeSchema>;
 
 export const HeroNodeSchema = BaseNodeSchema.extend({
   type: z.literal(NodeType.SectionHero),
+  subtitle: z.string(),
   title: z.string(),
   description: z.string(),
   imageUrl: z.string().optional(),

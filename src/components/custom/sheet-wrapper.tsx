@@ -34,7 +34,7 @@ const SheetWrapper: React.FC<SheetWrapperProps> = ({
       <SheetContent
         side={isMobile ? "bottom" : side}
         className={cn(
-          "space-y-0 gap-4",
+          "space-y-0 gap-4 group/pcp",
           isMobile && "max-h-[calc(100vh-2rem)]",
           previewMode && "bg-zinc-100 srounded-t-lg h-full flex flex-col"
         )}
@@ -46,7 +46,7 @@ const SheetWrapper: React.FC<SheetWrapperProps> = ({
         <div
           className={cn(
             previewMode
-              ? "flex flex-col justify-between h-full flex-1"
+              ? "flex flex-col  justify-between h-full flex-1"
               : "px-8 pb-10 md:pb-12 overflow-auto"
           )}
         >
