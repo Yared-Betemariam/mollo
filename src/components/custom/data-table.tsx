@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, isPast } from "date-fns";
 import { LucideIcon, MoreVertical } from "lucide-react";
 import * as React from "react";
 import {
@@ -26,6 +26,7 @@ type ColumnItem = {
   key: string;
   isBold?: boolean;
   isDate?: boolean;
+  isPast?: boolean;
   width?: number;
   align?: "left" | "center" | "right";
   render?: (value: any, row: Record<string, any>) => React.ReactNode;
@@ -102,6 +103,18 @@ const DataTable = ({
                           (row[col.key] as Date) || new Date(),
                           "dd MMM yyy"
                         )
+                      ) : col.isPast ? (
+                        <>
+                          {format(
+                            (row[col.key] as Date) || new Date(),
+                            "dd MMM yyy"
+                          )}{" "}
+                          {isPast(row[col.key] as Date) && (
+                            <span className="text-destructive ml-2 px-2 py-1 rounded-md bg-red-700/5 text-sm">
+                              Expired
+                            </span>
+                          )}
+                        </>
                       ) : col.render ? (
                         col.render(row[col.key], row)
                       ) : (

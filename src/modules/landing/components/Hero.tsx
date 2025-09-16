@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { cn, fontTheme } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import template1 from "@/assets/images/app.png";
 import { InfiniteImageScroll } from "@/components/custom/infinite-image-scroll";
+import { fontTheme } from "@/lib/fonts";
 
 /* eslint-disable react/no-unescaped-entities */
 const Hero = () => {
@@ -23,13 +24,13 @@ const Hero = () => {
           <div className="flex text-center items-center flex-col gap-8 w-full">
             <h1
               className={cn(
-                "text-[2.5rem] sm:text-[3rem] md:text-[5rem] font-medium leading-[1.1] tracking-tighter !max-w-[18ch] bg-clip-text bg-gradient-to-tl from-zinc-950 to-gray-600 text-transparent",
+                "text-[3.5rem] sm:text-[4rem] md:text-[4.5rem] font-medium leading-[1.1] tracking-tighter !max-w-[18ch] bg-clip-text bg-gradient-to-tl from-zinc-950 to-gray-600 text-transparent",
                 fontTheme.className
               )}
             >
               Build portfolio websites in minutes
             </h1>
-            <p className="big-body max-w-[32ch]">
+            <p className="body max-w-[32ch]">
               Mollo lets you Build and Deploy Personalized Portfolio websites in
               short minutes
             </p>

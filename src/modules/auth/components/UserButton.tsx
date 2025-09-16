@@ -52,11 +52,20 @@ const UserButton = () => {
         align="start"
         className="min-w-[14rem] mx-2 px-0 flex flex-col"
       >
-        <div className="px-3 border-b tracking-tight flex flex-col mb-1 py-2">
-          <span className="text-sm opacity-60 -mb-0.5">Email</span>
-          <p className="text-base tracking-tight">{user.email}</p>
+        <div className="px-3 tracking-tight flex items-center gap-2  pt-2 pb-2">
+          <GoPerson className="rounded-full aspect-square bg-zinc-200 border border-zinc-500/50 p-0.5 text-zinc-600 size-5" />
+          <p className="text-base tracking-tight opacity-80 ">{user.email}</p>
         </div>
-        <Link href={"/settings"}>
+        <div className="px-3 pb-2 flex items-center justify-between border-b">
+          <span className="text-muted-foreground text-sm">Plan</span>
+          <Link
+            href={"/billing"}
+            className="border border-blue-800/20 bg-blue-50 text-sm font-medium px-3 h-7 flex items-center ml-auto rounded-full text-blue-800  drop-shadow-[2px_2px] drop-shadow-blue-800/25"
+          >
+            <span>Upgrade</span>
+          </Link>
+        </div>
+        <Link href={"/settings"} className="mt-1">
           <DropdownMenuItem className="h-8 rounded-none px-4">
             <Settings className="mr-1 size-3.5" />
             <span>Settings</span>
@@ -73,7 +82,7 @@ const UserButton = () => {
         <DropdownMenuItem
           disabled={signingOut}
           onClick={() => handleLogout()}
-          className="h-8 rounded-none px-4 text-destructive! hover:text-destructive!"
+          className="h-8 rounded-none px-4 text-destructive! hover:bg-red-800/5! hover:text-destructive!"
         >
           <LogOut className="mr-1 size-3.5 text-destructive! hover:text-destructive!" />
           <span>{signingOut ? "logging out..." : "Logout"}</span>

@@ -144,7 +144,7 @@ const UserModal = () => {
                 name="subscription_end_date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Subscription enddate</FormLabel>
                     <FormControl>
                       <Calendar28
                         date={field.value}

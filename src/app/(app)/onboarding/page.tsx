@@ -4,7 +4,7 @@ import OnboardingCard from "@/modules/pages/components/onboarding-card";
 
 const Page = () => {
   return (
-    <section className="flex flex-col px">
+    <section className="flex flex-col flex-1 px">
       <OnboardingCard />
     </section>
   );

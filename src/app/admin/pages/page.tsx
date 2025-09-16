@@ -1,16 +1,17 @@
 "use client";
 
 import DataTable from "@/components/custom/data-table";
-import { countMediaUrls } from "@/lib/utils";
+import { cn, countMediaUrls } from "@/lib/utils";
 import { usePages } from "../hooks";
+import { fontTheme } from "@/lib/fonts";
 
 const Page = () => {
-  const { pages, users, isPagesLoading } = usePages();
+  const { pages, users, isPagesLoading, updatePage } = usePages();
 
   return (
     <>
       <div className="flex flex-col border-b pt-2 pb-6 gap-1 px-5">
-        <h1 className="h3">Pages</h1>
+        <h1 className={cn("h3 py-2", fontTheme.className)}>Pages</h1>
         <p>
           Here is the list of all the websites pages created by mollo users.
         </p>
@@ -39,6 +40,18 @@ const Page = () => {
             "image"
           )} Images, ${countMediaUrls(page.definition.nodes, "video")} Videos`,
         }))}
+        actions={[
+          {
+            label: "Toggle Published",
+            onClick: (row) => {
+              updatePage({
+                id: row.id as number,
+                username: row.username as string,
+                published: !(row.published as boolean),
+              });
+            },
+          },
+        ]}
       />
     </>
   );

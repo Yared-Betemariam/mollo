@@ -13,9 +13,9 @@ export const userRouter = createTRPCRouter({
       .values({
         user_id: Number(opts.ctx.session.user.id),
         username: opts.input.username,
-        base_template: opts.input.base_template,
         definition: {
-          nodes: getTemplate(opts.input.base_template as TemplateName),
+          template: opts.input.template,
+          nodes: getTemplate(opts.input.template as TemplateName),
         },
       })
       .returning();

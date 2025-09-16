@@ -9,20 +9,10 @@ import {
 import { and, eq } from "drizzle-orm";
 import z from "zod";
 import { PageNodeSchema } from "../editor";
+import { redis } from "@/redis";
+import { RedisDefinitionData } from "@/types";
 
 export const pageRouter = createTRPCRouter({
-  // create: protectedProcedure.input(accountSchema).mutation(async (opts) => {
-  //   const [newAccount] = await db
-  //     .insert(accounts)
-  //     .values({ ...opts.input, user_id: Number(opts.ctx.session.user.id) })
-  //     .returning();
-
-  //   return {
-  //     success: true,
-  //     message: "Account successfully created!",
-  //     data: newAccount,
-  //   };
-  // }),
   user: protectedProcedure.query(async (opts) => {
     const user_page = await db
       .select()
@@ -44,45 +34,66 @@ export const pageRouter = createTRPCRouter({
     };
   }),
   data: baseProcedure.input(z.string()).query(async (opts) => {
-    const page_datas = await db
-      .select({ definition: pages.definition })
-      .from(pages)
-      .where(and(eq(pages.username, opts.input), eq(pages.published, true)));
+    const data = await redis.get<RedisDefinitionData>(
+      `definition:${opts.input}`
+    );
 
-    if (page_datas.length < 1 || !page_datas[0]) {
+    if (!data) {
+      const page_datas = await db
+        .select({ definition: pages.definition })
+        .from(pages)
+        .where(and(eq(pages.username, opts.input), eq(pages.published, true)));
+
+      if (page_datas.length < 1 || !page_datas[0]) {
+        return {
+          success: false,
+          message: "Page not found!",
+          data: null,
+        };
+      }
+
+      await redis.set(`definition:${opts.input}`, page_datas[0]);
+
       return {
-        success: false,
-        message: "Page not found!",
-        data: null,
+        success: true,
+        message: "Page successfully fetched!",
+        data: page_datas[0],
       };
     }
 
     return {
       success: true,
       message: "Page successfully fetched!",
-      data: page_datas[0],
+      data,
     };
   }),
   updateDefinition: protectedProcedure
     .input(
       z.object({
         id: z.number(),
+        template: z.string(),
+        username: z.string(),
         nodes: z.array(PageNodeSchema),
       })
     )
     .mutation(async (opts) => {
-      await db
-        .update(pages)
-        .set({
-          definition: {
-            nodes: opts.input.nodes,
-          },
-        })
-        .where(eq(pages.id, Number(opts.input.id)));
+      await Promise.all([
+        db
+          .update(pages)
+          .set({
+            definition: {
+              template: opts.input.template,
+              nodes: opts.input.nodes,
+            },
+          })
+          .where(eq(pages.id, Number(opts.input.id))),
+        redis.del(`definition:${opts.input.username}`),
+      ]);
 
       return {
         success: true,
         message: "Page successfully updated!",
+        data: opts.input.nodes,
       };
     }),
   update: protectedProcedure
@@ -92,18 +103,28 @@ export const pageRouter = createTRPCRouter({
       })
     )
     .mutation(async (opts) => {
-      const { username, published, base_template } = opts.input;
+      const { username, published, template, nodes } = opts.input;
 
       await db
         .update(pages)
         .set({
           username,
           published,
-          base_template,
+          ...(template && nodes
+            ? {
+                definition: {
+                  template,
+                  nodes,
+                },
+              }
+            : {}),
           published_date: published ? new Date() : null,
         })
-        .where(eq(pages.id, Number(opts.input.id)))
-        .returning();
+        .where(eq(pages.id, Number(opts.input.id)));
+
+      if (published === false) {
+        await redis.del(`definition:${opts.input.username}`);
+      }
 
       return {
         success: true,
@@ -127,29 +148,4 @@ export const pageRouter = createTRPCRouter({
         taken: isTaken.length > 0,
       };
     }),
-  // delete: protectedProcedure
-  //   .input(z.object({ id: z.number() }))
-  //   .mutation(async (opts) => {
-  //     await db.delete(accounts).where(eq(accounts.id, opts.input.id));
-
-  //     return {
-  //       success: true,
-  //       message: "Account successfully deleted!",
-  //     };
-  //   }),
-  // edit: protectedProcedure
-  //   .input(accountSchema.extend({ id: z.number() }))
-  //   .mutation(async (opts) => {
-  //     const [updatedAccount] = await db
-  //       .update(accounts)
-  //       .set({ ...opts.input })
-  //       .where(eq(accounts.id, opts.input.id))
-  //       .returning();
-
-  //     return {
-  //       success: true,
-  //       message: "Account successfully updated!",
-  //       data: updatedAccount,
-  //     };
-  //   }),
 });

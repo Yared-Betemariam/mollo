@@ -1,4 +1,5 @@
 import Logo from "@/components/Logo";
+import { fontTheme } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 
 const Heading = ({
@@ -19,7 +20,13 @@ const Heading = ({
       )}
     >
       <Logo size="lg" className="mb-4" />
-      <h2 className={cn("h2", error && "h3 text-destructive brightness-75")}>
+      <h2
+        className={cn(
+          "h2",
+          error && "h3 text-destructive brightness-75",
+          fontTheme.className
+        )}
+      >
         {label}
       </h2>
     </div>

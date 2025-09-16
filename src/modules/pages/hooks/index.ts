@@ -3,7 +3,10 @@ import { useNodesStore } from "../store";
 import { useEffect } from "react";
 
 export const usePage = () => {
-  const { data, isLoading } = trpc.pages.user.useQuery();
+  const { data, isLoading } = trpc.pages.user.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
   const {
     nodes,
     editNode,

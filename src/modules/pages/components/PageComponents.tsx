@@ -18,12 +18,6 @@ import {
 } from "../editor";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
@@ -35,45 +29,25 @@ import {
 } from "@/components/ui/sheet";
 import { cn, getDateStringByIso } from "@/lib/utils";
 import { getDate } from "date-fns";
-import { Expand, Phone, Star } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { FaFacebook, FaInstagram, FaTelegram } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaQuoteRight,
+  FaTelegram,
+} from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
-import { GoMail } from "react-icons/go";
 import PhotoAlbum, {
   Photo,
   RenderImageContext,
   RenderImageProps,
 } from "react-photo-album";
 import { getHeaderlinks, getImageDimensions } from "../utils";
+import { FullscreenMedia } from "@/components/custom/fullscreen-media";
 
 // utils components
-function FullscreenMedia({ src, isVideo }: { src: string; isVideo?: boolean }) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-2 right-2 bg-white/40"
-        >
-          <Expand />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="p-0 bg-black/90">
-        <DialogTitle className="sr-only">Image</DialogTitle>
-        {isVideo ? (
-          <video controls className="w-full h-auto">
-            <source src={src} />
-          </video>
-        ) : (
-          <img src={src} className="w-full h-auto" />
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 export type GalleryImage = {
   src: string;
@@ -130,17 +104,6 @@ export function MasonryGallery({ urls }: { urls: string[] }) {
         spacing={8}
         render={{ image: renderNextImage }}
       />
-      {/* <ColumnsPhotoAlbum
-        photos={photos}
-        // render={{ image: renderNextImage }}
-        // defaultContainerWidth={1200}
-        // sizes={{
-        //   size: "1168px",
-        //   sizes: [
-        //     { viewport: "(max-width: 1200px)", size: "calc(100vw - 32px)" },
-        //   ],
-        // }}
-      /> */}
     </div>
   );
 }
@@ -178,6 +141,17 @@ export function HeaderSection({
     [nodes]
   );
 
+  const contactButton = contactNode ? (
+    <Link href={contactNode?.type}>
+      <Button
+        size={"xl"}
+        className="bg-gradient-to-b h-12! from-[var(--primary-light)] to-[var(--primary-darker)] dark:text-white dark:brightness-110 rounded-full"
+      >
+        {"Contact"}
+      </Button>
+    </Link>
+  ) : null;
+
   switch (node.template) {
     default:
       return (
@@ -185,47 +159,42 @@ export function HeaderSection({
           id={node.type}
           className={cn(
             `fixed z-50 w-full h-20 top-0 inset-x-0 ${node.template}`,
-            isScrolled && "border-b bg-white"
+            isScrolled && "border-b bg-white dark:bg-black"
           )}
         >
           <section className="page-wrapper h-full  flex items-center">
-            {node.showIcon && (
-              <img
-                width={80}
-                height={80}
-                alt="logo"
-                className="w-10"
-                src={
-                  (nodes[0].type == NodeType.PageMetadata
-                    ? nodes[0].iconUrl
-                    : undefined) || "/logo.png"
-                }
-              />
-            )}
-            {node.iconText && <p>{node.iconText}</p>}
+            <div className="flex items-center gap-3">
+              {node.showIcon && (
+                <img
+                  width={80}
+                  height={80}
+                  alt="logo"
+                  className="w-10 rounded-md"
+                  src={
+                    (nodes[0].type == NodeType.PageMetadata
+                      ? nodes[0].iconUrl
+                      : undefined) || "/logo.png"
+                  }
+                />
+              )}
+              {node.iconText && (
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  {node.iconText}
+                </h2>
+              )}
+            </div>
             {node.showLinks && (
               <>
                 <nav className="hidden sm:flex ml-auto gap-4 items-center">
                   {links.map((item) => {
+                    if (item.title == "Contact") {
+                      return contactButton;
+                    }
                     return (
-                      <Link
-                        className={cn(item.title === "Contact" && "ml-3")}
-                        key={item.title}
-                        href={item.url}
-                      >
-                        {item.title === "Contact" ? (
-                          <Button
-                            style={{
-                              backgroundColor: "var(--primary-darker)",
-                            }}
-                          >
-                            {item.title}
-                          </Button>
-                        ) : (
-                          <span className="opacity-65 hover:opacity-100 duration-200 transition-all hover:text-primary">
-                            {item.title}
-                          </span>
-                        )}
+                      <Link key={item.title} href={item.url}>
+                        <span className="opacity-65 hover:opacity-100 duration-200 transition-all hover:text-primary">
+                          {item.title}
+                        </span>
                       </Link>
                     );
                   })}
@@ -272,19 +241,12 @@ export function HeaderSection({
                       ))}
                     </SheetContent>
                   </Sheet>
-                  {contactNode && (
-                    <Link href={contactNode.type}>
-                      <Button
-                        style={{
-                          backgroundColor: "var(--primary-darker)",
-                        }}
-                      >
-                        {"Contact"}
-                      </Button>
-                    </Link>
-                  )}
+                  {contactButton}
                 </div>
               </>
+            )}
+            {!node.showLinks && (
+              <div className="flex items-center ml-auto"> {contactButton}</div>
             )}
           </section>
         </header>
@@ -296,16 +258,43 @@ export function HeroSection({ node }: { node: HeroNode }) {
   switch (node.template) {
     default:
       return (
-        <section id={node.type} className={`hero flex ${node.template}`}>
-          {node.imageUrl && !node.isImageBackgroud ? (
-            <div className="page-wrapper flex items-center gap-6 pb-24 pt-44">
-              <div className="flex max-w-[55%] flex-col gap-6">
-                <p className="page-subtitle">{node.subtitle}</p>
-                <h1 className="page-h1 from-zinc-950 to-[var(--primary-darker)]">
-                  {node.title}
-                </h1>
-                <p className="max-w-[56ch]">{node.description}</p>
-              </div>
+        <section
+          style={{
+            ...(node.imageUrl && node.isImageBackgroud
+              ? {
+                  backgroundImage: `url(${node.imageUrl})`,
+                  backgroundOrigin: "cover",
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                  backgroundRepeat: "no-repeat",
+                }
+              : {}),
+          }}
+          id={node.type}
+          className={`hero flex ${node.template}`}
+        >
+          <div
+            className={cn(
+              "page-wrapper flex items-center gap-6 ",
+              node.imageUrl && !node.isImageBackgroud
+                ? " pb-24 pt-44"
+                : "pb-28 pt-48 justify-center"
+            )}
+          >
+            <div
+              className={cn(
+                "flex flex-col gap-10",
+                (!node.imageUrl || node.isImageBackgroud) &&
+                  "items-center justify-center max-w-xl text-center"
+              )}
+            >
+              <p className="page-subtitle">{node.subtitle}</p>
+              <h1 className="page-h1 font-[family-name:var(--theme-font)]">
+                {node.title}
+              </h1>
+              <p className="text-2xl">{node.description}</p>
+            </div>
+            {node.imageUrl && !node.isImageBackgroud && (
               <img
                 width={400}
                 height={400}
@@ -313,30 +302,8 @@ export function HeroSection({ node }: { node: HeroNode }) {
                 src={node.imageUrl}
                 className="max-h-64 mx-auto w-auto object-cover"
               />
-            </div>
-          ) : (
-            <div
-              style={{
-                ...(node.imageUrl && node.isImageBackgroud
-                  ? {
-                      backgroundImage: `url(${node.imageUrl})`,
-                      backgroundOrigin: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }
-                  : {}),
-              }}
-              className="page-wrapper flex flex-col items-center justify-center gap-6 pb-32 pt-56"
-            >
-              <div className="flex flex-col items-center justify-center max-w-xl gap-8 text-center">
-                <p className="page-subtitle">{node.subtitle}</p>
-                <h1 className="page-h1 from-zinc-950 to-[var(--primary-darker)]">
-                  {node.title}
-                </h1>
-                <p className="text">{node.description}</p>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </section>
       );
   }
@@ -348,14 +315,13 @@ export function AboutSection({ node }: { node: AboutNode }) {
       return (
         <section
           id={node.type}
-          style={{
-            backgroundColor: "var(--primary-dark-bg)",
-          }}
-          className={`about ${node.template} py-16  border-y`}
+          className={`bg-[var(--primary-darker)]/5 dark:bg-[var(--primary-light)]/5 brightness-75 dark:brightness-100 ${node.template} py-16`}
         >
           <div className="page-wrapper flex flex-col gap-6">
-            <h2 className="h3">About me</h2>
-            <p className="big-text">{node.description}</p>
+            <h2 className="page-h2 font-[family-name:var(--theme-font)]">
+              About me
+            </h2>
+            <p className="text-3xl opacity-75 indent-12">{node.description}</p>
           </div>
         </section>
       );
@@ -368,7 +334,9 @@ export function EducationSection({ node }: { node: EducationNode }) {
       return (
         <section id={node.type} className={`education ${node.template} py-16`}>
           <div className="page-wrapper flex flex-col gap-4">
-            <h2 className="page-h2">Education</h2>
+            <h2 className="page-h2 font-[family-name:var(--theme-font)]">
+              Education
+            </h2>
             {node.description && <p className="text">{node.description}</p>}
             <ul className="timeline px-4 mt-10">
               {node.timeline.map((item, i) => (
@@ -377,13 +345,13 @@ export function EducationSection({ node }: { node: EducationNode }) {
                   className={cn(
                     "relative flex group/expbox",
                     i !== node.timeline.length - 1 &&
-                      "border-l-[2px] border-gray-950/40 border-dashed"
+                      "border-l-[2px] border-gray-950/40 dark:border-gray-50/40 border-dashed"
                   )}
                 >
-                  <span className="w-[1.8rem] h-[1.8rem] absolute top-0 -left-[0.9rem] rounded-full bg-gray-200 flex">
-                    <span className="bg-primary brightness-75 group-hover/expbox:w-full group-hover/expbox:h-full duration-300 transition-all w-3 h-3 rounded-full mx-auto my-auto" />
+                  <span className="w-[1.8rem] h-[1.8rem] absolute top-0 -left-[0.9rem] rounded-full bg-zinc-200 dark:bg-zinc-800 flex">
+                    <span className="bg-primary brightness-90 dark:brightness-110 group-hover/expbox:w-full group-hover/expbox:h-full duration-300 transition-all w-3 h-3 rounded-full mx-auto my-auto" />
                   </span>
-                  <div className="mb-8 ml-8 text-base flex flex-col p-4 border border-border/10 rounded-lg drop-shadow bg-black/5">
+                  <div className="mb-10 ml-10 text-base flex flex-col px-4 border border-border/10 rounded-lg drop-shadow">
                     <span>
                       {getDateStringByIso(item.startDate)} –{" "}
                       {item.endDate ? getDate(item.endDate) : "Present"}
@@ -408,7 +376,9 @@ export function CertificatesSection({ node }: { node: CertificatesNode }) {
           id={node.type}
           className={`page-wrapper certificates ${node.template} py-16`}
         >
-          <h2 className="page-h2">Certificates</h2>
+          <h2 className="page-h2 font-[family-name:var(--theme-font)]">
+            Certificates
+          </h2>
           <div className="mx-auto">
             <ScrollArea className="bg-zinc-900/10 rounded-md border whitespace-nowrap mt-6">
               <div className="flex space-x-4 w-max p-4">
@@ -456,16 +426,20 @@ export function SkillsSection({ node }: { node: SkillsNode }) {
       return (
         <section id={node.type} className={`skills ${node.template} py-24`}>
           <div className="page-wrapper flex flex-col gap-6">
-            <h2 className="page-h2">Skills</h2>
+            <h2 className="page-h2 font-[family-name:var(--theme-font)]">
+              Skills
+            </h2>
             {node.description && <p className="text">{node.description}</p>}
-            <div className="grid grid-cols-1 sm:gird-cols-2 md:grid-cols-4 gap-8 mt-6">
+            <div className="grid grid-cols-1 sm:gird-cols-2 md:grid-cols-3 gap-8 mt-6">
               {node.skills.map((skill) => (
-                <div key={skill.name} className="flex flex-col gap-2">
-                  <h3 className="page-h3">{skill.name}</h3>
+                <div key={skill.name} className="flex flex-col gap-2 relative">
+                  <h3 className="page-h4 z-10 absolute px-2 left-4 top-1/2 -translate-y-1/2  from-white to-zinc-100">
+                    {skill.name}
+                  </h3>
                   <Progress
                     value={Number(skill.proficiency)}
                     max={100}
-                    className="w-full h-2 rounded-full"
+                    className="w-full h-12 rounded-xl brightness-75"
                   />
                 </div>
               ))}
@@ -487,7 +461,9 @@ export function ProjectsSection({ node }: { node: ProjectsNode }) {
                 key={i}
                 className="space-y-4 page-wrapper py-20 flex flex-col gap-4"
               >
-                <h4 className="page-h2">{proj.name}</h4>
+                <h4 className="page-h2 font-[family-name:var(--theme-font)]">
+                  {proj.name}
+                </h4>
                 <p className="text">{proj.description}</p>
                 <MasonryGallery urls={proj.imageUrls || []} />
               </div>
@@ -562,27 +538,26 @@ export function TestimonialsSection({ node }: { node: TestimonialsNode }) {
       return (
         <section
           id={node.type}
-          className={`testimonials ${node.template} py-16`}
+          className={`testimonials ${node.template} py-24`}
         >
-          <div className="page-wrapper flex flex-col gap-6">
-            <h2 className="page-h2">Testimonials</h2>
-            <div className="flex flex-wrap gap-12">
+          <div className="page-wrapper flex flex-col gap-12 items-center">
+            <h2 className="page-h2 font-[family-name:var(--theme-font)]">
+              Testimonials
+            </h2>
+            <div className="gap-6 grid grid-cols-2">
               {node.testimonials.map((t, i: number) => {
-                const fullStars = Math.floor(Number(t.rating));
-
                 return (
-                  <div key={i} className="py-6 min-w-64">
-                    <p className="big-text">
-                      <span className="font-black opacity-50">
-                        &apos;&apos;
-                      </span>{" "}
-                      {t.feedback}{" "}
-                      <span className="font-black opacity-50">
-                        &apos;&apos;
-                      </span>
+                  <div
+                    key={i}
+                    className="min-w-64 rounded-xl flex flex-col bg-[var(--primary-darker)]/5 border gap-4 max-w-80 p-8 h-fit"
+                  >
+                    <FaQuoteRight className="size-6 fill-current text-primary brightness-75" />
+
+                    <p className="text-2xl opacity-90 font-medium">
+                      {t.feedback}
                     </p>
 
-                    <div className="flex mt-6">
+                    <div className="flex mt-4">
                       {t.picture && (
                         <img
                           src={t.picture}
@@ -590,41 +565,11 @@ export function TestimonialsSection({ node }: { node: TestimonialsNode }) {
                           className="w-24 h-24 rounded-full mx-auto"
                         />
                       )}
-                      <div className="flex flex-col">
-                        <p className="page-h4">{t.name}</p>
+                      <div className="opacity-90 flex-col">
+                        <p className="text-xl">{t.name}</p>
                         {t.jobDescription && (
-                          <p className="text-lg -mt-1.5 tracking-tight opacity-70">
-                            {t.jobDescription}
-                          </p>
+                          <p className="opacity-75">{t.jobDescription}</p>
                         )}
-                        <div className="flex mt-1 gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`size-4 fill-current ${
-                                i < fullStars ? "text-primary" : "text-zinc-200"
-                              }`}
-                            />
-                            // <div
-                            //   key={i}
-                            //   className="relative flex h-8 w-8 items-center justify-center"
-                            // >
-                            //   <div
-                            //     className={`absolute inset-0 flex items-center justify-center ${
-                            //       i < fullStars ? "bg-primary" : "bg-zinc-200"
-                            //     }`}
-                            //   >
-                            //   </div>
-
-                            //   {hasHalfStar && i === fullStars && (
-                            //     <div className="absolute inset-0 flex items-center justify-center">
-                            //       <div className="absolute inset-y-0 left-0 h-full w-1/2 bg-orange-500" />
-                            //       <Star className="absolute h-6 w-6 text-white fill-current mx-auto" />
-                            //     </div>
-                            //   )}
-                            // </div>
-                          ))}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -646,35 +591,32 @@ export function ContactSection({ node }: { node: ContactNode }) {
           style={{
             backgroundColor: "var(--primary-dark)",
           }}
-          className={`${node.template} border-t-2 py-24 text-white`}
+          className={`${node.template} border-t-2 pb-20 text-white`}
         >
-          <div className="page-wrapper items-center justify-center flex flex-col gap-6">
-            <h2 className="page-h2 from-white to-gray-500">Contacts </h2>
-            <p className="text-light">
-              Let&apos;s know if you have any questions
-            </p>
-
+          <div className="page-wrapper items-center py-24 justify-center flex flex-col gap-6">
+            <h2
+              className={cn(
+                "page-h2 from-white to-gray-500 font-[family-name:var(--theme-font)]"
+              )}
+            >
+              Contacts{" "}
+            </h2>
             <div className="flex flex-col items-center gap-6">
-              <div
-                style={{
-                  color: "var(--primary-light)",
-                }}
-                className="flex flex-col md:flex-row items-center gap-6"
-              >
+              <div className="flex flex-col md:flex-row items-center gap-6">
                 {node.phoneNumber && (
-                  <div className="border border-border/25 gap-3 rounded-full px-4 pr-5 py-1 bg-primary/5 flex items-center">
-                    <Phone className="fill-current size-6" />
-                    <div className="flex flex-col -space-y-1">
+                  <div className="border border-border/20 gap-5 rounded-full px-8 py-4 drop-shadow-xl drop-shadow-black bg-black flex items-center">
+                    <Phone className="size-6 text-primary drop-shadow-lg drop-shadow-primary/75" />
+                    <div className="flex flex-col">
                       <span className="text-base opacity-60">tel +251</span>
                       <p className="text-lg">{node.phoneNumber}</p>
                     </div>
                   </div>
                 )}
                 {node.email && (
-                  <div className="border border-border/25 gap-3 rounded-full px-4 pr-5 py-1 bg-primary/5 flex items-center">
-                    <GoMail className="fill-current size-7" />
-                    <div className="flex flex-col -space-y-1">
-                      <span className="text-base opacity-60">Email</span>
+                  <div className="border border-border/20 gap-5 rounded-full px-8 py-4 drop-shadow-xl drop-shadow-black bg-black flex items-center">
+                    <Mail className="fill- size-6 text-primary drop-shadow-lg drop-shadow-primary/75" />
+                    <div className="flex flex-col">
+                      <span className="text-base opacity-60">email</span>
                       <p className="text-lg">{node.email}</p>
                     </div>
                   </div>
@@ -688,16 +630,16 @@ export function ContactSection({ node }: { node: ContactNode }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     key={s.url}
-                    className="hover:scale-120 transition-all duration-300"
+                    className="hover:scale-120 transition-all duration-300 opacity-50 hover:opacity-100"
                   >
                     {s.platform == "Facebook" && (
-                      <FaFacebook className="size-8" />
+                      <FaFacebook className="size-10" />
                     )}
                     {s.platform == "Telegram" && (
-                      <FaTelegram className="size-8" />
+                      <FaTelegram className="size-10" />
                     )}
                     {s.platform == "Instagram" && (
-                      <FaInstagram className="size-8" />
+                      <FaInstagram className="size-10" />
                     )}
                   </Link>
                 ))}
@@ -715,12 +657,9 @@ export function FooterSection({ node }: { node: FooterNode }) {
       return (
         <footer
           id={node.type}
-          className={`footer ${node.template} py-6 text-center text-white border-t border-border/20`}
-          style={{
-            backgroundColor: "var(--primary-dark)",
-          }}
+          className={`footer absolute bottom-0 inset-x-0 ${node.template} py-8 text-center text-white border-t border-border/20 bg-black/25 backdrop-blur-xl`}
         >
-          <p className="opacity-20">{node.text}</p>
+          <p className="opacity-25 text-lg">{node.text}</p>
         </footer>
       );
   }

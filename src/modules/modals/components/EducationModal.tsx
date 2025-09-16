@@ -57,7 +57,6 @@ const EducationModal = () => {
   }, [open, nodeInfo?.education]);
 
   const onSubmit = (values: EducationItem) => {
-    console.log("slk");
     if (!nodeInfo) return;
 
     if (nodeInfo.education) {

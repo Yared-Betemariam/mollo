@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const Page = () => {
   return (
     <CardWrapper headerLabel="Signin to Mollo" showSocial>
-      <p>
+      <p className="text-muted-foreground">
         <span>By signing in you will be agreeing to the </span>
         <Link target="_blank" href={"#"} className="underline text-blue-950/80">
           Terms of services

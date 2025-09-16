@@ -51,7 +51,7 @@ export const uploadsRouter = createTRPCRouter({
       });
 
       const uploadUrl = await getSignedUrl(R2_CLIENT, command, {
-        expiresIn: 60,
+        expiresIn: 180,
       });
 
       return {

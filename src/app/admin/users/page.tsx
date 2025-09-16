@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Plan } from "@/types";
 import { useModalStore } from "@/modules/modals/store";
 import { PencilIcon } from "lucide-react";
+import { fontTheme } from "@/lib/fonts";
 
 const Page = () => {
   const { users, isUsersLoading, updateUser } = useUsers();
@@ -14,7 +15,7 @@ const Page = () => {
   return (
     <>
       <div className="flex flex-col border-b pt-2 pb-6 gap-1 px-5">
-        <h1 className="h3">Users</h1>
+        <h1 className={cn("h3 py-2", fontTheme.className)}>Users</h1>
         <p>All mollo users and their subscription information.</p>
       </div>
       <DataTable
@@ -56,7 +57,7 @@ const Page = () => {
           {
             name: "Subscription end date",
             key: "subscription_end_date",
-            isDate: true,
+            isPast: true,
           },
         ]}
         isLoading={isUsersLoading}

@@ -1,23 +1,13 @@
 import Dropdown from "@/components/custom/dropdown";
 import Hint from "@/components/custom/hint";
-import { ScrollAreaWrapper } from "@/components/custom/scrollarea-wrapper";
 import { AnimatedAccordionContent } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { cn, getDateStringByIso } from "@/lib/utils";
 import IconUploadDialog from "@/modules/modals/components/IconUpload";
-import { useModalStore } from "@/modules/modals/store";
 import ImagesUploadComponent from "@/modules/uploads/components/ImagesUpload";
-import {
-  ArrowDown,
-  ArrowUp,
-  ImageIcon,
-  Pencil,
-  Plus,
-  Trash,
-  Upload,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ImageIcon, Trash, Upload } from "lucide-react";
 import { useMemo } from "react";
 import { BsInfo } from "react-icons/bs";
 import {
@@ -44,6 +34,7 @@ import ImageUploadComponent from "@/modules/uploads/components/ImageUpload";
 import NodeItems from "./NodeItems";
 import { Info } from "@/types";
 import VideosUploadComponent from "@/modules/uploads/components/VideosUpload";
+import { fonts } from "@/data";
 
 interface Props {
   node: PageNode;
@@ -69,7 +60,6 @@ const Node = ({
   info,
 }: Props) => {
   const nodeInfo = useMemo(() => getNodeTypeInfo(node.type), [node]);
-
   const contents = () => {
     switch (node.type) {
       case NodeType.PageMetadata:
@@ -129,36 +119,8 @@ const Node = ({
                 <Dropdown
                   value={node.themeFont}
                   label="Main Font"
-                  options={[
-                    {
-                      value: "system-ui",
-                      label: "System ui",
-                    },
-                    {
-                      value: "serif",
-                      label: "Serif",
-                    },
-                    {
-                      value: "gill",
-                      label: "Gill Sans",
-                    },
-                    {
-                      value: "georgia",
-                      label: "Georgia",
-                    },
-                    {
-                      value: "cambria",
-                      label: "Cambria",
-                    },
-                    {
-                      value: "arial",
-                      label: "Arial",
-                    },
-                    {
-                      value: "sans-serif",
-                      label: "Sans Serif",
-                    },
-                  ]}
+                  placeholder="Select font"
+                  options={fonts}
                   onChange={(value) => {
                     editNode<PageMetadataNode>({
                       ...node,
@@ -451,7 +413,7 @@ const Node = ({
                 })) || []
               }
             />
-            <div className="flex flex-col w-full gap-0.5">
+            {/* <div className="flex flex-col w-full gap-0.5">
               <ScrollAreaWrapper className="flex flex-1 flex-col max-h-36 w-full p-0.5">
                 {node.groups && node.groups.length > 0 ? (
                   node.groups.map((group, i) => (
@@ -512,7 +474,7 @@ const Node = ({
               >
                 <Plus className="size-4" />
               </Button>
-            </div>
+            </div> */}
           </>
         );
       case NodeType.SectionImageGallery:

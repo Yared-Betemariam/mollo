@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { cn, fontTheme } from "@/lib/utils";
+import { fontTheme } from "@/lib/fonts";
+import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 

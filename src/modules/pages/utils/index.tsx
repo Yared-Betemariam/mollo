@@ -16,10 +16,13 @@ import {
   VideoGallerySection,
 } from "../components/PageComponents";
 import { LinkItem, NodeType, PageMetadataNode, PageNode } from "../editor";
+import { dark_templates } from "@/data";
+import { getPageFont } from "@/lib/fonts";
+
 type TransformOptions = {
-  darken?: number; // 0 to 1
-  brighten?: number; // 0 to 1
-  opacity?: number; // 0 to 1
+  darken?: number;
+  brighten?: number;
+  opacity?: number;
 };
 
 export function hexTransfigure(hex: string, options: TransformOptions): string {
@@ -87,7 +90,10 @@ export async function getImageDimensions(
   });
 }
 
-export function toReact(nodes: PageNode[]): React.ReactNode {
+export function toReact(
+  nodes: PageNode[],
+  template?: string | undefined
+): React.ReactNode {
   const metadataNode = nodes[0] as PageMetadataNode;
 
   return (
@@ -96,7 +102,7 @@ export function toReact(nodes: PageNode[]): React.ReactNode {
         {
           "--primary": metadataNode?.themeColor || "#020202",
           "--primary-dark": hexTransfigure(metadataNode?.themeColor || "#FFF", {
-            darken: 0.9,
+            darken: 0.925,
           }),
           "--primary-darker": hexTransfigure(
             metadataNode?.themeColor || "#FFF",
@@ -107,21 +113,28 @@ export function toReact(nodes: PageNode[]): React.ReactNode {
           "--primary-light": hexTransfigure(
             metadataNode?.themeColor || "#FFF",
             {
-              brighten: 0.6,
+              brighten: 0.4,
             }
           ),
           "--primary-dark-bg": hexTransfigure(
             metadataNode?.themeColor || "#FFF",
             {
               darken: 0.625,
-              opacity: 0.1,
             }
           ),
+          "--theme-font": getPageFont(metadataNode.themeFont),
         } as CSSProperties
       }
-      className={cn("flex flex-col")}
+      className={cn(
+        dark_templates.includes(template || "") && "dark",
+        "flex flex-col bg-background text-foreground"
+      )}
     >
-      {nodes.map((node) => {
+      {nodes.map((raw_node) => {
+        const node = {
+          ...raw_node,
+          template,
+        };
         switch (node.type) {
           case NodeType.SectionHeader:
             return <HeaderSection nodes={nodes} key={node.id} node={node} />;

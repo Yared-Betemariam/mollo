@@ -72,7 +72,7 @@ const Page = async ({ params }: Props) => {
 
   if (project.nodes.length <= 0) return notFound();
 
-  return <>{toReact(project.nodes)}</>;
+  return <>{toReact(project.nodes, project.template)}</>;
 };
 
 export default Page;

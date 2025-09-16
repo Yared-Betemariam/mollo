@@ -1,3 +1,4 @@
+import { generateId } from "@/lib/utils";
 import { PageNode } from "@/modules/pages/editor";
 import { plansList, statusList } from "@/types";
 import {
@@ -26,7 +27,18 @@ export const users = pgTable("users", {
     .default("free")
     .notNull(),
   subscription_end_date: timestamp("subscription_end_date"),
+  rId: varchar("r_id").references(() => affiliates.id),
   created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const affiliates = pgTable("affiliates", {
+  id: varchar("id")
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => generateId(true)),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  signups: integer("sign_ups").notNull().default(0),
+  converstions: integer("converstions"),
 });
 
 export const pages = pgTable(
@@ -38,8 +50,9 @@ export const pages = pgTable(
       .unique()
       .references(() => users.id),
     username: varchar("username", { length: 255 }).unique().notNull(),
-    definition: json("definition").$type<{ nodes: PageNode[] }>().notNull(),
-    base_template: varchar("base_template", { length: 255 }).notNull(),
+    definition: json("definition")
+      .$type<{ template: string; nodes: PageNode[] }>()
+      .notNull(),
 
     published: boolean("published").default(false).notNull(),
     published_date: timestamp("published_date", { withTimezone: true }),
@@ -53,4 +66,5 @@ export const pages = pgTable(
 );
 
 export type User = typeof users.$inferSelect;
+export type Affiliate = typeof users.$inferSelect;
 export type Page = typeof pages.$inferSelect;

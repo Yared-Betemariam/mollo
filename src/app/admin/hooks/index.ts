@@ -28,10 +28,22 @@ export const usePages = () => {
   const { users } = useUsers();
   const utils = trpc.useUtils();
 
+  const updatePageMutation = trpc.pages.update.useMutation({
+    onSuccess: () => {
+      toast.success("User updated successfully!");
+      utils.admin.pages.invalidate();
+    },
+    onError: (error) => {
+      console.error("Error updating user:", error);
+      toast.error("Failed to update user. Please try again.");
+    },
+  });
+
   return {
     pages: data?.data || [],
     users,
     isPagesLoading: isLoading,
+    updatePage: updatePageMutation.mutate,
     invalidatePages: () => utils.admin.pages.invalidate(),
   };
 };

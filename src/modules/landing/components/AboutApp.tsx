@@ -1,6 +1,7 @@
-import { cn, fontTheme } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 import Features from "./Features";
+import { fontTheme } from "@/lib/fonts";
 
 const AboutApp = () => {
   return (
@@ -9,7 +10,7 @@ const AboutApp = () => {
       className="py-20 bg-blue-800/[3%] flex flex-col gap-12"
     >
       <div className="wrapper flex items-center flex-col gap-6">
-        <p className="big-body text-center">What is mollo?</p>
+        <p className="body text-center">What is mollo?</p>
         <p className={cn("about text-center", fontTheme.className)}>
           Mollo lets Video Editors, Graphics Designers, Photographers . . . make
           portfolio simple websites and publish them in minutes

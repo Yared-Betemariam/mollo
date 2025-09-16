@@ -6,18 +6,23 @@ import { toReact } from "@/modules/pages/utils";
 import { useEffect, useState } from "react";
 
 const Page = () => {
-  const [nodes, setNodes] = useState<PageNode[]>([]);
+  const [data, setData] = useState<{
+    template?: string | undefined;
+    nodes: PageNode[];
+  }>({
+    nodes: [],
+  });
 
   useEffect(() => {
     channel.onmessage = (e) => {
-      setNodes(e.data.nodes);
+      setData(e.data);
     };
   }, []);
 
   return (
     <>
-      {nodes.length >= 1 ? (
-        toReact(nodes)
+      {data.nodes.length >= 1 ? (
+        toReact(data.nodes, data.template)
       ) : (
         <span className="opacity-60 mx-auto my-auto text-sm">Loading...</span>
       )}

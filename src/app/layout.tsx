@@ -1,8 +1,9 @@
-import { cn, fontGeist } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { TRPCProvider } from "@/trpc/client";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
+import { fontGeist } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: {

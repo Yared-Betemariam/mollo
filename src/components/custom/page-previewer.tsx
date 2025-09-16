@@ -5,14 +5,12 @@ import { cn } from "@/lib/utils";
 interface PagePreviewerProps {
   className?: string;
   onFrameLoad?: () => void;
-  zoom: number;
   deviceView: "desktop" | "mobile";
 }
 
 export function PagePreviewer({
   className,
   onFrameLoad,
-  zoom,
   deviceView,
 }: PagePreviewerProps) {
   return (
@@ -26,7 +24,7 @@ export function PagePreviewer({
         src={"/preview"}
         className="flex-1 border-0 transition-all duration-300"
         style={{
-          zoom: `${zoom}%`,
+          zoom: `75%`,
         }}
         onLoad={onFrameLoad}
         title="Page Preview"

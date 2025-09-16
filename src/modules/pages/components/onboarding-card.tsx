@@ -7,17 +7,18 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { fontTheme } from "@/lib/fonts";
+import { cn } from "@/lib/utils";
 import { OnboardingFormData, onboardingSchema } from "@/schemas";
 import { trpc } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 
@@ -26,8 +27,10 @@ export default function OnboardingCard() {
   const { mutate, isPending } = trpc.users.onboard.useMutation({
     onSuccess: () => {
       utils.pages.user.invalidate();
+      toast.success("Onboarding successful!");
     },
-    onError: () => {
+    onError: (error) => {
+      console.log(error);
       toast.error("Onboarding failed! Try again");
     },
   });
@@ -36,12 +39,15 @@ export default function OnboardingCard() {
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
       username: "",
-      base_template: "",
+      template: "",
     },
   });
 
-  const watchedUsername = form.watch("username");
-  const [debouncedUsername] = useDebounce(watchedUsername, 2000);
+  const username = useWatch({
+    control: form.control,
+    name: "username",
+  });
+  const [debouncedUsername] = useDebounce(username, 1000);
 
   const { data: usernameStatus, isFetching: isCheckingUsername } =
     trpc.pages.checkUsernameStatus.useQuery(
@@ -52,12 +58,16 @@ export default function OnboardingCard() {
     );
 
   const handleSubmit = (data: OnboardingFormData) => {
-    if (isCheckingUsername) {
+    if (
+      isCheckingUsername ||
+      usernameStatus === undefined ||
+      debouncedUsername !== username
+    ) {
       toast.error("Please wait while we check the username availability.");
       return;
     }
 
-    if (usernameStatus?.taken) {
+    if (usernameStatus.taken) {
       toast.error("This username is already taken. Please choose another.");
       return;
     }
@@ -71,10 +81,12 @@ export default function OnboardingCard() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto my-auto py-12 flex flex-col gap-6 w-full">
-      <CardHeader className="flex flex-col gap-3">
+    <div className="max-w-md mx-auto my-auto py-12 flex flex-col gap-12 w-full">
+      <CardHeader className="flex flex-col items-center gap-3">
         <Logo size="lg" className="mb-2" />
-        <CardTitle className="h3">Let&apos;s get you all started</CardTitle>
+        <CardTitle className={cn("h3", fontTheme.className)}>
+          Get started
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-8">
@@ -89,9 +101,12 @@ export default function OnboardingCard() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Choose your username</FormLabel>
+                  <FormLabel className="text-base opacity-90">
+                    Choose your username
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      maxLength={20}
                       placeholder="Enter your username"
                       {...field}
                       onChange={(e) => {
@@ -105,25 +120,30 @@ export default function OnboardingCard() {
                   <FormMessage />
 
                   {/* Subdomain Preview */}
-                  {watchedUsername && !form.formState.errors.username && (
-                    <div className="rounded-lg p-2 mt-1">
+                  {field.value && !form.formState.errors.username && (
+                    <div className="rounded-lg py-2 mt-1">
                       <p className="text-sm opacity-50 mb-1">
                         Your hosing domain will be
                       </p>
-                      <div className="flex p-1 px-2 rounded-md bg-primary/10 items-center gap-2">
-                        <p className="">{watchedUsername}.mollo.com</p>
+                      <div className="flex p-1.5 px-2.5 rounded-md bg-primary/[7.5%] items-center gap-2">
+                        <p className="">{field.value}.mollo.com</p>
                       </div>
-                      <div className="mt-1 brightness-75">
-                        {isCheckingUsername ? (
-                          <p className="text-xs text-muted-foreground">
+                      <div className="mt-1 text-sm brightness-75">
+                        {isCheckingUsername ||
+                        debouncedUsername !== username ? (
+                          <p className="text-muted-foreground">
                             Checking availability...
                           </p>
-                        ) : debouncedUsername && usernameStatus?.taken ? (
-                          <p className="text-xs text-red-500">
+                        ) : debouncedUsername &&
+                          usernameStatus &&
+                          usernameStatus.taken ? (
+                          <p className="text-red-500">
                             This username is taken.
                           </p>
-                        ) : debouncedUsername ? (
-                          <p className="text-xs text-green-500">
+                        ) : debouncedUsername &&
+                          usernameStatus &&
+                          usernameStatus.taken === false ? (
+                          <p className="text-green-500">
                             This username is available!
                           </p>
                         ) : null}
@@ -137,16 +157,12 @@ export default function OnboardingCard() {
             {/* Template Selection */}
             <FormField
               control={form.control}
-              name="base_template"
+              name="template"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg font-semibold">
+                  <FormLabel className="text-base opacity-90">
                     Choose your base template
                   </FormLabel>
-                  <FormDescription>
-                    Select a template that best fits your website&apos;s
-                    purpose. You can customize it later.
-                  </FormDescription>
                   <FormControl>
                     <TemplateGrid
                       selectedTemplate={field.value}
@@ -163,9 +179,7 @@ export default function OnboardingCard() {
               type="submit"
               size="lg"
               className="w-full text-base h-12"
-              disabled={
-                isPending || !usernameStatus || usernameStatus.taken === true
-              }
+              disabled={isPending}
             >
               {isPending ? "Starting..." : "Start"}
             </Button>

@@ -1,4 +1,5 @@
 import { pricing_plans } from "./data";
+import { PageNode } from "./modules/pages/editor";
 
 type ISODateString = string;
 
@@ -22,6 +23,7 @@ export type Template = {
   image_url: string;
   base_template: TemplateName;
   name: string;
+  dark?: boolean;
 };
 
 export type Limits = (typeof pricing_plans)[number]["limits"];
@@ -40,9 +42,15 @@ export interface UploadingFile {
   progress: number;
   url?: string;
   error?: string;
-  previewUrl?: string;
 }
 
-export type TemplateName = "empty" | "sample";
+export type RedisDefinitionData = {
+  definition: {
+    template: string;
+    nodes: PageNode[];
+  };
+};
+
+export type TemplateName = "primary" | "primary_dark";
 
 export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;

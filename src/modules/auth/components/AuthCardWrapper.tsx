@@ -22,7 +22,7 @@ const CardWrapper = ({
   error,
 }: CardWrapperProps) => {
   return (
-    <div className="flex flex-col relative bg-gradient-to-tr max-w-[398px] gap-5 w-full py-4 px-2">
+    <div className="flex flex-col relative bg-gradient-to-tr max-w-[498px] gap-5 w-full py-4 px-2">
       <CardHeader>
         <Heading error={error} center={center} label={headerLabel} />
       </CardHeader>

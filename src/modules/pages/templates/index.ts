@@ -2,7 +2,7 @@ import { TemplateName } from "@/types";
 import { NodeType, PageNode } from "../editor";
 
 const templateStore: Record<TemplateName, PageNode[]> = {
-  sample: [
+  primary: [
     {
       id: "xxx1",
       type: NodeType.PageMetadata,
@@ -12,35 +12,21 @@ const templateStore: Record<TemplateName, PageNode[]> = {
     {
       id: "xxx11",
       type: NodeType.SectionHeader,
-      links: [
-        {
-          title: "Testimonials",
-          url: "#testimonials",
-        },
-      ],
     },
     {
       id: "111",
       type: NodeType.SectionHero,
-      template: "light",
+      subtitle: "Drag",
       title: "Sample Hero",
       description: "This is a sample.",
     },
     {
       id: "2222",
       type: NodeType.SectionFooter,
-      template: "light",
-      text: "© 2025 Sample Template",
+      text: "© 2025 Portfolio webiste",
     },
   ],
-  empty: [
-    {
-      id: "xx21",
-      type: NodeType.PageMetadata,
-      title: "Empty Page",
-      description: "Empty mollo page",
-    },
-  ],
+  primary_dark: [],
 };
 
 // Getter function

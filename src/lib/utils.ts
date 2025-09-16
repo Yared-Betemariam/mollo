@@ -3,7 +3,6 @@ import { Info } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import crypto from "crypto";
 import { format, parseISO } from "date-fns";
-import { Geist, Hanken_Grotesk, Schibsted_Grotesk } from "next/font/google";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
@@ -24,16 +23,6 @@ export function getDateStringByIso(iso: string) {
   return format(date, "MMM yyyy");
 }
 
-export const fontTheme = Hanken_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-theme",
-});
-
-export const fontGeist = Geist({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
 const IMAGE_EXTENSIONS = [
   ".png",
   ".jpg",
@@ -45,6 +34,8 @@ const IMAGE_EXTENSIONS = [
   ".avif",
 ];
 const VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm", ".flv"];
+
+export const MAX_REF_COOKIE_AGE = 60 * 60 * 24 * 30;
 
 function hasValidExtension(url: string, fileType: "image" | "video"): boolean {
   const exts = fileType === "image" ? IMAGE_EXTENSIONS : VIDEO_EXTENSIONS;

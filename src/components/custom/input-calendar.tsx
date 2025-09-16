@@ -42,9 +42,7 @@ export function Calendar28({ date, setDate }: Props) {
   const [value, setValue] = React.useState(formatDate(date));
 
   React.useEffect(() => {
-    if (date) {
-      setValue(formatDate(date));
-    }
+    setValue(formatDate(date));
   }, [date]);
 
   return (

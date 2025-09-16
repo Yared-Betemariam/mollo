@@ -28,7 +28,7 @@ const ImageGalleryGroupModal = () => {
   const { editNode } = useNodesStore();
   const { info } = usePageInfoStore();
   const nodeInfo = data as {
-    node: ImageGalleryNode; // Replace with your actual node type if needed
+    node: ImageGalleryNode;
     group: ImageGroup | undefined;
   } | null;
 
@@ -38,21 +38,24 @@ const ImageGalleryGroupModal = () => {
     defaultValues: {
       id: generateId(true),
       imageUrls: [],
+      title: "",
     },
   });
 
   useEffect(() => {
-    if (nodeInfo && nodeInfo.group) {
+    if (open == "imageGalleryGroup" && nodeInfo && nodeInfo.group) {
       form.reset({
         id: nodeInfo.group.id ?? generateId(true),
         title: nodeInfo.group.title ?? "",
         imageUrls: nodeInfo.group.imageUrls.length
           ? nodeInfo.group.imageUrls
-          : [""],
+          : [],
       });
     } else {
       form.reset({
         id: generateId(true),
+        imageUrls: [],
+        title: "",
       });
     }
   }, [open, nodeInfo?.group]);

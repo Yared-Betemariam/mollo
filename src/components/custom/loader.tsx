@@ -5,7 +5,7 @@ const Loader = ({ shaded }: { shaded?: boolean }) => {
   return (
     <div
       className={cn(
-        "flex flex-col flex-1 items-center text-muted-foreground gap-2.5 justify-center text-center ",
+        "flex flex-col animate-pulse flex-1 items-center text-muted-foreground gap-2.5 justify-center text-center ",
         {
           "bg-zinc-100": shaded,
           "my-auto mx-auto": !shaded,

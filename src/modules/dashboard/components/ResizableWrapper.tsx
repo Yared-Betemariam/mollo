@@ -1,43 +1,35 @@
 "use client";
 
+import FormWarning from "@/components/custom/FormWarning";
+import Hint from "@/components/custom/hint";
 import { PagePreviewer } from "@/components/custom/page-previewer";
 import { ScrollAreaWrapper } from "@/components/custom/scrollarea-wrapper";
 import SheetWrapper from "@/components/custom/sheet-wrapper";
 import Logo from "@/components/Logo";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { pricing_plans } from "@/data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn, countMediaUrls } from "@/lib/utils";
 import UserButton from "@/modules/auth/components/UserButton";
+import { useBilling } from "@/modules/auth/hooks";
 import { useModalStore } from "@/modules/modals/store";
 import AddNode from "@/modules/pages/components/AddNode";
 import { usePage } from "@/modules/pages/hooks";
 import { channel, usePageInfoStore } from "@/modules/pages/store";
 import { trpc } from "@/trpc/client";
-import {
-  Loader,
-  Monitor,
-  Play,
-  Share,
-  Smartphone,
-  ZoomIn,
-  ZoomOut,
-} from "lucide-react";
+import { Limits } from "@/types";
+import { Loader, Monitor, Play, Share, Smartphone, Stars } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
+import { FaExclamationTriangle } from "react-icons/fa";
 import { toast } from "sonner";
 import HeaderWrapper from "./HeaderWrapper";
-import { useBilling } from "@/modules/auth/hooks";
-import { Badge } from "@/components/ui/badge";
-import { FaExclamationTriangle } from "react-icons/fa";
-import Hint from "@/components/custom/hint";
-import { pricing_plans } from "@/data";
-import { Limits } from "@/types";
-import FormWarning from "@/components/custom/FormWarning";
 
 type Props = {
   children: React.ReactNode;
@@ -53,7 +45,6 @@ const ResizableWrapper = ({ children }: Props) => {
   } = useBilling();
   const isMobile = useIsMobile();
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [zoom, setZoom] = useState(100);
   const [deviceView, setDeviceView] = useState<"desktop" | "mobile">("desktop");
   const utils = trpc.useUtils();
 
@@ -61,15 +52,42 @@ const ResizableWrapper = ({ children }: Props) => {
     return JSON.stringify(page?.definition.nodes) == JSON.stringify(nodes);
   }, [nodes, page]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!noChanges) {
+        event.preventDefault();
+        event.returnValue =
+          "Are you sure you want to close? You have unsaved changes.";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [noChanges]);
+
   const { mutate, isPending } = trpc.pages.updateDefinition.useMutation({
     onError: (er) => {
       console.log(er);
       toast.error("Error saving changes! Try again");
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      utils.pages.user.setData(undefined, (old) => {
+        if (!old || !old.data) return old;
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            definition: {
+              nodes: data.data,
+              template: old.data.definition.template,
+            },
+          },
+        };
+      });
       toast.success("Changes saved!");
-
-      utils.pages.user.invalidate();
     },
   });
 
@@ -85,7 +103,7 @@ const ResizableWrapper = ({ children }: Props) => {
   });
 
   useEffect(() => {
-    channel.postMessage({ nodes });
+    channel.postMessage({ nodes, template: page?.definition.template });
   }, [nodes]);
 
   useEffect(() => {
@@ -104,7 +122,7 @@ const ResizableWrapper = ({ children }: Props) => {
       videoCount: countMediaUrls(nodes, "video"),
       limits: planLimits,
     });
-  }, [nodes, isBillingLoading]);
+  }, [nodes, isBillingLoading, plan]);
 
   const links = [
     {
@@ -119,7 +137,6 @@ const ResizableWrapper = ({ children }: Props) => {
         id: page.id,
         username: page.username,
         published: !page.published,
-        base_template: page.base_template,
       });
     } else {
       toast.error("Page not found!");
@@ -135,15 +152,9 @@ const ResizableWrapper = ({ children }: Props) => {
     mutate({
       id: Number(page.id),
       nodes,
+      template: page.definition.template,
+      username: page.username,
     });
-  };
-
-  const handleZoomIn = () => {
-    setZoom(Math.min(zoom + 25, 200));
-  };
-
-  const handleZoomOut = () => {
-    setZoom(Math.max(zoom - 25, 50));
   };
 
   const SaveButton = (
@@ -164,48 +175,33 @@ const ResizableWrapper = ({ children }: Props) => {
           <Play className="size-5" />
           <span>Preview</span>
         </div>
-        <div className="flex opacity-0 group-hover/pcp:opacity-100 duration-200 transition-all items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleZoomOut}
-            disabled={zoom <= 50}
-            className="h-7 w-7 p-0"
-          >
-            <ZoomOut className="h-3.5 w-3.5" />
-          </Button>
-          <span className="text-xs text-muted-foreground min-w-[3rem] text-center">
-            {zoom}%
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleZoomIn}
-            disabled={zoom >= 200}
-            className="h-7 w-7 p-0"
-          >
-            <ZoomIn className="h-3.5 w-3.5" />
-          </Button>
-        </div>
         <div
           className={cn(
-            "flex opacity-0 group-hover/pcp:opacity-100 duration-200 transition-all items-center gap-1",
-            isMobile && "pr-9"
+            "flex opacity-0 group-hover/pcp:opacity-100 duration-200 transition-all items-center gap-2",
+            isMobile && "pr-11"
           )}
         >
           <Button
-            variant={deviceView === "mobile" ? "default" : "ghost"}
             size="sm"
             onClick={() => setDeviceView("mobile")}
-            className="size-8 px-2"
+            className={cn(
+              "size-8 px-2",
+              deviceView == "mobile"
+                ? ""
+                : "bg-primary/10! text-zinc-900! hover:bg-primary/25!"
+            )}
           >
             <Smartphone className="h-3.5 w-3.5" />
           </Button>
           <Button
-            variant={deviceView === "desktop" ? "default" : "ghost"}
             size="sm"
             onClick={() => setDeviceView("desktop")}
-            className="size-8 px-2"
+            className={cn(
+              "size-8 px-2 ",
+              deviceView == "desktop"
+                ? ""
+                : "bg-primary/10! text-zinc-900! hover:bg-primary/25!"
+            )}
           >
             <Monitor className="h-3.5 w-3.5" />
           </Button>
@@ -214,11 +210,13 @@ const ResizableWrapper = ({ children }: Props) => {
 
       {page && (
         <PagePreviewer
-          zoom={zoom}
           deviceView={deviceView}
           onFrameLoad={() => {
             setTimeout(() => {
-              channel.postMessage({ nodes });
+              channel.postMessage({
+                nodes,
+                template: page?.definition.template,
+              });
             }, 50);
           }}
           className={cn(
@@ -230,19 +228,32 @@ const ResizableWrapper = ({ children }: Props) => {
     </>
   );
 
-  const PublishButton = (
-    <Button
-      variant={!page?.published ? "default" : "outline"}
-      disabled={
-        !isUserActive || !noChanges || isPending || updatePage.isPending
-      }
-      onClick={() => {
-        handlePublish();
-      }}
-    >
-      {page?.published ? "Unpublish" : "Publish"}
-    </Button>
-  );
+  const PublishButton =
+    !isBillingLoading && plan !== "free" ? (
+      <Button
+        variant={!page?.published ? "default" : "outline"}
+        disabled={
+          !isUserActive ||
+          !noChanges ||
+          isPending ||
+          updatePage.isPending ||
+          isBillingLoading ||
+          isSubscriptionExpired
+        }
+        onClick={() => {
+          handlePublish();
+        }}
+        className={cn(
+          "rounded-xl",
+          page?.published
+            ? "text-red-800! border-red-900/25 bg-red-50 h-8 px-3 drop-shadow-[2px_2px] drop-shadow-red-800/25"
+            : "bg-gradient-to-br from-blue-800/90 h-8 to-blue-950/90 drop-shadow-[3px_3px] drop-shadow-blue-800/50"
+        )}
+      >
+        {!page?.published && <Stars />}
+        {page?.published ? "Unpublish" : "Publish"}
+      </Button>
+    ) : null;
 
   return (
     <ResizablePanelGroup
@@ -261,6 +272,7 @@ const ResizableWrapper = ({ children }: Props) => {
                 </Link>
               ))}
             </div>
+
             {!isBillingLoading && plan && (
               <Hint desc="Your current plan">
                 <Badge
@@ -275,6 +287,14 @@ const ResizableWrapper = ({ children }: Props) => {
                   {plan}
                 </Badge>
               </Hint>
+            )}
+            {!isBillingLoading && plan == "free" && (
+              <Link
+                href={"/billing"}
+                className="border border-blue-800/20 bg-blue-50 text-sm font-medium px-3 h-7 flex items-center rounded-full text-blue-800  drop-shadow-[2px_2px] drop-shadow-blue-800/25"
+              >
+                <span>Upgrade plan</span>
+              </Link>
             )}
             {!isBillingLoading && !isUserActive && (
               <Hint desc="Your account is not active. Please contact support to activate your account.">

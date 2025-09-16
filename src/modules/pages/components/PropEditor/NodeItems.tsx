@@ -25,11 +25,11 @@ type Props = {
 
 const NodeItems = ({ item_id, items, name, node, onDelete }: Props) => {
   return (
-    <div className="flex flex-col w-full gap-1">
+    <div className="flex flex-col w-full gap-2">
       <div className="flex items-center justify-between">
         <p className="font-medium">
           {name}
-          {items.length && ` (${items.length})`}
+          {items.length > 0 && ` (${items.length})`}
         </p>
         <Button
           size={"xs"}
@@ -102,7 +102,7 @@ const NodeItems = ({ item_id, items, name, node, onDelete }: Props) => {
           ))}
         </div>
         {items.length <= 0 && (
-          <span className="opacity-60">Nothing here...</span>
+          <span className="opacity-35 text-base px-2">Nothing here...</span>
         )}
       </ScrollAreaWrapper>
     </div>

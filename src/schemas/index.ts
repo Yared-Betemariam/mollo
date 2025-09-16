@@ -1,3 +1,4 @@
+import { PageNodeSchema } from "@/modules/pages/editor";
 import { plansList, statusList } from "@/types";
 import { z } from "zod";
 
@@ -15,7 +16,7 @@ export const usernameSchema = z
 
 export const onboardingSchema = z.object({
   username: usernameSchema,
-  base_template: z.string().min(1, "Please select a template"),
+  template: z.string().min(1, "Please select a template"),
 });
 
 export const updateUserSchema = z.object({
@@ -28,7 +29,8 @@ export const updateUserSchema = z.object({
 export const updatePageSchema = z.object({
   username: usernameSchema,
   published: z.boolean(),
-  base_template: z.string(),
+  template: z.string().optional(),
+  nodes: z.array(PageNodeSchema).optional(),
 });
 
 export type OnboardingFormData = z.infer<typeof onboardingSchema>;

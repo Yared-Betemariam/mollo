@@ -35,10 +35,10 @@ function VideosUploadComponent({
       const base = dot > -1 ? original.slice(0, dot) : original;
       const ext = dot > -1 ? original.slice(dot) : "";
       let i = 1;
-      let candidate = `${base} (${i})${ext}`;
+      let candidate = `${base}(${i})${ext}`;
       while (taken.has(candidate)) {
         i++;
-        candidate = `${base} (${i})${ext}`;
+        candidate = `${base}(${i})${ext}`;
       }
       return candidate;
     },
@@ -52,27 +52,14 @@ function VideosUploadComponent({
       );
       if (filtered.length === 0) return;
 
-      const isValid = isUploadValid(info, filtered, "image");
+      const isValid = isUploadValid(info, filtered, "video");
       if (!isValid) return;
 
-      // Basic size validation (optional)
-      // const maxBytes = maxFileSizeMB * 1024 * 1024;
-      // const filtered = incoming.filter((f) => {
-      //   if (f.size > maxBytes) {
-      //     console.warn(`Skipping ${f.name}: exceeds ${maxFileSizeMB}MB`);
-      //     return false;
-      //   }
-      //   return true;
-      // });
-      // if (filtered.length === 0) return;
-
-      // Build taken names from currently uploading to avoid duplicates across the same session
       const taken = new Set<string>([
         ...uploadingFiles.map((u) => u.file.name),
         ...filtered.map((f) => f.name),
       ]);
 
-      // Ensure unique names within this batch
       const processedFiles = filtered.map((file) => {
         const unique = getUniqueFileName(file.name, taken);
         taken.add(unique);
@@ -88,11 +75,9 @@ function VideosUploadComponent({
         id: Math.random().toString(36).slice(2),
         file,
         progress: 0,
-        previewUrl: URL.createObjectURL(file),
       }));
       setUploadingFiles((prev) => [...prev, ...batch]);
 
-      // Upload each file: 1) get uploadUrl via mutateAsync 2) axios.put(uploadUrl, file)
       const results = await Promise.all(
         batch.map(async (item) => {
           try {
@@ -103,36 +88,29 @@ function VideosUploadComponent({
               throw new Error(res.message || "Failed to get upload URL");
 
             const { uploadUrl, videoUrl } = res.data;
-            await axios.put(
-              `${uploadUrl}${
-                uploadUrl.includes("?") ? "&" : "?"
-              }filename=${encodeURIComponent(item.file.name)}`,
-              item.file,
-              {
-                headers: {
-                  "Content-Type": item.file.type || "application/octet-stream",
-                },
-                onUploadProgress: (e) => {
-                  if (e.total) {
-                    const pct = Math.round((e.loaded * 100) / e.total);
-                    setUploadingFiles((prev) =>
-                      prev.map((u) =>
-                        u.id === item.id ? { ...u, progress: pct } : u
-                      )
-                    );
-                  } else {
-                    // Fallback when total is missing, show indeterminate climb
-                    setUploadingFiles((prev) =>
-                      prev.map((u) =>
-                        u.id === item.id
-                          ? { ...u, progress: Math.min(99, u.progress + 1) }
-                          : u
-                      )
-                    );
-                  }
-                },
-              }
-            );
+            await axios.put(uploadUrl, item.file, {
+              headers: {
+                "Content-Type": item.file.type || "application/octet-stream",
+              },
+              onUploadProgress: (e) => {
+                if (e.total) {
+                  const pct = Math.round((e.loaded * 100) / e.total);
+                  setUploadingFiles((prev) =>
+                    prev.map((u) =>
+                      u.id === item.id ? { ...u, progress: pct } : u
+                    )
+                  );
+                } else {
+                  setUploadingFiles((prev) =>
+                    prev.map((u) =>
+                      u.id === item.id
+                        ? { ...u, progress: Math.min(99, u.progress + 1) }
+                        : u
+                    )
+                  );
+                }
+              },
+            });
 
             setUploadingFiles((prev) =>
               prev.map((u) =>
@@ -160,9 +138,6 @@ function VideosUploadComponent({
       // Cleanup previews and remove completed items from uploading list
       setTimeout(() => {
         setUploadingFiles((prev) => {
-          prev.forEach((u) => {
-            if (u.previewUrl) URL.revokeObjectURL(u.previewUrl);
-          });
           return prev.filter(
             (u) => !processedFiles.find((pf) => pf.name === u.file.name)
           );
@@ -176,6 +151,7 @@ function VideosUploadComponent({
       uploadMutation,
       uploadingFiles,
       videoUrls,
+      info,
     ]
   );
 
@@ -281,18 +257,6 @@ function VideosUploadComponent({
                 className={`h-2 ${u.error ? "bg-destructive/20" : ""}`}
               />
               {u.error && <p className="text-xs text-destructive">{u.error}</p>}
-              {/* Optional small preview while uploading */}
-              {u.previewUrl && (
-                <div className="rounded-lg overflow-hidden bg-black/5">
-                  <video
-                    src={u.previewUrl}
-                    className="w-full max-h-40"
-                    muted
-                    controls
-                    preload="metadata"
-                  />
-                </div>
-              )}
             </div>
           ))}
         </div>
@@ -304,23 +268,26 @@ function VideosUploadComponent({
           <h4 className="text-sm font-medium">
             Uploaded Videos ({videoUrls.length})
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
             {videoUrls.map((url, i) => (
               <div key={`${url}-${i}`} className="relative group">
-                <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                   <video
+                    style={{
+                      zoom: "85%",
+                    }}
                     src={url}
                     className="w-full h-full object-cover"
-                    controls
                     preload="metadata"
+                    controls
                   />
                 </div>
                 <button
                   onClick={() => handleRemoveVideo(url)}
-                  aria-label="Remove video"
-                  className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-destructive/90"
+                  className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-destructive/90"
+                  aria-label="Remove image"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="size-4" />
                 </button>
               </div>
             ))}

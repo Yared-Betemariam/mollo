@@ -99,7 +99,7 @@ function ImageUploadComponent({
         setUploadingFile(null);
       }, 1000);
     },
-    [uploadFile, onChange]
+    [uploadFile, onChange, info]
   );
 
   // Drag and drop handlers

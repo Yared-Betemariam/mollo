@@ -37,22 +37,25 @@ const VideoGalleryGroupModal = () => {
     reValidateMode: "onSubmit",
     defaultValues: {
       id: generateId(true),
+      title: "",
       videoUrls: [],
     },
   });
 
   useEffect(() => {
-    if (nodeInfo && nodeInfo.group) {
+    if (open == "videoGalleryGroup" && nodeInfo && nodeInfo.group) {
       form.reset({
         id: nodeInfo.group.id ?? generateId(true),
         title: nodeInfo.group.title ?? "",
         videoUrls: nodeInfo.group.videoUrls.length
           ? nodeInfo.group.videoUrls
-          : [""],
+          : [],
       });
     } else {
       form.reset({
         id: generateId(true),
+        title: "",
+        videoUrls: [],
       });
     }
   }, [open, nodeInfo?.group]);

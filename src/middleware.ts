@@ -6,6 +6,7 @@ import {
   publicRoutes,
   redirects,
 } from "./routes";
+import { MAX_REF_COOKIE_AGE } from "./lib/utils";
 
 function rewriteSubdomain(request: NextRequest): NextResponse | void {
   const host = request.headers.get("host") || "";
@@ -37,6 +38,16 @@ export default auth((req) => {
   if (rewritten) return rewritten;
 
   const { nextUrl } = req;
+  const refId = nextUrl.searchParams.get("ref");
+
+  if (refId) {
+    const cookie = req.cookies.get("referral_id");
+    if (!cookie) {
+      const res = NextResponse.next();
+      res.cookies.set("r_id", refId, { maxAge: MAX_REF_COOKIE_AGE });
+      return res;
+    }
+  }
 
   const matchedRedirect = redirects.find((r) => nextUrl.pathname === r.from);
   if (matchedRedirect) {

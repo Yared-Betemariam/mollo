@@ -79,7 +79,7 @@ function ImagesUploadComponent({
       const extension = fileName.match(/\.[^/.]+$/)?.[0] || "";
 
       while (existingNames.includes(uniqueName)) {
-        uniqueName = `${nameWithoutExt} (${counter})${extension}`;
+        uniqueName = `${nameWithoutExt}(${counter})${extension}`;
         counter++;
       }
 
@@ -158,7 +158,7 @@ function ImagesUploadComponent({
         );
       }, 1000);
     },
-    [imageUrls, onChange, uploadFile, getUniqueFileName]
+    [imageUrls, onChange, uploadFile, getUniqueFileName, info]
   );
 
   // Drag and drop handlers
@@ -301,7 +301,7 @@ function ImagesUploadComponent({
       {imageUrls.length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm">Uploaded Images ({imageUrls.length})</h4>
-          <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 gap-4">
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
             {imageUrls.map((url, index) => (
               <div key={`${url}-${index}`} className="relative group">
                 <div className="aspect-square bg-muted rounded-lg overflow-hidden">

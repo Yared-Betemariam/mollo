@@ -22,15 +22,77 @@ export const timeRangeOptions = [
 export const templates: Template[] = [
   {
     image_url: "/logo.png?height=200&width=200",
-    base_template: "sample",
-    name: "Sample",
+    base_template: "primary",
+    name: "Primary",
   },
   {
     image_url: "/logo.png?height=200&width=200",
-    base_template: "empty",
-    name: "Empty",
+    base_template: "primary_dark",
+    name: "Primary Dark",
+    dark: true,
   },
 ];
+
+export const fonts = [
+  {
+    value: "lato",
+    label: "Lato",
+  },
+  {
+    value: "roboto",
+    label: "Roboto",
+  },
+  {
+    value: "open-sans",
+    label: "Open Sans",
+  },
+  {
+    value: "rubik",
+    label: "Rubik",
+  },
+  {
+    value: "dm-sans",
+    label: "DM Sans",
+  },
+  {
+    value: "poppins",
+    label: "Poppins",
+  },
+  {
+    value: "manrope",
+    label: "Manrope",
+  },
+  {
+    value: "raleway",
+    label: "Raleway",
+  },
+  {
+    value: "montserrat",
+    label: "Montserrat",
+  },
+  {
+    value: "playfair",
+    label: "Playfair",
+  },
+  {
+    value: "lora",
+    label: "Lora",
+  },
+  {
+    value: "eb-garamond",
+    label: "EB Garamond",
+  },
+  {
+    value: "libre-baskerville",
+    label: "Libre Baskerville",
+  },
+  {
+    value: "forum",
+    label: "Forum",
+  },
+];
+
+export const dark_templates = ["primary_dark"];
 
 export const pricing_plans = [
   {
@@ -83,3 +145,5 @@ export const IconUrls = {
     "https://play-lh.googleusercontent.com/Mtnybz6w7FMdzdQUbc7PWN3_0iLw3t9lUkwjmAa_usFCZ60zS0Xs8o00BW31JDCkAiQk",
   cbe: "https://play-lh.googleusercontent.com/kKGUk63iUIMXF-SL4AklHhZnQesw3-jZT2MR6NuX-xS54ncaZJ-8tlJETZdQYyZ5-g?width=10&height=10",
 };
+
+export const mollo_telegram_username = "@mollosupport";
