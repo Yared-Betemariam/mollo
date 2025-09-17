@@ -7,40 +7,50 @@ import {
   redirects,
 } from "./routes";
 import { MAX_REF_COOKIE_AGE } from "./lib/utils";
+function extractSubdomain(host: string, baseHost: string) {
+  if (!host || !baseHost) return "";
+
+  const hostNoPort = host.split(":")[0].toLowerCase();
+  if (!hostNoPort.endsWith(baseHost.toLowerCase())) return "";
+
+  const prefix = hostNoPort.slice(0, hostNoPort.length - baseHost.length - 1);
+  if (!prefix) return "";
+
+  return prefix.split(".")[0];
+}
 
 function rewriteSubdomain(request: NextRequest): NextResponse | void {
   const host = request.headers.get("host") || "";
   const url = request.nextUrl.clone();
 
-  const PROD_DOMAIN = process.env.NEXT_PUBLIC_BASE_DOMAIN || "mollo.cc";
-  const PORD_SUB_DOMAIN =
-    process.env.NEXT_PUBLIC_BASE_SUB_DOMAIN || "mollo.orpad.cc";
-
-  const isLocalhost = host.includes("localhost");
+  const BASE_HOST = process.env.NEXT_PUBLIC_BASE_DOMAIN || "mollo.orpad.cc";
 
   let subdomain = "";
 
-  if (isLocalhost) {
-    const parts = host.split(".");
+  if (host.includes("localhost")) {
+    const hostNoPort = host.split(":")[0];
+    const parts = hostNoPort.split(".");
+
     if (parts.length > 2) {
       subdomain = parts[0];
     }
-  } else if (host.endsWith(PROD_DOMAIN)) {
-    subdomain = host.replace(`.${PROD_DOMAIN}`, "");
-  } else if (host.endsWith(PORD_SUB_DOMAIN)) {
-    subdomain = host.replace(`.${PORD_SUB_DOMAIN}`, "");
+  } else {
+    subdomain = extractSubdomain(host, BASE_HOST);
   }
 
-  if (
-    subdomain &&
-    subdomain !== "www" &&
-    subdomain !== "mollo" &&
-    !url.pathname.startsWith("/_next") &&
-    !url.pathname.startsWith("/api")
-  ) {
-    url.pathname = `/${subdomain}`;
+  if (!subdomain) return;
+
+  const reserved = new Set(["", "www", "mollo"]);
+
+  const ignorePath = (p: string) =>
+    p.startsWith("/_next") || p.startsWith("/api") || p.startsWith("/trpc");
+
+  if (subdomain && !reserved.has(subdomain) && !ignorePath(url.pathname)) {
+    url.pathname = `/${subdomain}${url.pathname}`;
     return NextResponse.rewrite(url);
   }
+
+  return;
 }
 
 export default auth((req) => {

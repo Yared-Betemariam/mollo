@@ -57,7 +57,7 @@ const ClientPage = ({ affiliate }: Props) => {
   if (!affiliate) {
     return (
       <div className="mx-auto px-10 my-auto flex items-center justify-center flex-col gap-6">
-        <p className="text">Earn by referring mollo to others!</p>
+        <p className="text">Earn by sharing mollo to others!</p>
         <Globe className="size-14 text-primary/75 rounded-full p-2 bg-gradient-to-b from-zinc-200" />
         <h1 className={cn("h3 font-semibold", fontTheme.className)}>
           Mollo Affiliate <span className="text-zinc-400">Rules</span>

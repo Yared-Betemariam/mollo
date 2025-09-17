@@ -16,12 +16,16 @@ const DashboardWrapper = ({ children }: Props) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isLoading && !page) {
-      router.push("/onboarding");
+    if (isLoading) {
+      return;
+    }
+
+    if (!page) {
+      return router.push("/onboarding");
     }
 
     if (pathname == "/onboarding" && page) {
-      router.push(defaultLoginRedirect);
+      return router.push(defaultLoginRedirect);
     }
   }, [isLoading, page, pathname]);
 

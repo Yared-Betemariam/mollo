@@ -17,7 +17,7 @@ export const navLinks = [
   },
   {
     name: "Contact",
-    href: "#",
+    href: "/help",
   },
 ];
 
