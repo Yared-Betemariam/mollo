@@ -147,3 +147,5 @@ export const IconUrls = {
 };
 
 export const mollo_telegram_username = "@mollosupport";
+
+export const AFFILIATE_FEE = 0.3;

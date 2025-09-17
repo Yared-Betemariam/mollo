@@ -30,7 +30,7 @@ const Logo = ({ className, noLink, logo, size, light }: Props) => {
         alt="Metabook Logo"
         width={140}
         height={140}
-        className={cn("shrink-0 w-20 md:w-[4.5rem]", {
+        className={cn("shrink-0 w-20 md:w-[5.5rem]", {
           "md:w-28": size === "lg",
           "md:w-36": size === "xl",
           "md:w-16": size === "sm",

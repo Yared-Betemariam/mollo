@@ -7,14 +7,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CreditCard, LogOut, Settings } from "lucide-react";
+import { CreditCard, Gift, LogOut, Settings } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { GoPerson } from "react-icons/go";
 import { useUser } from "../hooks";
 
-const UserButton = () => {
+const UserButton = ({ simple }: { simple?: boolean }) => {
   const { user, isLoading } = useUser();
   const [signingOut, setSigningOut] = useState(false);
 
@@ -50,41 +50,51 @@ const UserButton = () => {
       <DropdownMenuContent
         sideOffset={12}
         align="start"
-        className="min-w-[14rem] mx-2 px-0 flex flex-col"
+        className="min-w-[16rem] mx-2 px-0 flex flex-col"
       >
-        <div className="px-3 tracking-tight flex items-center gap-2  pt-2 pb-2">
+        <div className="px-5 tracking-tight flex items-center gap-2  pt-4 pb-2.5">
           <GoPerson className="rounded-full aspect-square bg-zinc-200 border border-zinc-500/50 p-0.5 text-zinc-600 size-5" />
           <p className="text-base tracking-tight opacity-80 ">{user.email}</p>
         </div>
-        <div className="px-3 pb-2 flex items-center justify-between border-b">
-          <span className="text-muted-foreground text-sm">Plan</span>
-          <Link
-            href={"/billing"}
-            className="border border-blue-800/20 bg-blue-50 text-sm font-medium px-3 h-7 flex items-center ml-auto rounded-full text-blue-800  drop-shadow-[2px_2px] drop-shadow-blue-800/25"
-          >
-            <span>Upgrade</span>
-          </Link>
-        </div>
-        <Link href={"/settings"} className="mt-1">
-          <DropdownMenuItem className="h-8 rounded-none px-4">
-            <Settings className="mr-1 size-3.5" />
-            <span>Settings</span>
-          </DropdownMenuItem>
-        </Link>
-        <Link href={"/billing"}>
-          <DropdownMenuItem className="h-8 rounded-none px-4">
-            <CreditCard className="mr-1 size-3.5" />
-            <span>Billing</span>
-          </DropdownMenuItem>
-        </Link>
-
+        {!simple && (
+          <>
+            <div className="px-5 pb-2.5 flex items-center justify-between border-b">
+              <span className="text-muted-foreground text-sm">Plan</span>
+              <Link
+                href={"/billing"}
+                className="border border-blue-800/20 bg-blue-50 text-sm font-medium px-3 h-7 flex items-center ml-auto rounded-full text-blue-800  drop-shadow-[2px_2px] drop-shadow-blue-800/25"
+              >
+                <span>Upgrade</span>
+              </Link>
+            </div>
+            <Link href={"/settings"} className="mt-1">
+              <DropdownMenuItem className="h-8 rounded-none px-7">
+                <Settings className="mr-1 size-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link href={"/billing"}>
+              <DropdownMenuItem className="h-8 rounded-none px-7">
+                <CreditCard className="mr-1 size-4" />
+                <span>Billing</span>
+              </DropdownMenuItem>
+            </Link>
+            <span className="border-b my-1" />
+            <Link href={"/affiliate"}>
+              <DropdownMenuItem className="h-8 text-amber-600 hover:text-amber-600! rounded-none px-7">
+                <Gift className="mr-1 size-4 text-amber-600!" />
+                <span>Become an Affiliate</span>
+              </DropdownMenuItem>
+            </Link>
+          </>
+        )}
         <span className="border-b my-1" />
         <DropdownMenuItem
           disabled={signingOut}
           onClick={() => handleLogout()}
-          className="h-8 rounded-none px-4 text-destructive! hover:bg-red-800/5! hover:text-destructive!"
+          className="h-8 rounded-none px-7 text-destructive! hover:bg-red-800/5! hover:text-destructive!"
         >
-          <LogOut className="mr-1 size-3.5 text-destructive! hover:text-destructive!" />
+          <LogOut className="mr-1 size-4 text-destructive! hover:text-destructive!" />
           <span>{signingOut ? "logging out..." : "Logout"}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

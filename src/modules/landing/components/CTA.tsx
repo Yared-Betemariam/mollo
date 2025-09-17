@@ -26,7 +26,7 @@ const CTA = () => {
           <Link href={"/signin"} className="w-fit">
             <Button
               size={"2xl"}
-              className="rounded-full text-white bg-gradient-to-br from-blue-400/90 border border-white/25 to-blue-700/90"
+              className="rounded-full hover:opacity-90 duration-300 transition-all text-white bg-gradient-to-br from-blue-400/90 border border-white/25 to-blue-700/90 shadow-[0_0_35px_-5px] shadow-blue-800"
             >
               <span>Start now</span>
               <ArrowRight className="size-5 ml-2" />

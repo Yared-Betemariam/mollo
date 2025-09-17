@@ -138,12 +138,12 @@ const Page = () => {
 
           {plan == "free" && (
             <>
-              <p>
+              <p className="px-6 py-4">
                 Start by{" "}
                 <span className="font-medium underline underline-offset-2">
                   purchasing
                 </span>{" "}
-                a plan to continue publishing you website.
+                a plan to continue publishing your website.
               </p>
             </>
           )}

@@ -3,6 +3,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { db } from "./db";
 import { users } from "./db/schema";
+import { cookies } from "next/headers";
 
 export const {
   auth,
@@ -21,7 +22,10 @@ export const {
     async jwt({ token }) {
       try {
         const [user] = await db
-          .select()
+          .select({
+            id: users.id,
+            email: users.email,
+          })
           .from(users)
           .where(eq(users.email, token.email as string));
 
@@ -42,13 +46,20 @@ export const {
           if (!profile?.email) return false;
 
           const [user] = await db
-            .select()
+            .select({
+              id: users.id,
+            })
             .from(users)
             .where(eq(users.email, profile.email));
 
           if (!user) {
+            // signup logic
+            const cookieStore = await cookies();
+            const rId = cookieStore.get("ref")?.value ?? null;
+
             await db.insert(users).values({
               email: profile.email,
+              ...(rId ? { rId } : {}),
             });
 
             return true;

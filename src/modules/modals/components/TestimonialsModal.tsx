@@ -47,7 +47,6 @@ const TestimonialsModal = () => {
         feedback: nodeInfo.testimonial.feedback ?? undefined,
         picture: nodeInfo.testimonial.picture ?? undefined,
         jobDescription: nodeInfo.testimonial.jobDescription ?? undefined,
-        rating: nodeInfo.testimonial.rating ?? undefined,
       });
     } else {
       form.reset({
@@ -86,30 +85,15 @@ const TestimonialsModal = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="px-6 space-y-4">
-              <div className="flex gap-2 items-center">
-                <FormField
-                  control={form.control}
-                  name="rating"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Rating</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <div className="grid grid-cols-2 gap-2">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Their name</FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input placeholder="John Doe" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -120,9 +104,9 @@ const TestimonialsModal = () => {
                   name="jobDescription"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Job description</FormLabel>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input placeholder="Technical Engineer" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -138,6 +122,7 @@ const TestimonialsModal = () => {
                     <FormControl>
                       <ValueChanger
                         type="textarea"
+                        placeHolder="Good work! He did a great job."
                         value={field.value}
                         onChange={(e) => field.onChange(e)}
                       />

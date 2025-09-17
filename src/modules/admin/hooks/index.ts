@@ -47,3 +47,39 @@ export const usePages = () => {
     invalidatePages: () => utils.admin.pages.invalidate(),
   };
 };
+
+export const useAffiliates = () => {
+  const { data, isLoading } = trpc.admin.affiliates.useQuery();
+  const { users } = useUsers();
+  const utils = trpc.useUtils();
+
+  const payoutAffiliateMutation = trpc.affiliate.payout.useMutation({
+    onSuccess: () => {
+      toast.success("User updated successfully!");
+      utils.admin.affiliates.invalidate();
+    },
+    onError: (error) => {
+      console.error("Error updating user:", error);
+      toast.error("Failed to update user. Please try again.");
+    },
+  });
+
+  const payout = (total: number, payout: number) => {
+    if (!total || total == payout) {
+      toast.error("No changes!");
+      return;
+    }
+
+    payoutAffiliateMutation.mutate({
+      total_payouts: String(total),
+    });
+  };
+
+  return {
+    affiliates: data?.data || [],
+    users,
+    isAffiliatesLoading: isLoading,
+    payout,
+    invalidateAffiliates: () => utils.admin.affiliates.invalidate(),
+  };
+};

@@ -1,32 +1,33 @@
 import { TemplateName } from "@/types";
 import { NodeType, PageNode } from "../editor";
 
+const basePageNode: PageNode[] = [
+  {
+    id: "0A0A0A0A",
+    type: NodeType.PageMetadata,
+    title: "Page title",
+  },
+  {
+    id: "0A0A0A0B",
+    type: NodeType.SectionHeader,
+  },
+  {
+    id: "0A0A0A0C",
+    type: NodeType.SectionHero,
+    subtitle: "Subtitle here",
+    title: "Heading 1 of Website",
+    description: "This is a description part.",
+  },
+  {
+    id: "0A0A0A0D",
+    type: NodeType.SectionFooter,
+    text: "© 2025 Website",
+  },
+];
+
 const templateStore: Record<TemplateName, PageNode[]> = {
-  primary: [
-    {
-      id: "xxx1",
-      type: NodeType.PageMetadata,
-      title: "Yared's page",
-      description: "Here is your metedatea",
-    },
-    {
-      id: "xxx11",
-      type: NodeType.SectionHeader,
-    },
-    {
-      id: "111",
-      type: NodeType.SectionHero,
-      subtitle: "Drag",
-      title: "Sample Hero",
-      description: "This is a sample.",
-    },
-    {
-      id: "2222",
-      type: NodeType.SectionFooter,
-      text: "© 2025 Portfolio webiste",
-    },
-  ],
-  primary_dark: [],
+  primary: basePageNode,
+  primary_dark: basePageNode,
 };
 
 // Getter function

@@ -51,6 +51,14 @@ export type RedisDefinitionData = {
   };
 };
 
+export type AffiliateData = {
+  id: string;
+  signups: number;
+  conversions: number;
+  withdrawnPayouts: number;
+  remainingPayouts: number;
+};
+
 export type TemplateName = "primary" | "primary_dark";
 
 export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;

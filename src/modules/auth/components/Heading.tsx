@@ -19,10 +19,10 @@ const Heading = ({
         error && ""
       )}
     >
-      <Logo size="lg" className="mb-4" />
+      <Logo size="md" className="mb-4" />
       <h2
         className={cn(
-          "h2",
+          "h2 text-5xl",
           error && "h3 text-destructive brightness-75",
           fontTheme.className
         )}

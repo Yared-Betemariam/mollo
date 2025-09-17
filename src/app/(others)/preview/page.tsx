@@ -24,7 +24,7 @@ const Page = () => {
       {data.nodes.length >= 1 ? (
         toReact(data.nodes, data.template)
       ) : (
-        <span className="opacity-60 mx-auto my-auto text-sm">Loading...</span>
+        <span className="opacity-60 mx-auto my-auto text-sm">Nothing here...</span>
       )}
     </>
   );

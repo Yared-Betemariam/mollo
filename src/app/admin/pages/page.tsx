@@ -2,7 +2,7 @@
 
 import DataTable from "@/components/custom/data-table";
 import { cn, countMediaUrls } from "@/lib/utils";
-import { usePages } from "../hooks";
+import { usePages } from "../../../modules/admin/hooks";
 import { fontTheme } from "@/lib/fonts";
 
 const Page = () => {
@@ -11,7 +11,9 @@ const Page = () => {
   return (
     <>
       <div className="flex flex-col border-b pt-2 pb-6 gap-1 px-5">
-        <h1 className={cn("h3 py-2", fontTheme.className)}>Pages</h1>
+        <h1 className={cn("h3 py-2 font-semibold", fontTheme.className)}>
+          Pages
+        </h1>
         <p>
           Here is the list of all the websites pages created by mollo users.
         </p>

@@ -62,7 +62,7 @@ const UserModal = () => {
   });
 
   const handleSubmit = async (values: z.infer<typeof updateUserSchema>) => {
-    mutate(values);
+    mutate({ ...values, prevPlan: user?.plan });
   };
 
   if (!user) return null;

@@ -31,7 +31,6 @@ export type LinkItem = z.infer<typeof LinkItemSchema>;
 export const PageMetadataNodeSchema = BaseNodeSchema.extend({
   type: z.literal(NodeType.PageMetadata),
   title: z.string(),
-  description: z.string(),
   iconUrl: z.string().optional(),
   themeColor: z.string().optional(),
   themeFont: z.string().optional(),
@@ -146,7 +145,6 @@ export const TestimonialSchema = z.object({
   name: z.string(),
   jobDescription: z.string().optional(),
   feedback: z.string(),
-  rating: z.string().optional(),
 });
 export type Testimonial = z.infer<typeof TestimonialSchema>;
 

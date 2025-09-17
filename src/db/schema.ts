@@ -8,10 +8,27 @@ import {
   json,
   pgTable,
   serial,
+  numeric,
   text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+
+export const affiliates = pgTable("affiliates", {
+  id: varchar("id", { length: 12 })
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => generateId(true)),
+  user_id: integer("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+
+  converstions: integer("converstions").default(0).notNull(),
+  total_payouts: numeric("total_payouts").default("0").notNull(),
+  payouts: numeric("payouts").default("0").notNull(),
+});
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -27,18 +44,8 @@ export const users = pgTable("users", {
     .default("free")
     .notNull(),
   subscription_end_date: timestamp("subscription_end_date"),
-  rId: varchar("r_id").references(() => affiliates.id),
+  rId: varchar("r_id", { length: 12 }),
   created_at: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const affiliates = pgTable("affiliates", {
-  id: varchar("id")
-    .primaryKey()
-    .notNull()
-    .$defaultFn(() => generateId(true)),
-  created_at: timestamp("created_at").defaultNow().notNull(),
-  signups: integer("sign_ups").notNull().default(0),
-  converstions: integer("converstions"),
 });
 
 export const pages = pgTable(

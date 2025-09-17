@@ -27,6 +27,7 @@ type ColumnItem = {
   isBold?: boolean;
   isDate?: boolean;
   isPast?: boolean;
+  isBirr?: boolean;
   width?: number;
   align?: "left" | "center" | "right";
   render?: (value: any, row: Record<string, any>) => React.ReactNode;
@@ -117,6 +118,8 @@ const DataTable = ({
                         </>
                       ) : col.render ? (
                         col.render(row[col.key], row)
+                      ) : col.isBirr ? (
+                        `${row[col.key]?.toString()} birr`
                       ) : (
                         row[col.key]?.toString() || "N/A"
                       )

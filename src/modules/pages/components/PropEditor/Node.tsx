@@ -14,6 +14,7 @@ import {
   AboutNode,
   CertificatesNode,
   ContactNode,
+  EducationItem,
   EducationNode,
   FooterNode,
   HeaderNode,
@@ -35,6 +36,7 @@ import NodeItems from "./NodeItems";
 import { Info } from "@/types";
 import VideosUploadComponent from "@/modules/uploads/components/VideosUpload";
 import { fonts } from "@/data";
+import { FaFacebook, FaInstagram, FaTelegram } from "react-icons/fa";
 
 interface Props {
   node: PageNode;
@@ -144,7 +146,7 @@ const Node = ({
         );
       case NodeType.SectionHeader:
         return (
-          <div className="flex gap-6">
+          <div className="flex  items-center gap-6">
             <div className="flex max-w-[30%] flex-col gap-2">
               <div className="flex gap-2 items-center">
                 <Checkbox
@@ -290,7 +292,14 @@ const Node = ({
               }}
               node={node}
               name="Timeline"
+              movable
               item_id="education"
+              onItemsChange={(items) => {
+                editNode<EducationNode>({
+                  ...node,
+                  timeline: items as EducationItem[],
+                });
+              }}
               items={
                 node.timeline?.map((item) => ({
                   id: item.id,
@@ -534,31 +543,7 @@ const Node = ({
       case NodeType.SectionContact:
         return (
           <>
-            <div className="flex flex-col gap-1">
-              <label className="opacity-70">Social links</label>
-              <div className="flex flex-col gap-2">
-                {node.socialLinks.map((item) => (
-                  <div key={item.platform} className="flex items-center gap-2">
-                    <span className="w-20">{item.platform}</span>
-                    <ValueChanger
-                      className="flex-1"
-                      onChange={(value) => {
-                        editNode<ContactNode>({
-                          ...node,
-                          socialLinks: node.socialLinks.map((link) =>
-                            link.platform == item.platform
-                              ? { ...item, url: value }
-                              : link
-                          ),
-                        });
-                      }}
-                      value={item.url}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <ValueChanger
                 label="Email"
                 placeHolder="email@email.com"
@@ -581,6 +566,37 @@ const Node = ({
                 }}
                 value={node.phoneNumber || ""}
               />
+            </div>
+            <div className="flex flex-col gap-2.5 mt-2">
+              <label className="opacity-70">Social links</label>
+              <div className="flex flex-col gap-2">
+                {node.socialLinks.map((item) => (
+                  <div key={item.platform} className="flex items-center gap-3">
+                    {item.platform == "Facebook" ? (
+                      <FaFacebook className="text-blue-700/95 size-6" />
+                    ) : item.platform == "Telegram" ? (
+                      <FaTelegram className="text-sky-600 size-6" />
+                    ) : (
+                      <FaInstagram className="text-rose-700 size-6" />
+                    )}
+                    <ValueChanger
+                      placeHolder={`${item.platform} link here...`}
+                      className="flex-1"
+                      onChange={(value) => {
+                        editNode<ContactNode>({
+                          ...node,
+                          socialLinks: node.socialLinks.map((link) =>
+                            link.platform == item.platform
+                              ? { ...item, url: value }
+                              : link
+                          ),
+                        });
+                      }}
+                      value={item.url}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </>
         );

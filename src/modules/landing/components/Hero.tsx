@@ -24,7 +24,7 @@ const Hero = () => {
           <div className="flex text-center items-center flex-col gap-8 w-full">
             <h1
               className={cn(
-                "text-[3.5rem] sm:text-[4rem] md:text-[4.5rem] font-medium leading-[1.1] tracking-tighter !max-w-[18ch] bg-clip-text bg-gradient-to-tl from-zinc-950 to-gray-600 text-transparent",
+                "text-5xl sm:text-6xl md:text-7xl font-semibold leading-[1] tracking-tighter !max-w-[18ch] bg-clip-text bg-gradient-to-tl from-zinc-950 to-gray-600 text-transparent",
                 fontTheme.className
               )}
             >
@@ -35,10 +35,10 @@ const Hero = () => {
               short minutes
             </p>
             <Link href={"/signin"} className="w-fit relative h-fit">
-              <div className="h-14 w-64 radiant-mask -z-10 blur-lg rounded-full bg-gradient-to-t from-sky-800 to-blue-800 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              <div className="h-10 w-64 radiant-mask -z-10 blur-xl rounded-full bg-gradient-to-t from-sky-600 to-blue-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
               <Button
                 size={"2xl"}
-                className="rounded-full bg-gradient-to-br from-blue-400 to-blue-800"
+                className="rounded-full border-white/85 border duration-300 transition-all opacity-95 hover:opacity-85 bg-gradient-to-br from-blue-500 to-blue-800"
               >
                 <span>Start Building for Free</span>
                 <ArrowRight className="size-5 ml-2" />

@@ -1,7 +1,7 @@
 "use client";
 
 import DataTable from "@/components/custom/data-table";
-import { useUsers } from "../hooks";
+import { useUsers } from "../../../modules/admin/hooks";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Plan } from "@/types";
@@ -15,7 +15,9 @@ const Page = () => {
   return (
     <>
       <div className="flex flex-col border-b pt-2 pb-6 gap-1 px-5">
-        <h1 className={cn("h3 py-2", fontTheme.className)}>Users</h1>
+        <h1 className={cn("h3 py-2 font-semibold", fontTheme.className)}>
+          Users
+        </h1>
         <p>All mollo users and their subscription information.</p>
       </div>
       <DataTable
@@ -58,6 +60,10 @@ const Page = () => {
             name: "Subscription end date",
             key: "subscription_end_date",
             isPast: true,
+          },
+          {
+            name: "Ref",
+            key: "rId",
           },
         ]}
         isLoading={isUsersLoading}

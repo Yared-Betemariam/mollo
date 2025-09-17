@@ -11,20 +11,30 @@ import { MAX_REF_COOKIE_AGE } from "./lib/utils";
 function rewriteSubdomain(request: NextRequest): NextResponse | void {
   const host = request.headers.get("host") || "";
   const url = request.nextUrl.clone();
-  const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN || "sample.com";
+
+  const PROD_DOMAIN = process.env.NEXT_PUBLIC_BASE_DOMAIN || "mollo.cc";
+  const PORD_SUB_DOMAIN =
+    process.env.NEXT_PUBLIC_BASE_SUB_DOMAIN || "mollo.orpad.cc";
+
   const isLocalhost = host.includes("localhost");
 
   let subdomain = "";
+
   if (isLocalhost) {
     const parts = host.split(".");
-    subdomain = parts.length > 1 ? parts[0] : "";
-  } else if (host.endsWith(baseDomain)) {
-    subdomain = host.replace(`.${baseDomain}`, "");
+    if (parts.length > 2) {
+      subdomain = parts[0];
+    }
+  } else if (host.endsWith(PROD_DOMAIN)) {
+    subdomain = host.replace(`.${PROD_DOMAIN}`, "");
+  } else if (host.endsWith(PORD_SUB_DOMAIN)) {
+    subdomain = host.replace(`.${PORD_SUB_DOMAIN}`, "");
   }
 
   if (
     subdomain &&
     subdomain !== "www" &&
+    subdomain !== "mollo" &&
     !url.pathname.startsWith("/_next") &&
     !url.pathname.startsWith("/api")
   ) {
@@ -41,10 +51,10 @@ export default auth((req) => {
   const refId = nextUrl.searchParams.get("ref");
 
   if (refId) {
-    const cookie = req.cookies.get("referral_id");
+    const cookie = req.cookies.get("ref");
     if (!cookie) {
       const res = NextResponse.next();
-      res.cookies.set("r_id", refId, { maxAge: MAX_REF_COOKIE_AGE });
+      res.cookies.set("ref", refId, { maxAge: MAX_REF_COOKIE_AGE });
       return res;
     }
   }
@@ -68,7 +78,9 @@ export default auth((req) => {
   }
 
   if (!isLoggedIn && !isPublic) {
-    return NextResponse.redirect(new URL(authRoutes[0], nextUrl));
+    const loginUrl = new URL(authRoutes[0], nextUrl);
+    loginUrl.searchParams.set("redirectto", nextUrl.pathname + nextUrl.search);
+    return NextResponse.redirect(loginUrl);
   }
 
   return;
