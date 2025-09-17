@@ -1,7 +1,6 @@
 import { NodeType, PageNode } from "@/modules/pages/editor";
 import { Info } from "@/types";
 import { clsx, type ClassValue } from "clsx";
-import crypto from "crypto";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
@@ -11,11 +10,19 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function generateId(small?: boolean): string {
-  return crypto
-    .randomBytes(12)
-    .toString("base64")
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .slice(0, small ? 8 : 24);
+  const length = small ? 8 : 24;
+  const bytes = new Uint8Array(length);
+
+  crypto.getRandomValues(bytes);
+
+  const base62 =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let id = "";
+  for (let i = 0; i < length; i++) {
+    id += base62[bytes[i] % base62.length];
+  }
+
+  return id;
 }
 
 export function getDateStringByIso(iso: string) {

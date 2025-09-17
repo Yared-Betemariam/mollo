@@ -21,7 +21,7 @@ export const usePages = () => {
     if (isMobile && activeTab.length > 1) {
       setActiveTab([0]);
     }
-  }, [isMobile]);
+  }, [isMobile, activeTab]);
 
   return {
     activeTab,

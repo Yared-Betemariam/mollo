@@ -58,7 +58,7 @@ const VideoGalleryGroupModal = () => {
         videoUrls: [],
       });
     }
-  }, [open, nodeInfo?.group]);
+  }, [open, nodeInfo]);
 
   const onSubmit = (values: VideoGroup) => {
     if (!nodeInfo) return;

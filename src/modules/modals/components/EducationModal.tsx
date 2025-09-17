@@ -54,7 +54,7 @@ const EducationModal = () => {
         id: generateId(true),
       });
     }
-  }, [open, nodeInfo?.education]);
+  }, [open, nodeInfo]);
 
   const onSubmit = (values: EducationItem) => {
     if (!nodeInfo) return;

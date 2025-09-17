@@ -53,7 +53,7 @@ const TestimonialsModal = () => {
         id: generateId(true),
       });
     }
-  }, [open, nodeInfo?.testimonial]);
+  }, [open, nodeInfo]);
 
   const onSubmit = (values: Testimonial) => {
     if (!nodeInfo) return;

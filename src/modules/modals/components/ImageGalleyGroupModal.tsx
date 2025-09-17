@@ -58,7 +58,7 @@ const ImageGalleryGroupModal = () => {
         title: "",
       });
     }
-  }, [open, nodeInfo?.group]);
+  }, [open, nodeInfo]);
 
   const onSubmit = (values: ImageGroup) => {
     if (!nodeInfo) return;

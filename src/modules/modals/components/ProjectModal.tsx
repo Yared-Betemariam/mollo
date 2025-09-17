@@ -20,13 +20,14 @@ import {
   ProjectItemSchema,
   ProjectsNode,
 } from "../../pages/editor";
-import { useNodesStore } from "../../pages/store";
+import { useNodesStore, usePageInfoStore } from "../../pages/store";
 import ValueChanger from "../../pages/components/PropEditor/ValueChanger";
 import ImagesUploadComponent from "@/modules/uploads/components/ImagesUpload";
 
 const ProjectModal = () => {
   const { open, closeModal, data } = useModalStore();
   const { editNode } = useNodesStore();
+  const { info } = usePageInfoStore();
   const nodeInfo = data as {
     node: ProjectsNode;
     project: ProjectItem | undefined;
@@ -59,7 +60,7 @@ const ProjectModal = () => {
         imageUrls: [],
       });
     }
-  }, [open, nodeInfo?.project]);
+  }, [open]);
 
   const onSubmit = (values: ProjectItem) => {
     if (!nodeInfo) return;
@@ -125,6 +126,7 @@ const ProjectModal = () => {
               name="imageUrls"
               render={({ field }) => (
                 <ImagesUploadComponent
+                  info={info}
                   imageUrls={field.value}
                   onChange={(newImgUrls) => field.onChange(newImgUrls)}
                 />

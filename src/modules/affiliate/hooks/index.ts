@@ -3,7 +3,6 @@ import { AffiliateData } from "@/types";
 import { toast } from "sonner";
 
 export const useUserAffiliate = () => {
-  const data = trpc.affiliate.user.useSuspenseQuery(undefined);
   const utils = trpc.useUtils();
 
   const registerMutation = trpc.affiliate.register.useMutation({
@@ -32,7 +31,6 @@ export const useUserAffiliate = () => {
   });
 
   return {
-    affiliate: data[0].data,
     mutateRegistration: registerMutation.mutate,
     isRegistering: registerMutation.isPending,
   };

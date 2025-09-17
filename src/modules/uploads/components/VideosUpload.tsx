@@ -20,7 +20,6 @@ function VideosUploadComponent({
   videoUrls,
   onChange,
   info,
-  maxFileSizeMB = 500,
 }: VideosUploadComponentProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
@@ -146,7 +145,6 @@ function VideosUploadComponent({
     },
     [
       getUniqueFileName,
-      maxFileSizeMB,
       onChange,
       uploadMutation,
       uploadingFiles,
