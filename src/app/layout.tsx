@@ -8,13 +8,19 @@ import { fontGeist } from "@/lib/fonts";
 export const metadata: Metadata = {
   title: {
     template: "%s | Mollo",
-    default: "Build portfolio websites in minutes - Mollo",
+    default: "Build portfolio websites in Minutes - Mollo",
   },
-  description: "",
+  description:
+    "Mollo lets you Build and Deploy Personalized Portfolio websites in minutes.",
   icons: [
     {
       rel: "icon",
       url: "/logo.png",
+    },
+    {
+      rel: "icon",
+      type: "image/x-icon",
+      url: "/favicon.ico",
     },
   ],
 };
