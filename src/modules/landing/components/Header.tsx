@@ -33,7 +33,7 @@ const Header = () => {
                 href={item.href}
                 key={item.name}
                 className={cn(
-                  "opacity-80 font-normal transition-all hidden md:block duration-300 cursor-pointer"
+                  "opacity-80 font-medium transition-all hidden md:block duration-300 cursor-pointer"
                 )}
               >
                 {item.name}

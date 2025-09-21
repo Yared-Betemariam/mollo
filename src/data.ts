@@ -1,4 +1,4 @@
-import { Template } from "./types";
+import { Limits, Template } from "./types";
 
 export const timeRangeOptions = [
   {
@@ -21,12 +21,12 @@ export const timeRangeOptions = [
 
 export const templates: Template[] = [
   {
-    image_url: "/logo.png?height=200&width=200",
+    image_url: "/templates/primary.png",
     base_template: "primary",
     name: "Primary",
   },
   {
-    image_url: "/logo.png?height=200&width=200",
+    image_url: "/templates/primary_dark.png",
     base_template: "primary_dark",
     name: "Primary Dark",
     dark: true,
@@ -35,16 +35,8 @@ export const templates: Template[] = [
 
 export const fonts = [
   {
-    value: "lato",
-    label: "Lato",
-  },
-  {
-    value: "roboto",
-    label: "Roboto",
-  },
-  {
-    value: "open-sans",
-    label: "Open Sans",
+    value: "geist",
+    label: "Geist",
   },
   {
     value: "rubik",
@@ -75,10 +67,6 @@ export const fonts = [
     label: "Playfair",
   },
   {
-    value: "lora",
-    label: "Lora",
-  },
-  {
     value: "eb-garamond",
     label: "EB Garamond",
   },
@@ -99,14 +87,14 @@ export const pricing_plans = [
     id: "starter",
     title: "Starter",
     price: {
-      year: 299,
-      onetime: 699,
+      year: 399,
+      onetime: 799,
     },
     limits: {
-      maxImages: 10,
-      maxVideos: 5,
+      maxImages: 15,
+      maxVideos: 4,
       maxImageSize: 5,
-      maxVideoSize: 50,
+      maxVideoSize: 75,
     },
   },
   {
@@ -114,31 +102,39 @@ export const pricing_plans = [
     title: "Pro",
     isPopular: true,
     price: {
-      year: 399,
-      onetime: 799,
+      year: 499,
+      onetime: 899,
     },
     limits: {
-      maxImages: 25,
-      maxVideos: 10,
+      maxImages: 30,
+      maxVideos: 8,
       maxImageSize: 10,
-      maxVideoSize: 100,
+      maxVideoSize: 150,
     },
   },
   {
     id: "premium",
     title: "Premium",
+    isRecommended: true,
     price: {
-      year: 499,
-      onetime: 899,
+      year: 599,
+      onetime: 999,
     },
     limits: {
-      maxImages: 49,
-      maxVideos: 19,
-      maxImageSize: 25,
-      maxVideoSize: 300,
+      maxImages: 50,
+      maxVideos: 10,
+      maxImageSize: 20,
+      maxVideoSize: 200,
     },
   },
 ];
+
+export const free_limits: Limits = {
+  maxImages: 4,
+  maxVideos: 0,
+  maxImageSize: 2,
+  maxVideoSize: 10,
+};
 
 export const IconUrls = {
   telebirr:

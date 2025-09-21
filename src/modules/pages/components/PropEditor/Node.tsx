@@ -1,13 +1,12 @@
 import Dropdown from "@/components/custom/dropdown";
 import Hint from "@/components/custom/hint";
 import { AnimatedAccordionContent } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { cn, getDateStringByIso } from "@/lib/utils";
 import IconUploadDialog from "@/modules/modals/components/IconUpload";
 import ImagesUploadComponent from "@/modules/uploads/components/ImagesUpload";
-import { ArrowDown, ArrowUp, ImageIcon, Trash, Upload } from "lucide-react";
+import { ArrowDown, ArrowUp, ImageIcon, Trash } from "lucide-react";
 import { useMemo } from "react";
 import { BsInfo } from "react-icons/bs";
 import {
@@ -98,12 +97,6 @@ const Node = ({
                         iconUrl: value,
                       });
                     }}
-                    trigger={
-                      <Button variant={"outline"} size={"xs"}>
-                        <Upload className="h-4 w-4 mr-1" />
-                        {node.iconUrl ? "Change Icon" : "Upload Icon"}
-                      </Button>
-                    }
                   />
                 </div>
               </div>
@@ -230,7 +223,9 @@ const Node = ({
                 onChange={(imageUrl) => {
                   editNode<HeroNode>({
                     ...node,
-                    ...(imageUrl ? { imageUrl } : { imageUrl: undefined }),
+                    ...(imageUrl
+                      ? { imageUrl }
+                      : { imageUrl: undefined, isImageBackgroud: false }),
                   });
                 }}
               />
@@ -238,6 +233,7 @@ const Node = ({
                 <div className="flex items-center  gap-2">
                   <Checkbox
                     id="isImageBackgroud"
+                    disabled={!node.imageUrl}
                     checked={node.isImageBackgroud || false}
                     onCheckedChange={() => {
                       editNode<HeroNode>({

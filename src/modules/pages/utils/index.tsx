@@ -19,6 +19,142 @@ import { LinkItem, NodeType, PageMetadataNode, PageNode } from "../editor";
 import { dark_templates } from "@/data";
 import { getPageFont } from "@/lib/fonts";
 
+// color palette
+function hexToRgb(hex: string) {
+  hex = hex.replace(/^#/, "");
+  if (hex.length === 3) {
+    hex = hex
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  }
+  const num = parseInt(hex, 16);
+  return {
+    r: (num >> 16) & 255,
+    g: (num >> 8) & 255,
+    b: num & 255,
+  };
+}
+
+function rgbToHex(r: number, g: number, b: number) {
+  return (
+    "#" +
+    [r, g, b]
+      .map((x) => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      })
+      .join("")
+      .toUpperCase()
+  );
+}
+
+function rgbToHsl(r: number, g: number, b: number) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0,
+    s = 0;
+
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  return { h: h * 360, s, l };
+}
+
+function hslToRgb(h: number, s: number, l: number) {
+  h /= 360;
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255),
+  };
+}
+
+function triadicPalette(hex: string) {
+  const { r, g, b } = hexToRgb(hex);
+  const { h, s, l } = rgbToHsl(r, g, b);
+
+  const h2 = (h + 120) % 360;
+  const h3 = (h + 240) % 360;
+
+  const rgb1 = hslToRgb(h, s, l);
+  const rgb2 = hslToRgb(h2, s, l);
+  const rgb3 = hslToRgb(h3, s, l);
+
+  return {
+    primary: rgbToHex(rgb1.r, rgb1.g, rgb1.b),
+    secondary: rgbToHex(rgb2.r, rgb2.g, rgb2.b),
+    tertiary: rgbToHex(rgb3.r, rgb3.g, rgb3.b),
+  };
+}
+
+export function GatesColor(index: number, type: "b" | "n" = "n") {
+  const colors =
+    type == "n"
+      ? ["bg-primary", "bg-secondary", "bg-[var(--tertiary)]"]
+      : [
+          "bg-[var(--primary-darker)]/[9%]",
+          "bg-[var(--secondary-darker)]/[9%]",
+          "bg-[var(--tertiary-darker)]/[9%]",
+        ];
+
+  if (colors.length === 0) {
+    throw new Error("No colors defined");
+  }
+
+  let color = colors[index % colors.length];
+
+  if (index > 0) {
+    const prevColor = colors[(index - 1) % colors.length];
+    if (color === prevColor) {
+      color = colors[(index + 1) % colors.length];
+    }
+  }
+
+  return color;
+}
+
 type TransformOptions = {
   darken?: number;
   brighten?: number;
@@ -95,41 +231,54 @@ export function toReact(
   template?: string | undefined
 ): React.ReactNode {
   const metadataNode = nodes[0] as PageMetadataNode;
+  const { primary, secondary, tertiary } = triadicPalette(
+    metadataNode.themeColor || "#FFF"
+  );
+  const isDark = dark_templates.includes(template || "");
 
   return (
     <div
       style={
         {
-          "--primary": metadataNode?.themeColor || "#020202",
-          "--primary-dark": hexTransfigure(metadataNode?.themeColor || "#FFF", {
+          "--primary": primary,
+          "--secondary": secondary,
+          "--tertiary": tertiary,
+          "--primary-darker": hexTransfigure(primary, {
+            darken: 0.55,
+          }),
+          "--secondary-darker": hexTransfigure(secondary, {
+            darken: 0.55,
+          }),
+          "--tertiary-darker": hexTransfigure(tertiary, {
+            darken: 0.55,
+          }),
+          "--primary-dark": hexTransfigure(primary, {
             darken: 0.925,
           }),
-          "--primary-darker": hexTransfigure(
-            metadataNode?.themeColor || "#FFF",
-            {
-              darken: 0.2,
-            }
-          ),
-          "--primary-light": hexTransfigure(
-            metadataNode?.themeColor || "#FFF",
-            {
-              brighten: 0.4,
-            }
-          ),
-          "--primary-dark-bg": hexTransfigure(
-            metadataNode?.themeColor || "#FFF",
-            {
-              darken: 0.625,
-            }
-          ),
+          "--primary-light": hexTransfigure(primary, {
+            brighten: 0.4,
+          }),
+          "--primary-dark-bg": hexTransfigure(primary, {
+            darken: 0.625,
+          }),
           "--theme-font": getPageFont(metadataNode.themeFont),
+          ...(isDark
+            ? {
+                "--border": "#ffffff1b",
+              }
+            : {
+                "--border": "#0000001b",
+              }),
         } as CSSProperties
       }
       className={cn(
-        dark_templates.includes(template || "") && "dark",
-        "flex flex-col bg-background text-foreground"
+        isDark && "dark",
+        "flex flex-col bg-background text-foreground flex-1"
       )}
     >
+      <div className="border-b">
+        <div className="border-x page-wrapper py-4" />
+      </div>
       {nodes.map((raw_node) => {
         const node = {
           ...raw_node,
@@ -137,7 +286,14 @@ export function toReact(
         };
         switch (node.type) {
           case NodeType.SectionHeader:
-            return <HeaderSection nodes={nodes} key={node.id} node={node} />;
+            return (
+              <HeaderSection
+                isDark={isDark}
+                nodes={nodes}
+                key={node.id}
+                node={node}
+              />
+            );
           case NodeType.SectionHero:
             return <HeroSection key={node.id} node={node} />;
           case NodeType.SectionAbout:
@@ -149,17 +305,23 @@ export function toReact(
           case NodeType.SectionSkills:
             return <SkillsSection key={node.id} node={node} />;
           case NodeType.SectionProjects:
-            return <ProjectsSection key={node.id} node={node} />;
+            return (
+              <ProjectsSection isDark={isDark} key={node.id} node={node} />
+            );
           case NodeType.SectionVideoGallery:
-            return <VideoGallerySection key={node.id} node={node} />;
+            return (
+              <VideoGallerySection isDark={isDark} key={node.id} node={node} />
+            );
           case NodeType.SectionImageGallery:
-            return <ImageGallerySection key={node.id} node={node} />;
+            return (
+              <ImageGallerySection isDark={isDark} key={node.id} node={node} />
+            );
           case NodeType.SectionTestimonials:
             return <TestimonialsSection key={node.id} node={node} />;
           case NodeType.SectionContact:
             return <ContactSection key={node.id} node={node} />;
           case NodeType.SectionFooter:
-            return <FooterSection key={node.id} node={node} />;
+            return <FooterSection nodes={nodes} key={node.id} node={node} />;
           default:
             return null;
         }

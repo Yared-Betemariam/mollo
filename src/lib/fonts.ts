@@ -2,16 +2,12 @@ import {
   Geist,
   Hanken_Grotesk,
   Rubik,
-  Lato,
-  Roboto,
-  Open_Sans,
   DM_Sans,
   Poppins,
   Manrope,
   Raleway,
   Montserrat,
   Playfair_Display,
-  Lora,
   EB_Garamond,
   Libre_Baskerville,
   Forum,
@@ -32,17 +28,6 @@ export const fontRubik = Rubik({
   variable: "--font-rubik",
 });
 
-export const fontLato = Lato({
-  weight: ["100", "300", "400", "700", "900"],
-  subsets: ["latin"],
-  variable: "--font-lato",
-});
-
-export const fontRoboto = Roboto({
-  subsets: ["latin"],
-  variable: "--font-roboto",
-});
-
 export const fontEBGaramond = EB_Garamond({
   subsets: ["latin"],
   variable: "--font-eb-garamond",
@@ -58,11 +43,6 @@ export const fontForum = Forum({
   weight: ["400"],
   subsets: ["latin"],
   variable: "--font-forum",
-});
-
-export const fontOpenSans = Open_Sans({
-  subsets: ["latin"],
-  variable: "--font-open-sans",
 });
 
 export const fontDMSans = DM_Sans({
@@ -96,23 +76,12 @@ export const fontPlayfairDisplay = Playfair_Display({
   variable: "--font-playfair-display",
 });
 
-export const fontLora = Lora({
-  subsets: ["latin"],
-  variable: "--font-lora",
-});
-
 export const getPageFont = (font?: string): string => {
   switch (font) {
     case "geist":
       return fontGeist.style.fontFamily;
     case "rubik":
       return fontRubik.style.fontFamily;
-    case "lato":
-      return fontLato.style.fontFamily;
-    case "roboto":
-      return fontRoboto.style.fontFamily;
-    case "open-sans":
-      return fontOpenSans.style.fontFamily;
     case "dm-sans":
       return fontDMSans.style.fontFamily;
     case "poppins":
@@ -131,8 +100,6 @@ export const getPageFont = (font?: string): string => {
       return fontLibreBaskerville.style.fontFamily;
     case "forum":
       return fontForum.style.fontFamily;
-    case "lora":
-      return fontLora.style.fontFamily;
     default:
       return fontTheme.style.fontFamily;
   }

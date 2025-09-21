@@ -156,8 +156,7 @@ const Page = () => {
                             </p>
                             <div className="flex p-1.5 px-2.5 rounded-md bg-primary/[7.5%] items-center gap-2">
                               <p className="">
-                                {field.value}.
-                                {process.env.NEXT_PUBLIC_BASE_DOMAIN}
+                                {process.env.NEXT_PUBLIC_BASE_URL}/{field.value}
                               </p>
                             </div>
                             <div className="mt-1 text-sm brightness-75">

@@ -42,12 +42,12 @@ const Page = () => {
     {
       url: IconUrls.telebirr,
       title: "Telebirr",
-      value: "09092109210",
+      value: "0917810879",
     },
     {
       url: IconUrls.cbe,
       title: "CBE",
-      value: "1000912819289",
+      value: "1000069029144",
     },
   ];
 
@@ -89,7 +89,7 @@ const Page = () => {
           </div>
         </Step>
         <Step>
-          {step("2", "Send screenshot")}
+          {step("2", "Send screenshot and email")}
           <span className="text-muted-foreground -mb-4">Telegram account</span>
           <Link
             href={`https://t.me/${mollo_telegram_username.slice(1)}`}

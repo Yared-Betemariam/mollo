@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 
 import {
   Command,
@@ -26,6 +26,7 @@ const AddNode = ({ addNode }: Props) => {
 
   const items = [
     {
+      group: "Favourites",
       type: NodeType.SectionHero,
       title: "Hero Section",
       node: {
@@ -55,6 +56,39 @@ const AddNode = ({ addNode }: Props) => {
       },
     },
     {
+      type: NodeType.SectionVideoGallery,
+      title: "Video Gallery Section",
+      node: {
+        type: NodeType.SectionVideoGallery,
+        videos: [],
+        groups: [],
+      },
+    },
+    {
+      type: NodeType.SectionContact,
+      title: "Contact Section",
+      node: {
+        type: NodeType.SectionContact,
+        email: "yourname@email.com",
+        phoneNumber: "090909090909",
+        socialLinks: [
+          {
+            platform: "Facebook",
+            url: "https://facebook.com",
+          },
+          {
+            platform: "Telegram",
+            url: "https://tg.me",
+          },
+          {
+            platform: "Instagram",
+            url: "https://instagram.com",
+          },
+        ],
+      },
+    },
+    {
+      group: "All",
       type: NodeType.SectionProjects,
       title: "Projects Section",
       node: {
@@ -115,38 +149,6 @@ const AddNode = ({ addNode }: Props) => {
         ],
       },
     },
-    {
-      type: NodeType.SectionVideoGallery,
-      title: "Video Gallery Section",
-      node: {
-        type: NodeType.SectionVideoGallery,
-        videos: [],
-        groups: [],
-      },
-    },
-    {
-      type: NodeType.SectionContact,
-      title: "Contact Section",
-      node: {
-        type: NodeType.SectionContact,
-        email: "yourname@email.com",
-        phoneNumber: "090909090909",
-        socialLinks: [
-          {
-            platform: "Facebook",
-            url: "https://facebook.com",
-          },
-          {
-            platform: "Telegram",
-            url: "https://tg.me",
-          },
-          {
-            platform: "Instagram",
-            url: "https://instagram.com",
-          },
-        ],
-      },
-    },
   ];
 
   return (
@@ -166,20 +168,36 @@ const AddNode = ({ addNode }: Props) => {
           <CommandList className="p-0 pt-1">
             <CommandEmpty>No label found.</CommandEmpty>
             <CommandGroup className="p-0">
-              {items.map((item) => (
-                <CommandItem
-                  key={item.type}
-                  value={item.title}
-                  className="h-9 px-4 rounded-none"
-                  onSelect={() => {
-                    setOpen(false);
+              {items.map((item) => {
+                const cpt = (
+                  <CommandItem
+                    key={item.type}
+                    value={item.title}
+                    className="h-9 px-4 rounded-none"
+                    onSelect={() => {
+                      setOpen(false);
 
-                    addNode(item.node);
-                  }}
-                >
-                  {item.title}
-                </CommandItem>
-              ))}
+                      addNode(item.node);
+                    }}
+                  >
+                    {item.title}
+                  </CommandItem>
+                );
+
+                return item.group ? (
+                  <div key={item.type} className="flex flex-col">
+                    <span className="text-sm opacity-50 px-4 mt-2 mb-1">
+                      {item.group}{" "}
+                      {item.group == "Favourites" && (
+                        <Star className="size-3 text-yellow-600 inline ml-1 fill-current" />
+                      )}
+                    </span>
+                    {cpt}
+                  </div>
+                ) : (
+                  cpt
+                );
+              })}
             </CommandGroup>
           </CommandList>
         </Command>

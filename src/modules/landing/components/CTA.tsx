@@ -7,7 +7,7 @@ import Link from "next/link";
 /* eslint-disable react/no-unescaped-entities */
 const CTA = () => {
   return (
-    <section className="relative py-12 overflow-hidden bg-neutral-900 text-white">
+    <section className="relative py-12 pb-32 md:pb-12 overflow-hidden bg-neutral-900 text-white">
       <img
         width={500}
         height={500}

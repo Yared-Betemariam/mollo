@@ -25,7 +25,7 @@ export const ScrollAreaWrapper = ({
         className="ScrollAreaScrollbar rounded-full w-[10px] bg-zinc-900/10 p-[1.5px] py-[2.5px] mr-[1px] z-50"
         orientation="vertical"
       >
-        <Thumb className="ScrollAreaThumb bg-zinc-900/25 rounded-full" />
+        <Thumb className="ScrollAreaThumb bg-zinc-900/15 rounded-full" />
       </Scrollbar>
       <Scrollbar
         className="ScrollAreaScrollbar rounded-full h-[10px] bg-zinc-900/10 p-[1.5px] px-[2.5px] mb-[1px] z-50"

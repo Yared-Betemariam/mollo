@@ -42,7 +42,7 @@ export function TemplateGrid({
                 type="button"
                 variant="secondary"
                 size="icon"
-                className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 bg-white/25 hover:bg-white/50 shadow-md"
+                className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 bg-white hover:bg-white/75 shadow-md"
                 onClick={(e) => {
                   e.stopPropagation();
                   setPreviewTemplate(template);
@@ -66,6 +66,7 @@ export function TemplateGrid({
 
       {previewTemplate && (
         <FullscreenMedia
+          aspect={1}
           src={previewTemplate.image_url}
           open={!!previewTemplate}
           onOpen={() => setPreviewTemplate(null)}

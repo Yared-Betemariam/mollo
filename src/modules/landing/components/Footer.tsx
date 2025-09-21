@@ -5,7 +5,7 @@ import Logo from "@/components/Logo";
 const Footer = () => {
   const date = new Date();
   return (
-    <footer className="absolute bottom-0 inset-x-0 text-white border-t border-border/20 py-12 md:py-8 bg-black/15 backdrop-blur-lg">
+    <footer className="absolute bottom-0 z-50 inset-x-0 text-white border-t border-border/20 py-12 md:py-8 bg-black/15 backdrop-blur-lg">
       <section className="wrapper text-center font-normal h-full flex items-center justify-center gap-4 md:gap-8 flex-col md:flex-row">
         <Logo light />
         <p className="opacity-45 hover:cursor-pointer  hover:opacity-50 duration-200 transition-all text-base md:mr-auto">

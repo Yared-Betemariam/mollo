@@ -95,7 +95,7 @@
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 25%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.488 0.243 264.376);
@@ -130,7 +130,19 @@
   }
 
   .page-wrapper {
-    @apply max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-4xl w-full mx-auto;
+  }
+
+  .page-p {
+    @apply py-14 px-8 sm:px-10 sm:py-20;
+  }
+
+  .page-bg {
+    @apply bg-[var(--primary-darker)]/[3%] dark:bg-[var(--primary-light)]/10;
+  }
+
+  .page-side {
+    @apply min-w-80 px-10 py-16 sm:border-r border-b sm:border-b-0;
   }
 
   .px {
@@ -142,11 +154,11 @@
   }
 
   .h2 {
-    @apply text-6xl tracking-tighter leading-tight font-medium text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-zinc-500;
+    @apply text-[3.25rem] md:text-6xl tracking-tighter leading-tight font-medium text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-zinc-500;
   }
 
   .about {
-    @apply text-5xl tracking-tighter leading-tight font-medium text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-zinc-500;
+    @apply text-4xl md:text-5xl tracking-tighter leading-tight font-medium text-transparent bg-clip-text bg-gradient-to-b from-zinc-900 to-zinc-500;
   }
 
   .h3 {
@@ -162,7 +174,7 @@
   }
 
   .body {
-    @apply text-2xl tracking-tight opacity-60;
+    @apply text-2xl tracking-tight text-black/60;
   }
 
   .text {
@@ -170,11 +182,11 @@
   }
 
   .page-subtitle {
-    @apply opacity-80 text-2xl tracking-wide brightness-50 bg-clip-text text-transparent bg-gradient-to-l from-primary to-primary/75 dark:brightness-150;
+    @apply opacity-80 text-2xl tracking-wide brightness-50 bg-clip-text text-transparent bg-gradient-to-l from-primary to-primary/75 dark:from-white dark:to-white/75 dark:brightness-150;
   }
 
   .page-h1 {
-    @apply text-[4.125rem] leading-[1] font-semibold tracking-tighter bg-clip-text text-transparent from-zinc-950 to-zinc-500 bg-gradient-to-b dark:from-zinc-50 dark:to-zinc-400;
+    @apply text-[4.125rem] leading-[1.2] font-semibold tracking-tighter bg-clip-text text-transparent from-zinc-950 to-zinc-500 bg-gradient-to-b dark:from-zinc-50 dark:to-zinc-400;
   }
 
   .page-h2 {
@@ -336,4 +348,29 @@
   .animate-reverse {
     animation-direction: reverse;
   }
+}
+
+.glare-animation {
+  animation: glare 3s ease-in-out infinite;
+}
+
+@keyframes glare {
+  0% {
+    transform: translateX(-150%) skewX(12deg);
+  }
+  50% {
+    transform: translateX(250%) skewX(12deg);
+  }
+  100% {
+    transform: translateX(-150%) skewX(12deg);
+  }
+}
+
+video::-webkit-media-controls {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out; /* Optional: adds a smooth transition */
+}
+
+video:hover::-webkit-media-controls {
+  opacity: 1;
 }

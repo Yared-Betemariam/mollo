@@ -82,8 +82,8 @@ export default function OnboardingCard() {
 
   return (
     <div className="max-w-md mx-auto my-auto py-12 flex flex-col gap-12 w-full">
-      <CardHeader className="flex flex-col items-center gap-3">
-        <Logo size="lg" className="mb-2" />
+      <CardHeader className="flex flex-col items-center gap-4">
+        <Logo className="mb-2" />
         <CardTitle className={cn("h3", fontTheme.className)}>
           Get started
         </CardTitle>
@@ -102,7 +102,7 @@ export default function OnboardingCard() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base opacity-90">
-                    Choose your username
+                    Username
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -127,7 +127,7 @@ export default function OnboardingCard() {
                       </p>
                       <div className="flex p-1.5 px-2.5 rounded-md bg-primary/[7.5%] items-center gap-2">
                         <p className="">
-                          {field.value}.{process.env.NEXT_PUBLIC_BASE_DOMAIN}
+                          {process.env.NEXT_PUBLIC_BASE_URL}/{field.value}
                         </p>
                       </div>
                       <div className="mt-1 text-sm brightness-75">
@@ -163,7 +163,7 @@ export default function OnboardingCard() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base opacity-90">
-                    Choose your base template
+                    Base Template
                   </FormLabel>
                   <FormControl>
                     <TemplateGrid

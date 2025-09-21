@@ -38,8 +38,8 @@ const ValueChanger = ({
         />
       ) : (
         <Textarea
-          rows={long ? 3 : 2}
-          maxRows={long ? 3 : 2}
+          rows={long ? 4 : 2}
+          maxRows={long ? 5 : 2}
           id={label}
           placeholder={placeHolder}
           className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex min-h-16 w-full min-w-0 rounded-md border px-3 py-1.5 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm shadow-none bg-zinc-900/[0.025]"

@@ -233,11 +233,9 @@ function IconUploadDialog({
 
           ctx.putImageData(imageData, 0, 0);
 
-          // Try WebP first for better compression, fallback to JPEG
           canvas.toBlob(
             (webpBlob) => {
               if (webpBlob && webpBlob.size < file.size * 0.5) {
-                // WebP provides good compression, use it
                 const processedFile = new File(
                   [webpBlob],
                   file.name.replace(/\.[^/.]+$/, ".webp"),
@@ -248,24 +246,23 @@ function IconUploadDialog({
                 );
                 resolve(processedFile);
               } else {
-                // Fallback to optimized JPEG
                 canvas.toBlob(
                   (jpegBlob) => {
                     if (jpegBlob) {
                       const processedFile = new File(
                         [jpegBlob],
-                        file.name.replace(/\.[^/.]+$/, ".jpg"),
+                        file.name.replace(/\.[^/.]+$/, ".png"),
                         {
-                          type: "image/jpeg",
+                          type: "image/png",
                           lastModified: Date.now(),
                         }
                       );
                       resolve(processedFile);
                     }
                   },
-                  "image/jpeg",
+                  "image/png",
                   0.85
-                ); // 85% quality for good balance
+                );
               }
             },
             "image/webp",
@@ -416,9 +413,9 @@ function IconUploadDialog({
   return (
     <>
       {trigger || (
-        <Button variant="outline" size="sm">
-          <Upload className="h-4 w-4 mr-2" />
-          Upload Icon
+        <Button onClick={() => setIsOpen(true)} variant={"outline"} size={"xs"}>
+          <Upload className="h-4 w-4 mr-1" />
+          {currentIconUrl ? "Change Icon" : "Upload Icon"}
         </Button>
       )}
 

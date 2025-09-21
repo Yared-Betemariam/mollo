@@ -6,50 +6,54 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Expand } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function FullscreenMedia({
   src,
   isVideo,
   open,
   onOpen,
+  aspect,
 }: {
   src: string;
   isVideo?: boolean;
   open?: boolean;
   onOpen?: (value: boolean) => void;
+  aspect: number;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpen}>
       <DialogTrigger asChild>
-        {/* <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-2 right-2 bg-white/40"
-        >
-          <Expand />
-        </Button> */}
         <Button
           type="button"
           variant="secondary"
           size="icon"
-          className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 bg-white/25 hover:bg-white/50 shadow-md"
+          className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 size-10 dark:text-black bg-white hover:bg-white/75 shadow-md z-50!"
           onClick={(e) => {
             e.stopPropagation();
-            // setPreviewTemplate(template);
           }}
         >
-          {/* <Maximize2 size={16} /> */}
-          <Expand size={16} />
+          <Expand size={20} />
         </Button>
       </DialogTrigger>
-      <DialogContent className="p-0 bg-black/90">
+      <DialogContent className={cn("p-0 rounded-md bg-black/0")}>
         <DialogTitle className="sr-only">Image</DialogTitle>
         {isVideo ? (
-          <video controls className="w-full h-auto">
+          <video controls className={cn("rounded-md w-full h-auto")}>
             <source src={src} />
           </video>
         ) : (
-          <img src={src} className="w-full h-auto" />
+          <img
+            src={src}
+            className={cn(
+              "rounded-md",
+              aspect > 1
+                ? "w-full h-auto"
+                : aspect < 1
+                ? "h-full w-auto"
+                : "h-full w-full"
+            )}
+          />
         )}
       </DialogContent>
     </Dialog>

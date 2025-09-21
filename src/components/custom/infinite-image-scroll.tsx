@@ -26,7 +26,7 @@ export function InfiniteImageScroll({
   return (
     <div
       className={cn(
-        "relative h-[36rem] w-72 overflow-hidden rounded-lg mask-scroller",
+        "relative h-[36rem] w-80 overflow-hidden rounded-xl drop-shadow-md mask-",
         className
       )}
     >
@@ -40,19 +40,19 @@ export function InfiniteImageScroll({
         {images.map((src, index) => (
           <div
             key={`first-${index}`}
-            className="flex-shrink-0 w-full h-72 rounded-lg overflow-hidden shadow-lg"
+            className="flex-shrink-0 h-max w-full rounded-md overflow-hidden shadow-lg border"
           >
             <img
               src={src || "/placeholder.svg"}
               alt={`Scrolling image ${index + 1}`}
-              className="w-full h-full object-cover"
+              className="w-full h-auto object-cover"
             />
           </div>
         ))}
         {images.map((src, index) => (
           <div
             key={`second-${index}`}
-            className="flex-shrink-0 w-full h-72 rounded-lg overflow-hidden shadow-lg"
+            className="flex-shrink-0 w-full h-72 rounded-md overflow-hidden shadow-lg border"
           >
             <img
               src={src || "/placeholder.svg"}

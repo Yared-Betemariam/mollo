@@ -43,7 +43,7 @@ const PropEditor = () => {
         );
       })}
       {nodes.length <= 0 && (
-        <div className="flex items-center w-full justify-between h-full flex-col gap-1">
+        <div className="flex items-center w-full justify-center h-full flex-col gap-1">
           <div className="size-8 rounded-md border-2 rotate-[35deg] border-black mb-4 shadow-md flex">
             <div className="border size-5 mx-auto my-auto border-blue-700/80 rounded-sm shadow-inner" />
           </div>

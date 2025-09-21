@@ -13,7 +13,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { pricing_plans } from "@/data";
+import { free_limits, pricing_plans } from "@/data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn, countMediaUrls } from "@/lib/utils";
 import UserButton from "@/modules/auth/components/UserButton";
@@ -107,13 +107,8 @@ const ResizableWrapper = ({ children }: Props) => {
   }, [nodes]);
 
   useEffect(() => {
-    const planLimits: Limits = pricing_plans.find((p) => p.id === plan)
-      ?.limits || {
-      maxImages: 3,
-      maxVideos: 0,
-      maxImageSize: 1,
-      maxVideoSize: 10,
-    };
+    const planLimits: Limits =
+      pricing_plans.find((p) => p.id === plan)?.limits || free_limits;
 
     usePageInfoStore.getState().setInfo({
       status: isUserActive ? "active" : "disabled",
@@ -221,7 +216,7 @@ const ResizableWrapper = ({ children }: Props) => {
           }}
           className={cn(
             isMobile ? "" : "max-h-[calc(100vh-7rem)]",
-            "rounded-lg overflow-hidden shadow-[0_-10px_50px_-12px] shadow-black/25 h-full flex-1 flex flex-col w-full max-w-3xl mx-auto"
+            "rounded-lg overflow-hidden shadow-[0_-10px_50px_-12px] shadow-black/25 h-full flex-1 flex flex-col w-full max-w-[45rem] mx-auto"
           )}
         />
       )}
@@ -250,8 +245,16 @@ const ResizableWrapper = ({ children }: Props) => {
             : "bg-gradient-to-br from-blue-800/90 h-8 to-blue-950/90 drop-shadow-[3px_3px] drop-shadow-blue-800/50"
         )}
       >
-        {!page?.published && <Stars />}
-        {page?.published ? "Unpublish" : "Publish"}
+        {!page?.published && (
+          <Stars className={cn(updatePage.isPending && "animate-spin")} />
+        )}
+        {page?.published
+          ? updatePage.isPending
+            ? "Unpublishing..."
+            : "Unpublish"
+          : updatePage.isPending
+          ? "Publishing..."
+          : "Publish"}
       </Button>
     ) : null;
 
