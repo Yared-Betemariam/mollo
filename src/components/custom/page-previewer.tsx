@@ -21,11 +21,9 @@ export function PagePreviewer({
       className={cn("relative", className)}
     >
       <iframe
+        id="preview-frame"
         src={"/preview"}
         className="flex-1 border-0 transition-all duration-300"
-        style={{
-          zoom: `75%`,
-        }}
         onLoad={onFrameLoad}
         title="Page Preview"
         sandbox="allow-scripts allow-same-origin allow-forms"

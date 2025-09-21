@@ -374,3 +374,13 @@ video::-webkit-media-controls {
 video:hover::-webkit-media-controls {
   opacity: 1;
 }
+
+#preview-frame {
+  zoom: 0.75;
+}
+
+@media (max-width: 639px) {
+  #preview-frame {
+    zoom: 0.6;
+  }
+}

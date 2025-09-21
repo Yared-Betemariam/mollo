@@ -26,7 +26,7 @@ export function InfiniteImageScroll({
   return (
     <div
       className={cn(
-        "relative h-[36rem] w-80 overflow-hidden rounded-xl drop-shadow-md mask-",
+        "relative h-[36rem] w-56 sm:64 md:w-80 overflow-hidden rounded-xl drop-shadow-md mask-",
         className
       )}
     >

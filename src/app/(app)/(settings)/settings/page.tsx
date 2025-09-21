@@ -103,12 +103,12 @@ const Page = () => {
 
   return (
     <>
-      <div className="wrapper flex flex-col md:flex-row md:items-center justify-between py-10 gap-4 md:gap-2">
+      <div className="wrapper flex flex-col md:flex-row md:items-center justify-between py-10 gap-5 md:gap-2">
         <h1 className={cn("h3", fontTheme.className)}>Settings & Hosting</h1>
 
         <FormButton
           small
-          className="w-fit rounded-lg ml-auto bg-gradient-to-br from-zinc-500/90 border-white/25 to-zinc-800/90"
+          className="w-fit rounded-lg md:ml-auto bg-gradient-to-br from-zinc-500/90 border-white/25 to-zinc-800/90"
           label="Save changes"
           loading={isPending}
           onClick={() => {
@@ -123,7 +123,7 @@ const Page = () => {
             className="flex flex-col border-t pt-12  gap-4"
           >
             <div className="flex flex-col md:flex-row gap-12 justify-between">
-              <div className="flex flex-col gap-8 flex-1 max-w-2/5">
+              <div className="flex flex-col gap-8 flex-1 md:max-w-2/5">
                 <span className="h5 opacity-85">General</span>
 
                 <FormField
@@ -150,8 +150,8 @@ const Page = () => {
                       {page &&
                         field.value &&
                         !form.formState.errors.username && (
-                          <div className="rounded-lg py-2 mt-1">
-                            <p className="text-sm opacity-50 mb-1">
+                          <div className="rounded-lg flex flex-col gap-2 py-2 mt-1">
+                            <p className="text-sm opacity-50">
                               Your hosing domain will be
                             </p>
                             <div className="flex p-1.5 px-2.5 rounded-md bg-primary/[7.5%] items-center gap-2">
@@ -159,7 +159,7 @@ const Page = () => {
                                 {process.env.NEXT_PUBLIC_BASE_URL}/{field.value}
                               </p>
                             </div>
-                            <div className="mt-1 text-sm brightness-75">
+                            <div className="text-sm brightness-75">
                               {isCheckingUsername ||
                               debouncedUsername !== username ? (
                                 <p className="text-muted-foreground">

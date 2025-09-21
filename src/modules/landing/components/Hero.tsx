@@ -82,7 +82,7 @@ const Hero = () => {
           </div>
         </section>
 
-        <div className="flex gap-6 mt-6 flex-row mx-auto">
+        <div className="flex gap-3 md:gap-6 mt-6 flex-row mx-auto">
           <InfiniteImageScroll speed="fast" images={[t0b.src, t0b.src]} />
           <InfiniteImageScroll speed="fast" images={[t0a.src, t0a.src]} />
         </div>

@@ -11,10 +11,10 @@ export const paths = [
   "/affiliate",
   "/billing",
   "/editor",
-  "/help   ",
+  "/help",
   "/onboarding",
   "/payment",
   "/preview",
   "/settings",
-  "/signin ",
+  "/signin",
 ];

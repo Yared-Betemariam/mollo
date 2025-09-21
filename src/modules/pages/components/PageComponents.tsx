@@ -384,7 +384,7 @@ export function HeroSection({ node }: { node: HeroNode }) {
         >
           <div
             className={cn(
-              "page-wrapper flex items-center gap-6",
+              "page-wrapper page-p flex items-center gap-6",
               node.imageUrl && !node.isImageBackgroud
                 ? "py-20"
                 : "py-24 justify-center"

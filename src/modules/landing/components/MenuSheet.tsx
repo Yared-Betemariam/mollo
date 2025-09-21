@@ -7,7 +7,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
 import { FiMenu } from "react-icons/fi";
 import Logo from "@/components/Logo";
 import Link from "next/link";
@@ -22,25 +21,16 @@ const MenuSheet = () => {
       >
         <FiMenu className="text-gray-900 group-hover/trigger:text-gray-800 duration-300 transition-all" />
       </SheetTrigger>
-      <SheetContent className="rounded h-full w-72 py-10 pt-14 flex flex-col px-8 gap-2">
+      <SheetContent className="rounded h-full w-72 py-10 pt-14 flex flex-col px-8 gap-3">
         <SheetTitle className="sr-only">This is menu sheet</SheetTitle>
         <Logo />
-        <hr className="my-2" />
+        <hr className="my-6" />
         {navLinks.map((item) => (
-          <SheetClose
-            key={item.name}
-            className="text-start border-none outline-none focus-visible:outline-none active:ring-0 m-0"
-          >
-            <Link
-              href={item.href}
-              className={cn(
-                "text-gray-900/90 opacity-80",
-                "transition-all duration-300 text-[15px] md:text-[17px]"
-              )}
-            >
+          <Link key={item.name} href={item.href}>
+            <SheetClose className="text-start border-none outline-none focus-visible:outline-none text-lg active:ring-0 m-0">
               {item.name}
-            </Link>
-          </SheetClose>
+            </SheetClose>
+          </Link>
         ))}
       </SheetContent>
     </Sheet>

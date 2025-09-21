@@ -15,12 +15,12 @@ const Page = () => {
 
   return (
     <>
-      <div className="wrapper flex items-center justify-between py-10 gap-2">
+      <div className="wrapper flex flex-col md:flex-row md:items-center justify-between py-10 gap-5">
         <h1 className={cn("h3", fontTheme.className)}>Plans & Billing</h1>
 
         <Link
           href={"#cards"}
-          className="brightness-90 text-xl bg-gradient-to-br text-transparent bg-clip-text tracking-tight hover:opacity-100 opacity-90 active:scale-105 duration-200 transition-all from-blue-500/75 to-blue-700"
+          className="brightness-90 text-xl bg-gradient-to-br text-transparent bg-clip-text tracking-tight hover:opacity-100 opacity-90 active:scale-105 duration-200 transition-all from-blue-500/75 to-blue-700 w-fit"
         >
           Upgrade plan
         </Link>
@@ -29,7 +29,7 @@ const Page = () => {
         <div className="flex flex-col border-y divide-y">
           <div className="flex flex-col gap-6 py-8 px-6">
             <p className="h5 opacity-65">Plan details</p>
-            <div className="flex items-center gap-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
               <div className="flex flex-col gap-1">
                 <p className="text-lg opacity-60">Your plan</p>
                 <h2 className="h4">
@@ -84,7 +84,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="flex items-center py-8 px-6 gap-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 py-8 px-6 gap-12">
             <div className="flex flex-col gap-2">
               <p className="text-lg opacity-60">User status</p>
               <div
@@ -120,16 +120,15 @@ const Page = () => {
               >
                 {isSubscriptionExpired ? (
                   <>
-                    <BsExclamationTriangle className="size-4" /> Subscription
-                    has expired
+                    <BsExclamationTriangle className="size-4" /> Expired
                   </>
                 ) : plan == "free" ? (
                   <>
-                    <BsExclamationTriangle className="size-4" /> No subscription
+                    <BsExclamationTriangle className="size-4" /> None
                   </>
                 ) : (
                   <>
-                    <Check className="size-4" /> Subscription active
+                    <Check className="size-4" /> Active
                   </>
                 )}
               </div>

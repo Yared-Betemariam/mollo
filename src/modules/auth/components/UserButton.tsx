@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { GoPerson } from "react-icons/go";
 import { useUser } from "../hooks";
+import { BsQuestion } from "react-icons/bs";
 
 const UserButton = ({ simple }: { simple?: boolean }) => {
   const { user, isLoading } = useUser();
@@ -88,6 +89,13 @@ const UserButton = ({ simple }: { simple?: boolean }) => {
             </Link>
           </>
         )}
+        <span className="border-b my-1" />
+        <Link href={"/help"}>
+          <DropdownMenuItem className="h-8 rounded-none px-7">
+            <BsQuestion className="mr-1 size-4 ring rounded-full" />
+            <span>Help</span>
+          </DropdownMenuItem>
+        </Link>
         <span className="border-b my-1" />
         <DropdownMenuItem
           disabled={signingOut}

@@ -8,9 +8,9 @@ import { unknown } from "zod";
 import "react-photo-album/masonry.css";
 
 type Props = {
-  params: Promise<{
+  params: {
     username: string;
-  }>;
+  };
 };
 
 const getPageDataByUsername = cache(async (username: string) => {
@@ -24,7 +24,7 @@ const getPageDataByUsername = cache(async (username: string) => {
 });
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { username } = await params;
+  const { username } = params;
   if (!username) return {};
 
   const project = await getPageDataByUsername(username);
@@ -44,13 +44,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     ...(pageMetaData.iconUrl
       ? {
-          icons: [
-            {
-              rel: "icon",
-              url: pageMetaData.iconUrl,
-              href: pageMetaData.iconUrl,
-            },
-          ],
+          icons: {
+            icon: pageMetaData.iconUrl,
+          },
         }
       : {}),
     openGraph: {
@@ -64,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const Page = async ({ params }: Props) => {
-  const { username } = await params;
+  const { username } = params;
   if (!username) return notFound();
 
   const project = await getPageDataByUsername(username);
@@ -72,7 +68,25 @@ const Page = async ({ params }: Props) => {
 
   if (project.nodes.length <= 0) return notFound();
 
-  return <>{toReact(project.nodes, project.template)}</>;
+  return (
+    <>
+      {toReact(project.nodes, project.template)}{" "}
+      <a
+        target="_blank"
+        href="https://mollo.orpad.cc"
+        className="w-fit h-fit border border-zinc-900/25 flex items-center gap-2 font-sans rounded-xl text-sm p-1 px-2 opacity-70 hover:opacity-90 duration-300 transition-all drop-shadow-sm bg-gradient-to-b from-blue-500 to-blue-700 text-white fixed bottom-2 right-2 md:bottom-4 md:right-4 z-50"
+      >
+        <img
+          src="https://mollo.orpad.cc/logo.png"
+          width={15}
+          height={15}
+          alt="orpad logo"
+          className="size-4"
+        />
+        <span>Made with Mollo</span>
+      </a>
+    </>
+  );
 };
 
 export default Page;
