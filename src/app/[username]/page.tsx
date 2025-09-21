@@ -8,9 +8,9 @@ import { unknown } from "zod";
 import "react-photo-album/masonry.css";
 
 type Props = {
-  params: {
+  params: Promise<{
     username: string;
-  };
+  }>;
 };
 
 const getPageDataByUsername = cache(async (username: string) => {
@@ -24,7 +24,7 @@ const getPageDataByUsername = cache(async (username: string) => {
 });
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { username } = params;
+  const { username } = await params;
   if (!username) return {};
 
   const project = await getPageDataByUsername(username);
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const Page = async ({ params }: Props) => {
-  const { username } = params;
+  const { username } = await params;
   if (!username) return notFound();
 
   const project = await getPageDataByUsername(username);
