@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NodeType } from "@/modules/pages/editor";
 import { toReact } from "@/modules/pages/utils";
 import { trpc } from "@/trpc/server";
@@ -74,10 +76,10 @@ const Page = async ({ params }: Props) => {
       <a
         target="_blank"
         href="https://mollo.orpad.cc"
-        className="w-fit h-fit border border-zinc-900/25 flex items-center gap-2 font-sans rounded-xl text-sm p-1 px-2 opacity-70 hover:opacity-90 duration-300 transition-all drop-shadow-sm bg-gradient-to-b from-blue-500 to-blue-700 text-white fixed bottom-2 right-2 md:bottom-4 md:right-4 z-50"
+        className="w-fit h-fit border border-zinc-900/25 flex items-center gap-2 font-sans rounded-lg text-sm p-1.5 px-3 opacity-70 hover:opacity-90 duration-300 transition-all drop-shadow-sm bg-gradient-to-b from-blue-500 to-blue-700 text-white fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50"
       >
         <img
-          src="https://mollo.orpad.cc/logo.png"
+          src="https://mollo.orpad.cc/logo_w.png"
           width={15}
           height={15}
           alt="orpad logo"
